@@ -351,6 +351,21 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     .viz-label { font-family: var(--font-mono); font-size: 13px; color: var(--ink);
       background: var(--amber-soft); border: 1px solid #f0d9ac; border-radius: 8px;
       padding: 8px 12px; margin-top: 14px; min-height: 20px; }
+    /* Collapsible answers */
+    details.ans { margin-top: 10px; }
+    details.ans summary {
+      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+      color: var(--accent-dark); background: var(--accent-soft);
+      padding: 7px 14px; border-radius: 8px; user-select: none;
+      border: 1px solid #bfdee5;
+    }
+    details.ans summary::-webkit-details-marker { display: none; }
+    details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
+    details.ans[open] summary::before { content: "\2212"; }
+    details.ans .ans-body { margin-top: 10px; }
+    /* Keyword highlight */
+    .kw { color: #c2179b; }
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; }
       .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
@@ -421,7 +436,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <h2><span class="sec-no">2.1</span>What is an Algorithm?</h2>
       <div class="def-box">
         <span class="def-label">Definition · Algorithm</span>
-        An algorithm is a <strong>finite sequence of instructions</strong>, typically used to
+        An algorithm is a <strong class="kw">finite sequence of instructions</strong>, typically used to
         solve a computational task or transform an input (I/P) into an output (O/P).
       </div>
       <p>
@@ -459,8 +474,8 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
       <p>
         Before solving a problem, we usually write a possible solution on a piece
         of paper in our native language — that written solution is the
-        <strong>algorithm</strong>. When translated into a programming language for a
-        computer to execute, it becomes a <strong>program</strong>.
+        <strong class="kw">algorithm</strong>. When translated into a programming language for a
+        computer to execute, it becomes a <strong class="kw">program</strong>.
       </p>
       <table class="tbl">
         <thead>
@@ -505,7 +520,7 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
       </p>
       <div class="def-box">
         <span class="def-label">Idea</span>
-        Unorganised data &nbsp;⟶&nbsp; <strong>Sorting</strong> &nbsp;⟶&nbsp; Organised data
+        Unorganised data &nbsp;⟶&nbsp; <strong class="kw">Sorting</strong> &nbsp;⟶&nbsp; Organised data
       </div>
       <h3>Where sorting is used</h3>
       <ul>
@@ -519,7 +534,7 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
     <section class="chapter-section" id="sec-5">
       <h2><span class="sec-no">2.5</span>Bubble Sort</h2>
       <p>
-        Bubble sort is one of the <strong>simplest sorting algorithms</strong> and forms the
+        Bubble sort is one of the <strong class="kw">simplest sorting algorithms</strong> and forms the
         foundation for understanding other sorting algorithms. In each pass, adjacent
         elements are compared and swapped if they are out of order — the largest
         remaining element "bubbles" to the end of the array.
@@ -691,7 +706,7 @@ while (swap):
       <h2><span class="sec-no">2.7</span>Algorithm Analysis</h2>
       <div class="def-box">
         <span class="def-label">Definition · Algorithm analysis</span>
-        Predicting the <strong>resources</strong> that an algorithm requires to complete a given task.
+        Predicting the <strong class="kw">resources</strong> that an algorithm requires to complete a given task.
       </div>
       <p>The resources of interest include:</p>
       <ul>
@@ -716,7 +731,7 @@ while (swap):
       </ul>
       <div class="def-box">
         <span class="def-label">Correctness</span>
-        An algorithm for a computational problem is <strong>correct</strong> if, for every
+        An algorithm for a computational problem is <strong class="kw">correct</strong> if, for every
         problem instance provided as input, it halts its computing in finite time
         and outputs the correct solution to the problem instance.
       </div>
@@ -728,11 +743,11 @@ while (swap):
       <div class="def-box">
         <span class="def-label">Definition · Time complexity</span>
         Time complexity is a measure of the computational time an algorithm takes
-        to run, expressed <strong>as a function of the size of the input</strong>.
+        to run, expressed <strong class="kw">as a function of the size of the input</strong>.
       </div>
       <ul>
-        <li><strong>Constant time</strong> — execution time is fixed, irrespective of input size.</li>
-        <li><strong>Linear time</strong> — execution time grows linearly with input size.</li>
+        <li><strong class="kw">Constant time</strong> — execution time is fixed, irrespective of input size.</li>
+        <li><strong class="kw">Linear time</strong> — execution time grows linearly with input size.</li>
         <li><strong>Other complexities</strong> — quadratic, logarithmic, and so on.</li>
       </ul>
 
@@ -793,89 +808,152 @@ return x;</pre>
     <!-- 2.10 -->
     <section class="chapter-section" id="sec-10">
       <h2><span class="sec-no">2.10</span>Loop Examples — Find the Complexity</h2>
-      <p>Work through each example before revealing the answer chip.</p>
+      <p>Work through each example on paper first, then press <strong>+ show answer</strong> to check yourself.</p>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 1 — sequential + nested</span><span class="o-chip">≈ n²</span></div>
+        <div class="ex-head"><span class="ex-title">Example 1 — sequential + nested</span></div>
         <pre class="code">for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) { sum += i + j; }
     sum += i + j;
     for (int k = 0; k < n; k++) { sum += i + j + k; }
 }</pre>
-        <p class="ex-why">n² + n + n² = 2n² + n ≈ 2n² ≈ n².</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">≈ n²</span>
+          <p class="ex-why" style="margin-top:8px;">n² + n + n² = 2n² + n ≈ 2n² ≈ n².</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 2 — triple nesting</span><span class="o-chip">n³</span></div>
+        <div class="ex-head"><span class="ex-title">Example 2 — triple nesting</span></div>
         <pre class="code">for (int i = 0; i < n; i++)
     for (int j = 0; j < n; j++)
         for (int k = 0; k < n; k++)
             sum += i + j + k;</pre>
-        <p class="ex-why">Three loops of n each: n × n × n = n³.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">n³</span>
+          <p class="ex-why" style="margin-top:8px;">Three loops of n each: n × n × n = n³.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 3 — accumulating counter</span><span class="o-chip">√n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 3 — accumulating counter</span></div>
         <pre class="code">p = 0;
 for (int i = 1; p < n; i++) {
     p = p + i;
 }</pre>
-        <p class="ex-why">p grows as 1 + 2 + … + i = i(i+1)/2; it reaches n when i ≈ √n.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">√n</span>
+          <p class="ex-why" style="margin-top:8px;">p grows as 1 + 2 + … + i = i(i+1)/2; it reaches n when i ≈ √n.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 4 — doubling counter</span><span class="o-chip">log n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 4 — doubling counter</span></div>
         <pre class="code">for (int i = 1; i < n; i = i * 2) {
     p = p + i;
 }</pre>
-        <p class="ex-why">i takes values 1, 2, 4, 8, … — it crosses n after log₂ n steps.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">log n</span>
+          <p class="ex-why" style="margin-top:8px;">i takes values 1, 2, 4, 8, … — it crosses n after log₂ n steps.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 5 — halving counter</span><span class="o-chip">log n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 5 — halving counter</span></div>
         <pre class="code">for (int i = n; 1 < i; i = i / 2) {
     p = p + i;
 }</pre>
-        <p class="ex-why">Halving from n down to 1 also takes log₂ n steps.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">log n</span>
+          <p class="ex-why" style="margin-top:8px;">Halving from n down to 1 also takes log₂ n steps.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 6 — squared condition</span><span class="o-chip">√n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 6 — squared condition</span></div>
         <pre class="code">for (int i = 1; i * i < n; i = i + 1) {
     p = p + i;
 }</pre>
-        <p class="ex-why">The loop runs while i² &lt; n, i.e. while i &lt; √n.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">√n</span>
+          <p class="ex-why" style="margin-top:8px;">The loop runs while i² &lt; n, i.e. while i &lt; √n.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 7 — linear × logarithmic</span><span class="o-chip">n log n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 7 — linear × logarithmic</span></div>
         <pre class="code">for (int i = 0; i < n; i++) {
     for (int j = 1; j < n; j = j * 2) {
         sum += i + j;
     }
 }</pre>
-        <p class="ex-why">Outer loop runs n times; inner doubling loop runs log n times each.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">n log n</span>
+          <p class="ex-why" style="margin-top:8px;">Outer loop runs n times; inner doubling loop runs log n times each.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 8 — loop bounded by a logarithm</span><span class="o-chip">log log n</span></div>
+        <div class="ex-head"><span class="ex-title">Example 8 — loop bounded by a logarithm</span></div>
         <pre class="code">for (int i = 1; i < n; i = i * 2) {
     p = p + 1;                     // p becomes ≈ log n
 }
 for (int j = 1; j < p; j = j * 2) {
     sum += i + j;                  // second loop's complexity?
 }</pre>
-        <p class="ex-why">The first loop makes p ≈ log n; a doubling loop up to p then takes log p = log log n steps.</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">log log n</span>
+          <p class="ex-why" style="margin-top:8px;">The first loop makes p ≈ log n; a doubling loop up to p then takes log p = log log n steps.</p></div>
+        </details>
       </div>
 
       <div class="example-card">
-        <div class="ex-head"><span class="ex-title">Example 9 — inner loop bounded by i (exercise)</span><span class="o-chip">?</span></div>
+        <div class="ex-head"><span class="ex-title">Example 9 — inner loop bounded by i (exercise)</span></div>
         <pre class="code">for (int i = 1; i < n; i *= 2) {
     for (int j = 0; j < i; j++) {
         sum += i + j;
     }
 }</pre>
-        <p class="ex-why">Left as an exercise: sum the inner-loop work 1 + 2 + 4 + … over the doubling values of i.</p>
+        <p class="ex-why">Hint: sum the inner-loop work over the doubling values of i: 1 + 2 + 4 + &#8230;</p>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#8776; n</span>
+          <p class="ex-why" style="margin-top:8px;">The inner loop runs 1 + 2 + 4 + &#8230; + up to n times. This geometric series sums to about 2n &#8722; 1, so the total work is &#8776; n &#8212; surprisingly, linear, even though there are two nested loops.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Example 10 — inner loop depends on i</span></div>
+        <pre class="code">for (int i = 0; i < n; i++) {
+    for (int j = 0; j <= i; j++) {
+        sum += i + j;
+    }
+}</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#8776; n&#178;</span>
+          <p class="ex-why" style="margin-top:8px;">The inner loop runs 1, 2, 3, &#8230;, n times as i grows: total = 1 + 2 + &#8230; + n = n(n+1)/2 &#8776; n&#178;/2 &#8776; n&#178;. A dependent bound does not save us from quadratic here &#8212; it only halves the constant.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Example 11 — tripling counter</span></div>
+        <pre class="code">for (int i = 1; i < n; i = i * 3) {
+    p = p + i;
+}</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">log n</span>
+          <p class="ex-why" style="margin-top:8px;">i takes values 1, 3, 9, 27, &#8230; and crosses n after log&#8323; n steps. The base of the logarithm (2, 3, 10, &#8230;) only changes the constant factor, so we still call it log n.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Example 12 — cubed condition</span></div>
+        <pre class="code">for (int i = 1; i * i * i < n; i = i + 1) {
+    p = p + i;
+}</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">n^(1/3)</span>
+          <p class="ex-why" style="margin-top:8px;">The loop runs while i&#179; &lt; n, i.e. while i &lt; n^(1/3) &#8212; the cube root of n. Compare Example 6, where i&#178; &lt; n gave &#8730;n: the pattern generalises.</p></div>
+        </details>
       </div>
     </section>
 
@@ -883,11 +961,11 @@ for (int j = 1; j < p; j = j * 2) {
     <section class="chapter-section" id="sec-11">
       <h2><span class="sec-no">2.11</span>Characteristics of an Algorithm</h2>
       <ul>
-        <li><strong>Input</strong> — takes zero or more inputs.</li>
-        <li><strong>Output</strong> — produces at least one output.</li>
-        <li><strong>Definiteness</strong> — no vague statements; every step is precisely defined.</li>
-        <li><strong>Finiteness</strong> — it must stop after a finite number of steps.</li>
-        <li><strong>Effectiveness</strong> — every step must be basic enough to be carried out.</li>
+        <li><strong class="kw">Input</strong> — takes zero or more inputs.</li>
+        <li><strong class="kw">Output</strong> — produces at least one output.</li>
+        <li><strong class="kw">Definiteness</strong> — no vague statements; every step is precisely defined.</li>
+        <li><strong class="kw">Finiteness</strong> — it must stop after a finite number of steps.</li>
+        <li><strong class="kw">Effectiveness</strong> — every step must be basic enough to be carried out.</li>
       </ul>
       <div class="note-box">
         <span class="def-label">Note</span>
@@ -918,11 +996,11 @@ for (int j = 1; j < p; j = j * 2) {
       <table class="tbl">
         <thead><tr><th>Type</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><strong>Deterministic</strong></td><td>All steps are deterministic — the same input always follows the same steps.</td></tr>
-          <tr><td><strong>Non-deterministic</strong></td><td>Some steps are not (uniquely) defined.</td></tr>
-          <tr><td><strong>Parallel</strong></td><td>Performs multiple operations simultaneously using multiple processors or cores.</td></tr>
-          <tr><td><strong>Approximation</strong></td><td>Finds near-optimal solutions for hard problems within a guaranteed bound.</td></tr>
-          <tr><td><strong>Online</strong></td><td>Input arrives over time; the algorithm must decide how to proceed without knowing future data.</td></tr>
+          <tr><td><strong class="kw">Deterministic</strong></td><td>All steps are deterministic — the same input always follows the same steps.</td></tr>
+          <tr><td><strong class="kw">Non-deterministic</strong></td><td>Some steps are not (uniquely) defined.</td></tr>
+          <tr><td><strong class="kw">Parallel</strong></td><td>Performs multiple operations simultaneously using multiple processors or cores.</td></tr>
+          <tr><td><strong class="kw">Approximation</strong></td><td>Finds near-optimal solutions for hard problems within a guaranteed bound.</td></tr>
+          <tr><td><strong class="kw">Online</strong></td><td>Input arrives over time; the algorithm must decide how to proceed without knowing future data.</td></tr>
         </tbody>
       </table>
     </section>
@@ -933,11 +1011,11 @@ for (int j = 1; j < p; j = j * 2) {
       <table class="tbl">
         <thead><tr><th>Paradigm</th><th>Idea</th></tr></thead>
         <tbody>
-          <tr><td><strong>Brute force</strong></td><td>Tries all possible solutions to find the correct one; simple but inefficient for large inputs.</td></tr>
-          <tr><td><strong>Greedy</strong></td><td>Makes the best local choice at each step, hoping to find a global optimum.</td></tr>
-          <tr><td><strong>Dynamic programming (DP)</strong></td><td>Breaks problems into overlapping subproblems, solves each once, and stores the result.</td></tr>
-          <tr><td><strong>Divide and conquer</strong></td><td>Divides problems into independent subproblems, solves them recursively, and combines the solutions.</td></tr>
-          <tr><td><strong>Branch and bound</strong></td><td>Explores all possible solutions but uses bounding techniques to eliminate suboptimal ones early.</td></tr>
+          <tr><td><strong class="kw">Brute force</strong></td><td>Tries all possible solutions to find the correct one; simple but inefficient for large inputs.</td></tr>
+          <tr><td><strong class="kw">Greedy</strong></td><td>Makes the best local choice at each step, hoping to find a global optimum.</td></tr>
+          <tr><td><strong class="kw">Dynamic programming (DP)</strong></td><td>Breaks problems into overlapping subproblems, solves each once, and stores the result.</td></tr>
+          <tr><td><strong class="kw">Divide and conquer</strong></td><td>Divides problems into independent subproblems, solves them recursively, and combines the solutions.</td></tr>
+          <tr><td><strong class="kw">Branch and bound</strong></td><td>Explores all possible solutions but uses bounding techniques to eliminate suboptimal ones early.</td></tr>
         </tbody>
       </table>
     </section>
@@ -951,8 +1029,8 @@ for (int j = 1; j < p; j = j * 2) {
       </p>
       <div class="def-box">
         <span class="def-label">Answer</span>
-        Yes — to be certain that the solution method <strong>terminates</strong> and does so
-        with the <strong>correct answer</strong>.
+        Yes — to be certain that the solution method <strong class="kw">terminates</strong> and does so
+        with the <strong class="kw">correct answer</strong>.
       </div>
     </section>
 
