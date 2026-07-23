@@ -1255,7 +1255,7 @@ for (int j = 1; j < p; j = j * 2) {
       var bar = document.createElement("div");
       bar.className = "viz-bar";
       bar.style.height = Math.max(20, (v / MAXV) * 100) + "%";
-      if (idx >= f.s - 1 && pos > 0) bar.classList.add("sorted");
+      if (idx >= f.s && pos > 0) bar.classList.add("sorted");
       if (pos === frames.length - 1) bar.classList.add("sorted");
       var c = f.cls[idx];
       if (c === "compare") bar.classList.add("compare");
