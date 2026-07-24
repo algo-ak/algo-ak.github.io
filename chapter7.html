@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 7 · Linked Lists, Stacks and Queues · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --ink: #101c33;
+      --ink-soft: #46536b;
+      --line: #dbe4f0;
+      --grid: #e7edf6;
+      --accent: #0b7285;
+      --accent-dark: #085a68;
+      --accent-soft: #e0f1f4;
+      --blue: #357ff0;
+      --blue-soft: #e8f0ff;
+      --amber: #b45309;
+      --amber-soft: #fdf1df;
+      --danger: #c2410c;
+      --code-bg: #0f1a2e;
+      --code-text: #dbe7ff;
+      --radius: 10px;
+      --maxw: 1180px;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "IBM Plex Sans", sans-serif;
+      --font-mono: "IBM Plex Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font: 16.5px/1.65 var(--font-body);
+    }
+    h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-dark); }
+    code, pre { font-family: var(--font-mono); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    .nav {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 38px;
+      background: var(--ink);
+      color: white;
+      font: 600 13px var(--font-mono);
+    }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text strong { font: 600 15px var(--font-display); letter-spacing: .01em; }
+    .brand-text span { color: var(--ink-soft); font-size: 12px; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a {
+      display: block;
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: var(--ink-soft);
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+    .nav-links a.active { background: var(--ink); color: white; }
+
+    .chapter-layout {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 40px 24px 90px;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 44px;
+    }
+    .toc {
+      position: sticky;
+      top: 86px;
+      align-self: start;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .toc h4 {
+      margin-bottom: 12px;
+      color: var(--ink-soft);
+      font: 12px var(--font-mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .toc ol { list-style: none; border-left: 2px solid var(--line); }
+    .toc a {
+      display: block;
+      margin-left: -2px;
+      padding: 6px 14px;
+      border-left: 2px solid transparent;
+      color: var(--ink-soft);
+      font-size: 13.8px;
+      line-height: 1.4;
+    }
+    .toc a:hover { color: var(--accent-dark); }
+    .toc a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+    .chapter-body { min-width: 0; }
+    .chapter-kicker {
+      color: var(--accent-dark);
+      font: 13px var(--font-mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .chapter-body > h1 {
+      max-width: 100%;
+      margin: 8px 0 10px;
+      font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+      letter-spacing: -.02em;
+      overflow-wrap: anywhere;
+    }
+    .chapter-intro { max-width: 720px; margin-bottom: 8px; color: var(--ink-soft); }
+    .chapter-section { margin-top: 54px; }
+    .chapter-section > h2 {
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 1.5rem;
+    }
+    .chapter-section h3 { margin: 26px 0 10px; font-size: 1.13rem; }
+    .chapter-section p { max-width: 76ch; margin-bottom: 14px; }
+    .chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+    .chapter-section li { max-width: 72ch; margin-bottom: 7px; }
+    .sec-no {
+      margin-right: 10px;
+      color: var(--accent);
+      font: 1.05rem var(--font-mono);
+    }
+    .kw { color: var(--blue); }
+
+    .def-box, .note-box, .example-card {
+      margin: 18px 0;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+    }
+    .def-box { border: 1px solid #bfdee5; background: var(--accent-soft); }
+    .note-box { border: 1px solid #f3ddb4; background: var(--amber-soft); }
+    .example-card { border: 1px solid var(--line); background: var(--card); }
+    .def-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+      font: 12px var(--font-mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .note-box .def-label { color: var(--amber); }
+    .example-card h3 { margin: 0 0 10px; }
+
+    pre.code {
+      margin: 14px 0 18px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 14px;
+      line-height: 1.6;
+      tab-size: 4;
+    }
+    pre.code.python { color: #dbe7ff; }
+    .py-keyword { color: #ff79c6; font-weight: 600; }
+    .py-string { color: #f1fa8c; }
+    .py-comment { color: #8394b1; font-style: italic; }
+    .py-number { color: #bd93f9; }
+    .py-builtin { color: #8be9fd; }
+    .py-self { color: #ffb86c; font-style: italic; }
+    .py-function { color: #50fa7b; font-weight: 600; }
+    .py-operator { color: #ffb86c; }
+    code.inline {
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: #eaeff7;
+      color: #24344f;
+      font-size: .88em;
+    }
+    .code-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .code-card {
+      min-width: 0;
+      align-self: start;
+      overflow: hidden;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    .code-card h3 { margin: 0 0 8px; font-size: 1rem; }
+    .code-card pre.code {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      margin: 12px 0 0;
+    }
+    .deletion-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .deletion-grid .code-card { width: 100%; }
+
+    .diagram {
+      min-width: 0;
+      margin: 20px 0;
+      padding: 22px 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .diagram-title {
+      margin-bottom: 4px;
+      font: 600 15px var(--font-display);
+    }
+    .diagram-sub { margin-bottom: 18px; color: var(--ink-soft); font-size: 13.5px; }
+    .list-scroll {
+      max-width: 100%;
+      min-height: 128px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 38px 8px;
+    }
+    .list-line {
+      min-width: max-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .list-node {
+      position: relative;
+      display: grid;
+      grid-template-columns: 56px 28px;
+      height: 52px;
+      border: 2px solid #516078;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 6px 14px rgba(16, 28, 51, .08);
+      transition: transform .32s ease, opacity .32s ease, border-color .32s ease;
+    }
+    .list-node .data, .list-node .next {
+      display: grid;
+      place-items: center;
+      font: 600 14px var(--font-mono);
+    }
+    .list-node .data { background: #b9d5ee; }
+    .list-node .next {
+      position: relative;
+      border-left: 1px solid #516078;
+      background: #b8d99f;
+    }
+    .list-node .next::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #516078;
+    }
+    .list-node.null .next::before, .list-node.null .next::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      width: 2px;
+      height: 32px;
+      border-radius: 2px;
+      background: #516078;
+    }
+    .list-node.null .next::before { transform: rotate(36deg); }
+    .list-node.null .next::after { transform: rotate(-36deg); }
+    .list-arrow {
+      width: 48px;
+      height: 2px;
+      position: relative;
+      flex: 0 0 48px;
+      background: #263246;
+    }
+    .list-arrow::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -5px;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 9px solid #263246;
+    }
+    .list-arrow.active { background: var(--danger); }
+    .list-arrow.active::after { border-left-color: var(--danger); }
+    .node-tag {
+      position: absolute;
+      left: 50%;
+      top: -27px;
+      transform: translateX(-50%);
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+      white-space: nowrap;
+    }
+    .node-tag.bottom { top: auto; bottom: -29px; }
+    .new-node { border-color: var(--danger); }
+    .new-node .data { background: var(--amber-soft); }
+    .new-node .next { background: #f3ddb4; }
+    .muted-node { opacity: .28; }
+    .list-node.active-node {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(11, 114, 133, .15), 0 10px 22px rgba(16, 28, 51, .14);
+      transform: none;
+    }
+    .list-node.active-node .data { background: #88cbd5; }
+
+    /* Exact two-pointer animation for insertion in the middle */
+    .middle-stage {
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .middle-canvas {
+      width: 700px;
+      height: 300px;
+      position: relative;
+      margin: 0 auto;
+    }
+    .mid-node {
+      width: 84px;
+      height: 52px;
+      position: absolute;
+      top: 70px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 56px 28px;
+      overflow: hidden;
+      border: 2px solid #516078;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 6px 14px rgba(16, 28, 51, .08);
+      transition: left .38s ease, top .38s ease, opacity .28s ease, transform .28s ease,
+        border-color .28s ease, box-shadow .28s ease;
+    }
+    .mid-node .mid-data, .mid-node .mid-next {
+      display: grid;
+      place-items: center;
+      font: 600 14px var(--font-mono);
+    }
+    .mid-node .mid-data { background: #b9d5ee; }
+    .mid-node .mid-next { position: relative; border-left: 1px solid #516078; background: #b8d99f; }
+    .mid-node .mid-next::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #516078;
+    }
+    .mid-node.n40 .mid-next::before, .mid-node.n40 .mid-next::after {
+      content: "";
+      width: 2px;
+      height: 32px;
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      border-radius: 2px;
+      background: #516078;
+    }
+    .mid-node.n40 .mid-next::before { transform: rotate(36deg); }
+    .mid-node.n40 .mid-next::after { transform: rotate(-36deg); }
+    .mid-node.n10 { left: 35px; }
+    .mid-node.n20 { left: 195px; }
+    .mid-node.n30 { left: 405px; }
+    .mid-node.n40 { left: 565px; }
+    .mid-node.nnew {
+      left: 300px;
+      top: 195px;
+      opacity: 0;
+      transform: scale(.82);
+      border-color: var(--danger);
+    }
+    .mid-node.nnew .mid-data { background: var(--amber-soft); }
+    .mid-node.nnew .mid-next { background: #f3ddb4; }
+    .mid-head, .mid-current, .mid-new-label {
+      position: absolute;
+      z-index: 5;
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+      white-space: nowrap;
+      transition: left .38s ease, top .38s ease, opacity .28s ease;
+    }
+    .mid-head { left: 58px; top: 38px; }
+    .mid-current { left: 48px; top: 136px; }
+    .mid-current::before {
+      content: "↑";
+      display: block;
+      height: 15px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 12px;
+    }
+    .mid-new-label { left: 327px; top: 165px; opacity: 0; color: var(--danger); }
+    .mid-link {
+      height: 2px;
+      position: absolute;
+      z-index: 2;
+      transform-origin: 0 50%;
+      background: #263246;
+      transition: left .38s ease, top .38s ease, width .38s ease, opacity .25s ease,
+        transform .38s ease, background .25s ease;
+    }
+    .mid-link::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -5px;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 9px solid #263246;
+      transition: border-left-color .25s ease;
+    }
+    .mid-link.l10-20 { left: 119px; top: 95px; width: 76px; }
+    .mid-link.l20-30 { left: 279px; top: 95px; width: 126px; }
+    .mid-link.l30-40 { left: 489px; top: 95px; width: 76px; }
+    .mid-link.l20-new {
+      left: 279px;
+      top: 95px;
+      width: 127px;
+      opacity: 0;
+      transform: rotate(80.5deg);
+    }
+    .mid-link.lnew-30 {
+      left: 384px;
+      top: 220px;
+      width: 127px;
+      opacity: 0;
+      transform: rotate(-80.5deg);
+    }
+    .middle-canvas.state-1 .mid-current,
+    .middle-canvas.state-2 .mid-current,
+    .middle-canvas.state-3 .mid-current,
+    .middle-canvas.state-4 .mid-current,
+    .middle-canvas.state-5 .mid-current { left: 208px; }
+    .middle-canvas.state-2 .nnew,
+    .middle-canvas.state-3 .nnew,
+    .middle-canvas.state-4 .nnew,
+    .middle-canvas.state-5 .nnew,
+    .middle-canvas.state-2 .mid-new-label,
+    .middle-canvas.state-3 .mid-new-label,
+    .middle-canvas.state-4 .mid-new-label,
+    .middle-canvas.state-5 .mid-new-label { opacity: 1; transform: none; }
+    .middle-canvas.state-3 .lnew-30,
+    .middle-canvas.state-4 .lnew-30,
+    .middle-canvas.state-4 .l20-new,
+    .middle-canvas.state-5 .lnew-30,
+    .middle-canvas.state-5 .l20-new { opacity: 1; }
+    .middle-canvas.state-3 .lnew-30,
+    .middle-canvas.state-4 .lnew-30,
+    .middle-canvas.state-4 .l20-new { background: var(--danger); }
+    .middle-canvas.state-3 .lnew-30::after,
+    .middle-canvas.state-4 .lnew-30::after,
+    .middle-canvas.state-4 .l20-new::after { border-left-color: var(--danger); }
+    .middle-canvas.state-4 .l20-30,
+    .middle-canvas.state-5 .l20-30 { opacity: 0; }
+    .middle-canvas.state-0 .n10,
+    .middle-canvas.state-1 .n20,
+    .middle-canvas.state-2 .nnew,
+    .middle-canvas.state-3 .nnew,
+    .middle-canvas.state-3 .n30,
+    .middle-canvas.state-4 .n20,
+    .middle-canvas.state-4 .nnew,
+    .middle-canvas.state-5 .nnew {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(11, 114, 133, .15), 0 10px 22px rgba(16, 28, 51, .14);
+    }
+    .middle-canvas.state-5 .mid-node { top: 90px; }
+    .middle-canvas.state-5 .n10 { left: 20px; }
+    .middle-canvas.state-5 .n20 { left: 155px; }
+    .middle-canvas.state-5 .nnew { left: 290px; }
+    .middle-canvas.state-5 .n30 { left: 425px; }
+    .middle-canvas.state-5 .n40 { left: 560px; }
+    .middle-canvas.state-5 .l10-20 { left: 104px; top: 115px; width: 51px; }
+    .middle-canvas.state-5 .l20-new {
+      left: 239px;
+      top: 115px;
+      width: 51px;
+      transform: none;
+      background: #263246;
+    }
+    .middle-canvas.state-5 .l20-new::after { border-left-color: #263246; }
+    .middle-canvas.state-5 .lnew-30 {
+      left: 374px;
+      top: 115px;
+      width: 51px;
+      transform: none;
+      background: #263246;
+    }
+    .middle-canvas.state-5 .lnew-30::after { border-left-color: #263246; }
+    .middle-canvas.state-5 .l30-40 { left: 509px; top: 115px; width: 51px; }
+    .middle-canvas.state-5 .mid-head { left: 43px; top: 58px; }
+    .middle-canvas.state-5 .mid-current { left: 168px; top: 156px; }
+    .middle-canvas.state-5 .mid-new-label { left: 317px; top: 58px; }
+    .middle-status {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: auto minmax(190px, 1fr) minmax(220px, auto);
+      align-items: center;
+      gap: 8px;
+    }
+    .middle-step-count {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+    }
+    .middle-operation {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 12.5px;
+    }
+    .middle-temp-register {
+      min-height: 42px;
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid #bfdee5;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      transition: box-shadow .25s ease, border-color .25s ease;
+    }
+    .middle-temp-register.retained {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(11, 114, 133, .1);
+    }
+    .middle-temp-register span {
+      color: var(--accent-dark);
+      font: 600 10.5px var(--font-mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .middle-temp-register strong {
+      color: var(--ink);
+      font: 600 13px var(--font-mono);
+      white-space: nowrap;
+    }
+
+    .double-line .list-node {
+      grid-template-columns: 24px 52px 24px;
+    }
+    .double-line .prev, .double-line .next {
+      display: grid;
+      place-items: center;
+      background: #b8d99f;
+    }
+    .double-line .data { border-right: 1px solid #516078; border-left: 1px solid #516078; }
+    .double-arrow {
+      width: 46px;
+      flex: 0 0 46px;
+      color: #263246;
+      text-align: center;
+      font: 26px/1 var(--font-mono);
+    }
+
+    /* Doubly linked-list middle insertion */
+    .dbl-insert-stage {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .dbl-insert-canvas {
+      width: 760px;
+      height: 340px;
+      position: relative;
+      margin: 0 auto;
+    }
+    .dbl-visual-node {
+      width: 100px;
+      height: 54px;
+      position: absolute;
+      top: 76px;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 24px 52px 24px;
+      overflow: hidden;
+      border: 2px solid #516078;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 6px 14px rgba(16, 28, 51, .08);
+      transition: left .38s ease, top .38s ease, opacity .28s ease,
+        border-color .25s ease, box-shadow .25s ease;
+    }
+    .dbl-visual-node .dbl-prev,
+    .dbl-visual-node .dbl-data,
+    .dbl-visual-node .dbl-next {
+      position: relative;
+      display: grid;
+      place-items: center;
+      font: 600 14px var(--font-mono);
+    }
+    .dbl-visual-node .dbl-prev,
+    .dbl-visual-node .dbl-next { background: #b8d99f; }
+    .dbl-visual-node .dbl-data {
+      border-right: 1px solid #516078;
+      border-left: 1px solid #516078;
+      background: #b9d5ee;
+    }
+    .dbl-visual-node .dbl-prev::after,
+    .dbl-visual-node .dbl-next::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #516078;
+    }
+    .dbl-visual-node.da .dbl-prev::after,
+    .dbl-visual-node.dd .dbl-next::after,
+    .dbl-insert-canvas.state-1 .dx .dbl-prev::after,
+    .dbl-insert-canvas.state-1 .dx .dbl-next::after,
+    .dbl-insert-canvas.state-2 .dx .dbl-prev::after {
+      content: "×";
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: none;
+      color: #516078;
+      font: 18px/1 var(--font-mono);
+    }
+    .dbl-visual-node .dbl-tag {
+      position: absolute;
+      left: 50%;
+      top: -28px;
+      transform: translateX(-50%);
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+      white-space: nowrap;
+    }
+    .dbl-visual-node.da { left: 40px; }
+    .dbl-visual-node.db { left: 200px; }
+    .dbl-visual-node.dc { left: 440px; }
+    .dbl-visual-node.dd { left: 600px; }
+    .dbl-visual-node.dx {
+      left: 320px;
+      top: 210px;
+      opacity: 0;
+      border-color: var(--danger);
+    }
+    .dbl-visual-node.dx .dbl-data { background: var(--amber-soft); }
+    .dbl-visual-node.dx .dbl-prev,
+    .dbl-visual-node.dx .dbl-next { background: #f3ddb4; }
+    .dbl-none-label, .dbl-temp-marker {
+      position: absolute;
+      z-index: 4;
+      color: var(--ink-soft);
+      font: 600 12px var(--font-mono);
+      transition: left .38s ease, top .38s ease;
+    }
+    .dbl-none-label.left { left: 4px; top: 92px; }
+    .dbl-none-label.right { left: 706px; top: 92px; }
+    .dbl-temp-marker {
+      left: 220px;
+      top: 143px;
+      color: var(--accent-dark);
+    }
+    .dbl-temp-marker::before {
+      content: "↑";
+      display: block;
+      height: 14px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 10px;
+    }
+    .dbl-edge {
+      height: 2px;
+      position: absolute;
+      z-index: 2;
+      transform-origin: 0 50%;
+      background: #263246;
+      opacity: 1;
+      transition: left .38s ease, top .38s ease, width .38s ease,
+        transform .38s ease, opacity .25s ease, background .25s ease;
+    }
+    .dbl-edge::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -5px;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 9px solid #263246;
+      transition: border-left-color .25s ease;
+    }
+    .dbl-edge.reverse::after { display: none; }
+    .dbl-edge.reverse::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: -5px;
+      border-top: 6px solid transparent;
+      border-right: 9px solid #263246;
+      border-bottom: 6px solid transparent;
+      transition: border-right-color .25s ease;
+    }
+    .dbl-edge.e-ab-f { left: 140px; top: 97px; width: 60px; }
+    .dbl-edge.e-ab-r { left: 140px; top: 110px; width: 60px; }
+    .dbl-edge.e-bc-f { left: 300px; top: 97px; width: 140px; }
+    .dbl-edge.e-bc-r { left: 300px; top: 110px; width: 140px; }
+    .dbl-edge.e-cd-f { left: 540px; top: 97px; width: 60px; }
+    .dbl-edge.e-cd-r { left: 540px; top: 110px; width: 60px; }
+    .dbl-edge.e-xc {
+      left: 420px;
+      top: 237px;
+      width: 142px;
+      opacity: 0;
+      transform: rotate(-81.9deg);
+    }
+    .dbl-edge.e-xb {
+      left: 300px;
+      top: 110px;
+      width: 129px;
+      opacity: 0;
+      transform: rotate(81deg);
+    }
+    .dbl-edge.e-cx {
+      left: 420px;
+      top: 237px;
+      width: 129px;
+      opacity: 0;
+      transform: rotate(-81deg);
+    }
+    .dbl-edge.e-bx {
+      left: 300px;
+      top: 97px;
+      width: 142px;
+      opacity: 0;
+      transform: rotate(81.9deg);
+    }
+    .dbl-insert-canvas.state-1 .dx,
+    .dbl-insert-canvas.state-2 .dx,
+    .dbl-insert-canvas.state-3 .dx,
+    .dbl-insert-canvas.state-4 .dx,
+    .dbl-insert-canvas.state-5 .dx,
+    .dbl-insert-canvas.state-6 .dx { opacity: 1; }
+    .dbl-insert-canvas.state-2 .e-xc,
+    .dbl-insert-canvas.state-3 .e-xc,
+    .dbl-insert-canvas.state-4 .e-xc,
+    .dbl-insert-canvas.state-5 .e-xc,
+    .dbl-insert-canvas.state-6 .e-xc,
+    .dbl-insert-canvas.state-3 .e-xb,
+    .dbl-insert-canvas.state-4 .e-xb,
+    .dbl-insert-canvas.state-5 .e-xb,
+    .dbl-insert-canvas.state-6 .e-xb,
+    .dbl-insert-canvas.state-4 .e-cx,
+    .dbl-insert-canvas.state-5 .e-cx,
+    .dbl-insert-canvas.state-6 .e-cx,
+    .dbl-insert-canvas.state-5 .e-bx,
+    .dbl-insert-canvas.state-6 .e-bx { opacity: 1; }
+    .dbl-insert-canvas.state-4 .e-bc-r,
+    .dbl-insert-canvas.state-5 .e-bc-r,
+    .dbl-insert-canvas.state-6 .e-bc-r,
+    .dbl-insert-canvas.state-5 .e-bc-f,
+    .dbl-insert-canvas.state-6 .e-bc-f { opacity: 0; }
+    .dbl-insert-canvas.state-2 .e-xc,
+    .dbl-insert-canvas.state-3 .e-xb,
+    .dbl-insert-canvas.state-4 .e-cx,
+    .dbl-insert-canvas.state-5 .e-bx { background: var(--danger); }
+    .dbl-insert-canvas.state-2 .e-xc::after,
+    .dbl-insert-canvas.state-5 .e-bx::after { border-left-color: var(--danger); }
+    .dbl-insert-canvas.state-3 .e-xb::before,
+    .dbl-insert-canvas.state-4 .e-cx::before { border-right-color: var(--danger); }
+    .dbl-insert-canvas.state-0 .db,
+    .dbl-insert-canvas.state-1 .dx,
+    .dbl-insert-canvas.state-2 .dx,
+    .dbl-insert-canvas.state-3 .dx,
+    .dbl-insert-canvas.state-4 .dc,
+    .dbl-insert-canvas.state-5 .db,
+    .dbl-insert-canvas.state-6 .dx {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(11, 114, 133, .15), 0 10px 22px rgba(16, 28, 51, .14);
+    }
+    .dbl-insert-canvas.state-6 .dbl-visual-node { top: 100px; }
+    .dbl-insert-canvas.state-6 .da { left: 30px; }
+    .dbl-insert-canvas.state-6 .db { left: 165px; }
+    .dbl-insert-canvas.state-6 .dx { left: 300px; }
+    .dbl-insert-canvas.state-6 .dc { left: 435px; }
+    .dbl-insert-canvas.state-6 .dd { left: 570px; }
+    .dbl-insert-canvas.state-6 .e-ab-f { left: 130px; top: 121px; width: 35px; }
+    .dbl-insert-canvas.state-6 .e-ab-r { left: 130px; top: 134px; width: 35px; }
+    .dbl-insert-canvas.state-6 .e-bx {
+      left: 265px; top: 121px; width: 35px; transform: none; background: var(--accent);
+    }
+    .dbl-insert-canvas.state-6 .e-xb {
+      left: 265px; top: 134px; width: 35px; transform: none; background: var(--accent);
+    }
+    .dbl-insert-canvas.state-6 .e-xc {
+      left: 400px; top: 121px; width: 35px; transform: none; background: var(--accent);
+    }
+    .dbl-insert-canvas.state-6 .e-cx {
+      left: 400px; top: 134px; width: 35px; transform: none; background: var(--accent);
+    }
+    .dbl-insert-canvas.state-6 .e-cd-f { left: 535px; top: 121px; width: 35px; }
+    .dbl-insert-canvas.state-6 .e-cd-r { left: 535px; top: 134px; width: 35px; }
+    .dbl-insert-canvas.state-6 .e-bx::after,
+    .dbl-insert-canvas.state-6 .e-xc::after { border-left-color: var(--accent); }
+    .dbl-insert-canvas.state-6 .e-xb::before,
+    .dbl-insert-canvas.state-6 .e-cx::before { border-right-color: var(--accent); }
+    .dbl-insert-canvas.state-6 .dbl-none-label.left { left: 0; top: 116px; }
+    .dbl-insert-canvas.state-6 .dbl-none-label.right { left: 676px; top: 116px; }
+    .dbl-insert-canvas.state-6 .dbl-temp-marker { left: 185px; top: 168px; }
+    .dbl-status {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+    }
+    .circular-return {
+      width: min(348px, calc(100% - 48px));
+      height: 54px;
+      margin: -64px auto 0;
+      border-right: 2px solid var(--accent);
+      border-bottom: 2px solid var(--accent);
+      border-left: 2px solid var(--accent);
+      border-radius: 0 0 14px 14px;
+      position: relative;
+      transition: opacity .3s ease, transform .3s ease;
+    }
+    .circular-return::after {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: -2px;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 9px solid var(--accent);
+    }
+    .circular-return.off { opacity: 0; transform: translateY(-12px); }
+
+    .viz {
+      min-width: 0;
+      margin: 20px 0;
+      padding: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    .viz-title { margin-bottom: 4px; font: 600 16px var(--font-display); }
+    .viz-sub { margin-bottom: 16px; color: var(--ink-soft); font-size: 14px; }
+    .viz-label {
+      min-height: 64px;
+      margin-top: 16px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #f0d9ac;
+      border-radius: 8px;
+      background: var(--amber-soft);
+      color: var(--ink);
+      font: 13px/1.55 var(--font-mono);
+    }
+    .viz-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .viz-controls button {
+      min-width: 74px;
+      padding: 9px 18px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      font: 600 14px var(--font-display);
+    }
+    .viz-controls button.primary { border-color: var(--ink); background: var(--ink); color: white; }
+    .viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .stack-stage {
+      min-height: 290px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 42px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .stack-shell {
+      width: 150px;
+      height: 250px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 5px;
+      border-right: 4px solid var(--accent);
+      border-bottom: 4px solid var(--accent);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 0 12px 12px;
+    }
+    .stack-shell:empty::after {
+      content: "empty";
+      margin: auto;
+      color: var(--ink-soft);
+      font: 600 12px var(--font-mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .stack-item {
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: #69b8ff;
+      color: #10233e;
+      font: 600 14px var(--font-mono);
+      animation: stackIn .35s ease both;
+    }
+    .stack-item.top { background: var(--amber); color: white; }
+    .stack-meta { min-width: 140px; color: var(--ink-soft); font: 13px/1.9 var(--font-mono); }
+    .stack-meta strong { color: var(--accent-dark); }
+    @keyframes stackIn {
+      from { opacity: 0; transform: translateY(-26px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .algo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .algo-card {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid #f3ddb4;
+      border-radius: var(--radius);
+      background: var(--amber-soft);
+    }
+    .algo-card h3 { margin: 0 0 8px; font-size: 1rem; }
+    .algo-card pre {
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.65;
+      white-space: pre;
+    }
+    .error-word {
+      padding: 1px 5px;
+      border: 1px solid #e75858;
+      border-radius: 999px;
+      color: #a52323;
+    }
+
+    .queue-stage {
+      min-width: 0;
+      padding: 32px 14px 76px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .queue-cells {
+      min-width: 650px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2px;
+    }
+    .queue-cell {
+      height: 50px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid #526079;
+      background: #bce5f7;
+      color: var(--ink);
+      font: 600 14px var(--font-mono);
+      transition: background .25s ease, transform .25s ease;
+    }
+    .queue-cell.filled { background: #ffe5b6; }
+    .queue-cell.changed {
+      background: #9fe2bf;
+      box-shadow: inset 0 0 0 3px var(--accent);
+      transform: none;
+    }
+    .queue-index {
+      position: absolute;
+      top: -25px;
+      color: var(--ink-soft);
+      font: 11px var(--font-mono);
+    }
+    .queue-pointer {
+      position: absolute;
+      bottom: -34px;
+      color: var(--accent-dark);
+      font: 600 11px var(--font-mono);
+      white-space: nowrap;
+    }
+    .queue-pointer::before {
+      content: "↑";
+      display: block;
+      height: 14px;
+      text-align: center;
+      font-size: 16px;
+      line-height: 10px;
+    }
+    .queue-empty-state {
+      min-width: 220px;
+      padding: 18px 24px;
+      border: 2px dashed var(--line);
+      border-radius: 9px;
+      color: var(--ink-soft);
+      text-align: center;
+      font: 600 12px var(--font-mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .queue-rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .rule-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    .rule-card span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+      text-transform: uppercase;
+    }
+    .rule-card code { font-size: 13px; }
+
+    table.tbl {
+      width: 100%;
+      margin: 16px 0;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    .tbl th, .tbl td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; }
+    .tbl th { background: var(--ink); color: white; font: 600 14px var(--font-display); }
+    .tbl tr:last-child td { border-bottom: 0; }
+    .tbl tr:nth-child(even) td { background: #fbfcfe; }
+
+    .chapter-nav {
+      margin-top: 64px;
+      padding-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .chapter-nav a, .chapter-nav span { font: 600 15px var(--font-display); }
+    .chapter-nav span { color: #9aa7bd; }
+    .site-footer { border-top: 1px solid var(--line); background: var(--card); }
+    .footer-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 26px 24px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+    .chapter-body > h1 { animation-delay: .08s; }
+    .chapter-intro { animation-delay: .16s; }
+
+    @media (max-width: 900px) {
+      html { scroll-padding-top: 142px; }
+      .nav { flex-direction: column; gap: 10px; }
+      .chapter-layout { grid-template-columns: 1fr; gap: 8px; padding-top: 28px; }
+      .toc {
+        position: static;
+        max-height: none;
+        margin-bottom: 22px;
+        padding: 13px 14px 11px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+        overscroll-behavior-inline: contain;
+      }
+      .toc h4 { margin-bottom: 7px; }
+      .toc ol { min-width: max-content; display: flex; border-left: 0; }
+      .toc a {
+        margin-left: 0;
+        padding: 6px 11px;
+        border-bottom: 2px solid var(--line);
+        border-left: 0;
+        white-space: nowrap;
+      }
+      .toc a.current { border-bottom-color: var(--accent); border-left-color: transparent; }
+      .code-grid, .algo-grid, .queue-rules { grid-template-columns: 1fr; }
+      .middle-status { grid-template-columns: 1fr; }
+      .dbl-status { grid-template-columns: 1fr; }
+      .stack-stage { flex-direction: column; gap: 18px; }
+      .stack-meta { text-align: center; }
+    }
+
+    @media (max-width: 560px) {
+      .nav, .chapter-layout { padding-right: 16px; padding-left: 16px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
+      .viz, .diagram { padding: 16px; }
+      .list-arrow { width: 30px; flex-basis: 30px; }
+      .stack-stage { padding: 16px; }
+      table.tbl { display: block; overflow-x: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">O(n)</span>
+        <span class="brand-text">
+          <strong>Design &amp; Analysis of Algorithms</strong>
+          <span>NMCC509 · IIT (ISM) Dhanbad</span>
+        </span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a class="active" href="topics.html">Topics</a></li>
+        <li><a href="practical.html">Practical</a></li>
+        <li><a href="tutorials.html">Tutorials</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="chapter-layout">
+    <aside class="toc">
+      <h4>In this chapter</h4>
+      <ol>
+        <li><a href="#sec-1">7.1 Linked Lists</a></li>
+        <li><a href="#sec-2">7.2 Node Structure</a></li>
+        <li><a href="#sec-3">7.3 Singly Linked List</a></li>
+        <li><a href="#sec-4">7.4 Insert at the Front</a></li>
+        <li><a href="#sec-5">7.5 Insert in the Middle</a></li>
+        <li><a href="#sec-6">7.6 Insert at the End</a></li>
+        <li><a href="#sec-7">7.7 Complete Implementation</a></li>
+        <li><a href="#sec-8">7.8 Deletion</a></li>
+        <li><a href="#sec-9">7.9 Doubly &amp; Circular Lists</a></li>
+        <li><a href="#sec-10">7.10 Advantages &amp; Exercises</a></li>
+        <li><a href="#sec-11">7.11 Stack Data Structure</a></li>
+        <li><a href="#sec-12">7.12 Stack Operations</a></li>
+        <li><a href="#sec-13">7.13 Stack Algorithms</a></li>
+        <li><a href="#sec-14">7.14 Queue Data Structure</a></li>
+        <li><a href="#sec-15">7.15 Queue Operations</a></li>
+        <li><a href="#sec-16">7.16 Circular Queue</a></li>
+        <li><a href="#sec-17">7.17 Applications &amp; ADTs</a></li>
+      </ol>
+    </aside>
+
+    <main class="chapter-body">
+      <span class="chapter-kicker">Chapter 07</span>
+      <h1>Linked Lists, Stacks and Queues</h1>
+      <p class="chapter-intro">
+        Linked-list structures and operations, followed by stack and queue data
+        structures, their algorithms, applications, and abstract data types.
+      </p>
+
+      <section class="chapter-section" id="sec-1">
+        <h2><span class="sec-no">7.1</span>Linked Lists</h2>
+        <div class="def-box">
+          <span class="def-label">Linked list</span>
+          <p>
+            A linked list is a <strong class="kw">linear data structure</strong> made of
+            nodes. Each node stores data and a pointer to the next node.
+          </p>
+        </div>
+        <ul>
+          <li>Its size is dynamic.</li>
+          <li>It does not require contiguous memory locations.</li>
+          <li>Types include singly, doubly, and circular linked lists.</li>
+        </ul>
+      </section>
+
+      <section class="chapter-section" id="sec-2">
+        <h2><span class="sec-no">7.2</span>Node Structure</h2>
+        <p>Each node has two parts:</p>
+        <ul>
+          <li><strong class="kw">Data</strong> — the value stored in the node.</li>
+          <li><strong class="kw">Pointer</strong> — a reference to the next node.</li>
+        </ul>
+        <div class="viz" id="node-viz">
+          <div class="viz-title">Step by step: node structure</div>
+          <div class="viz-sub">Build the data field, pointer field, link, and final None pointer.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="node-list"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="node-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="node-play" type="button">Play</button>
+            <button id="node-step" type="button">Step</button>
+            <button id="node-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-3">
+        <h2><span class="sec-no">7.3</span>Singly Linked List</h2>
+        <p>
+          A singly linked list can be traversed in one direction. The
+          <strong class="kw">head</strong> points to the first node, and the last node’s
+          next pointer is <code class="inline">None</code>.
+        </p>
+        <div class="viz" id="singly-viz">
+          <div class="viz-title">Step by step: singly linked list</div>
+          <div class="viz-sub">Follow head and each next pointer from 10 to 40.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="singly-list"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="singly-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="singly-play" type="button">Play</button>
+            <button id="singly-step" type="button">Step</button>
+            <button id="singly-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-4">
+        <h2><span class="sec-no">7.4</span>Insertion at the Front</h2>
+        <ol>
+          <li>Create a new node.</li>
+          <li>Point its next to the current head.</li>
+          <li>Update the head to the new node.</li>
+        </ol>
+        <pre class="code">def insert_front(self, data):
+    new_node = Node(data)
+    new_node.next = self.head
+    self.head = new_node</pre>
+
+        <div class="viz" id="front-viz">
+          <div class="viz-title">Animate: insert at the front</div>
+          <div class="viz-sub">The animation follows the three pointer updates from the slide.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="front-list"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="front-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="front-play" type="button">Play</button>
+            <button id="front-step" type="button">Step</button>
+            <button id="front-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-5">
+        <h2><span class="sec-no">7.5</span>Insertion in the Middle</h2>
+        <ol>
+          <li>Traverse to the node just before the desired position.</li>
+          <li>Point the new node’s next to the current node’s next.</li>
+          <li>Point the current node’s next to the new node.</li>
+        </ol>
+        <pre class="code">def insert_middle(self, position, data):
+    if position &lt; 0:
+        print("Invalid position.")
+        return
+
+    new_node = Node(data)
+    if position == 0:
+        new_node.next = self.head
+        self.head = new_node
+        return
+
+    temp = self.head
+    for _ in range(position - 1):
+        if temp is None:
+            print("Position out of bounds.")
+            return
+        temp = temp.next
+
+    if temp is None:
+        print("Position out of bounds.")
+        return
+
+    new_node.next = temp.next
+    temp.next = new_node</pre>
+        <div class="viz" id="middle-viz">
+          <div class="viz-title">Step by step: insert in the middle</div>
+          <div class="viz-sub">The temporary pointer <code class="inline">temp</code> keeps the address of node 20 while both links are updated.</div>
+          <div class="middle-stage">
+            <div class="middle-canvas state-0" id="middle-canvas">
+              <span class="mid-head">head</span>
+              <span class="mid-current">temp</span>
+              <span class="mid-new-label">new</span>
+
+              <div class="mid-node n10"><span class="mid-data">10</span><span class="mid-next"></span></div>
+              <div class="mid-node n20"><span class="mid-data">20</span><span class="mid-next"></span></div>
+              <div class="mid-node nnew"><span class="mid-data">new</span><span class="mid-next"></span></div>
+              <div class="mid-node n30"><span class="mid-data">30</span><span class="mid-next"></span></div>
+              <div class="mid-node n40"><span class="mid-data">40</span><span class="mid-next"></span></div>
+
+              <span class="mid-link l10-20"></span>
+              <span class="mid-link l20-30"></span>
+              <span class="mid-link l30-40"></span>
+              <span class="mid-link l20-new"></span>
+              <span class="mid-link lnew-30"></span>
+            </div>
+          </div>
+          <div class="middle-status">
+            <span class="middle-step-count" id="middle-step-count">Step 1 of 6</span>
+            <div class="middle-temp-register" id="middle-temp-register">
+              <span>Temp register</span>
+              <strong id="middle-temp-value">temp → node 10</strong>
+            </div>
+            <code class="middle-operation" id="middle-operation">temp = self.head</code>
+          </div>
+          <div class="viz-label" id="middle-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="middle-play" type="button">Play</button>
+            <button id="middle-step" type="button">Step</button>
+            <button id="middle-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-6">
+        <h2><span class="sec-no">7.6</span>Insertion at the End</h2>
+        <ol>
+          <li>Traverse to the last node.</li>
+          <li>Update the last node’s next to the new node.</li>
+        </ol>
+        <pre class="code">while last.next:
+    last = last.next
+last.next = new_node</pre>
+        <div class="viz" id="end-viz">
+          <div class="viz-title">Step by step: insert at the end</div>
+          <div class="viz-sub">Move current to the last node, then link it to the new node.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="end-list"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="end-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="end-play" type="button">Play</button>
+            <button id="end-step" type="button">Step</button>
+            <button id="end-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-7">
+        <h2><span class="sec-no">7.7</span>Insertion in a Singly Linked List</h2>
+        <pre class="code">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+
+        # If list is empty
+        if self.head is None:
+            self.head = new_node
+            return
+
+        # Traverse till the last node
+        current = self.head
+        while current.next is not None:
+            current = current.next
+
+        # Insert at the end
+        current.next = new_node
+
+    def traverse(self):
+        current = self.head
+        while current is not None:
+            print(current.data, end=" -> ")
+            current = current.next
+        print("None")
+
+
+if __name__ == "__main__":
+    ll = LinkedList()
+    ll.insert_at_end(10)
+    ll.insert_at_end(20)
+    ll.insert_at_end(30)
+    ll.insert_at_end(40)
+    ll.traverse()</pre>
+        <div class="note-box">
+          <span class="def-label">Output</span>
+          <code>10 -&gt; 20 -&gt; 30 -&gt; 40 -&gt; None</code>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-8">
+        <h2><span class="sec-no">7.8</span>Deletion in a Singly Linked List</h2>
+        <div class="code-grid deletion-grid">
+          <article class="code-card">
+            <h3>Delete from the front</h3>
+            <ul>
+              <li>Update the head to the next node.</li>
+              <li>Free the old head.</li>
+            </ul>
+          </article>
+          <article class="code-card">
+            <h3>Delete from the middle</h3>
+            <ul>
+              <li>Traverse to the previous node of the target node.</li>
+              <li>Update its next to skip the target node.</li>
+            </ul>
+            <pre class="code">while temp.next and temp.next.data != key:
+    temp = temp.next
+if temp.next is None:
+    print("Key not found.")
+    return
+temp.next = temp.next.next</pre>
+          </article>
+          <article class="code-card">
+            <h3>Delete from the end</h3>
+            <ol>
+              <li>Traverse to the second-last node.</li>
+              <li>Update its next to None.</li>
+            </ol>
+            <pre class="code">while temp.next.next:
+    temp = temp.next
+temp.next = None</pre>
+          </article>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-9">
+        <h2><span class="sec-no">7.9</span>Doubly and Circular Linked Lists</h2>
+        <h3>Doubly linked list</h3>
+        <ul>
+          <li>Each node contains data, a next pointer, and a previous pointer.</li>
+          <li>It allows traversal in both directions.</li>
+          <li>The first node’s previous pointer is None, and the last node’s next pointer is None.</li>
+        </ul>
+        <pre class="code">class DoublyNode:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None</pre>
+        <div class="viz" id="doubly-viz">
+          <div class="viz-title">Example: insert X between B and C</div>
+          <div class="viz-sub">Update all four pointers required for insertion in the middle of a doubly linked list.</div>
+          <div class="dbl-insert-stage">
+            <div class="dbl-insert-canvas state-0" id="dbl-insert-canvas">
+              <span class="dbl-none-label left">None</span>
+              <span class="dbl-none-label right">None</span>
+              <span class="dbl-temp-marker">temp</span>
+
+              <div class="dbl-visual-node da">
+                <span class="dbl-tag">head</span>
+                <span class="dbl-prev"></span><span class="dbl-data">A</span><span class="dbl-next"></span>
+              </div>
+              <div class="dbl-visual-node db">
+                <span class="dbl-prev"></span><span class="dbl-data">B</span><span class="dbl-next"></span>
+              </div>
+              <div class="dbl-visual-node dx">
+                <span class="dbl-tag">new</span>
+                <span class="dbl-prev"></span><span class="dbl-data">X</span><span class="dbl-next"></span>
+              </div>
+              <div class="dbl-visual-node dc">
+                <span class="dbl-prev"></span><span class="dbl-data">C</span><span class="dbl-next"></span>
+              </div>
+              <div class="dbl-visual-node dd">
+                <span class="dbl-prev"></span><span class="dbl-data">D</span><span class="dbl-next"></span>
+              </div>
+
+              <span class="dbl-edge e-ab-f"></span>
+              <span class="dbl-edge e-ab-r reverse"></span>
+              <span class="dbl-edge e-bc-f"></span>
+              <span class="dbl-edge e-bc-r reverse"></span>
+              <span class="dbl-edge e-cd-f"></span>
+              <span class="dbl-edge e-cd-r reverse"></span>
+
+              <span class="dbl-edge e-xc"></span>
+              <span class="dbl-edge e-xb reverse"></span>
+              <span class="dbl-edge e-cx reverse"></span>
+              <span class="dbl-edge e-bx"></span>
+            </div>
+          </div>
+          <div class="dbl-status">
+            <span class="middle-step-count" id="dbl-step-count">Step 1 of 7</span>
+            <code class="middle-operation" id="dbl-operation">temp = node B</code>
+          </div>
+          <div class="viz-label" id="doubly-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="doubly-play" type="button">Play</button>
+            <button id="doubly-step" type="button">Step</button>
+            <button id="doubly-reset" type="button">Reset</button>
+          </div>
+        </div>
+
+        <h3>Circular linked list</h3>
+        <ul>
+          <li>It is similar to a singly linked list, but the last node’s next points back to the head.</li>
+          <li>There are no None values in the list.</li>
+          <li>It can be singly or doubly circular.</li>
+        </ul>
+        <div class="viz" id="circular-viz">
+          <div class="viz-title">Step by step: circular linked list</div>
+          <div class="viz-sub">Link 1 to 2, 2 to 3, and the last node back to head.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="circular-list"></div>
+            </div>
+            <div class="circular-return off" id="circular-return" aria-label="Pointer from the last node back to the head"></div>
+          </div>
+          <div class="viz-label" id="circular-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="circular-play" type="button">Play</button>
+            <button id="circular-step" type="button">Step</button>
+            <button id="circular-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-10">
+        <h2><span class="sec-no">7.10</span>Advantages, Disadvantages and Exercises</h2>
+        <div class="code-grid">
+          <article class="def-box" style="margin:0;">
+            <span class="def-label">Advantages</span>
+            <ul>
+              <li>Dynamic size.</li>
+              <li>Efficient memory utilization.</li>
+            </ul>
+          </article>
+          <article class="note-box" style="margin:0;">
+            <span class="def-label">Disadvantages</span>
+            <ul>
+              <li>Extra memory is required for pointers.</li>
+              <li>Elements are accessed sequentially.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="example-card">
+          <h3>Exercises</h3>
+          <ol>
+            <li>Implement all singly linked-list operations.</li>
+            <li>Reverse a singly linked list without recursion.</li>
+            <li>Reverse a singly linked list using recursion.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-11">
+        <h2><span class="sec-no">7.11</span>Stack Data Structure</h2>
+        <div class="def-box">
+          <span class="def-label">Stack</span>
+          <p>
+            A stack is a linear data structure that follows the
+            <strong class="kw">LIFO</strong> principle: Last In, First Out.
+          </p>
+        </div>
+        <p>Elements are added and removed from the same end, called the <strong class="kw">top</strong>.</p>
+      </section>
+
+      <section class="chapter-section" id="sec-12">
+        <h2><span class="sec-no">7.12</span>Stack Operations</h2>
+        <ul>
+          <li><strong class="kw">Push</strong> — add an element to the top of the stack.</li>
+          <li><strong class="kw">Pop</strong> — remove and return the top element of the stack.</li>
+          <li><strong class="kw">Peek</strong> — view the top element without removing it.</li>
+          <li><strong class="kw">IsEmpty</strong> — check whether the stack is empty.</li>
+          <li><strong class="kw">IsFull</strong> — check whether the stack is full for a fixed-size stack or array implementation.</li>
+        </ul>
+
+        <div class="viz" id="stack-viz">
+          <div class="viz-title">Stack: push one element at a time, then pop</div>
+          <div class="viz-sub">Begin with an empty stack, insert 15, 6, 2, 9, 17, and 3, then remove the top element.</div>
+          <div class="stack-stage">
+            <div class="stack-shell" id="stack-shell"></div>
+            <div class="stack-meta">
+              <div>operation: <strong id="stack-operation">start</strong></div>
+              <div>S.top = <strong id="stack-top">0</strong></div>
+              <div>capacity: <strong>7</strong></div>
+              <div id="stack-return"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="stack-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="stack-play" type="button">Play</button>
+            <button id="stack-step" type="button">Step</button>
+            <button id="stack-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-13">
+        <h2><span class="sec-no">7.13</span>Stack Operations: Algorithms</h2>
+        <div class="algo-grid">
+          <article class="algo-card">
+            <h3>PUSH(S, x)</h3>
+            <pre>if S.top == S.size
+    error(<span class="error-word">overflow</span>)
+else S.top = S.top + 1
+    S[S.top] = x</pre>
+          </article>
+          <article class="algo-card">
+            <h3>POP(S)</h3>
+            <pre>if STACK-EMPTY(S)
+    error(<span class="error-word">underflow</span>)
+else S.top = S.top - 1
+    return S[S.top + 1]</pre>
+          </article>
+          <article class="algo-card">
+            <h3>STACK-EMPTY(S)</h3>
+            <pre>if S.top == 0
+    return TRUE
+else return FALSE</pre>
+          </article>
+        </div>
+        <div class="note-box">
+          <span class="def-label">Notation</span>
+          <p><code>S.top</code> points to the top element. <code>S.size</code> is the maximum size of the stack.</p>
+        </div>
+        <div class="example-card">
+          <h3>Exercises</h3>
+          <ol>
+            <li>Reverse a string using a stack implemented with an array.</li>
+            <li>Evaluate a postfix expression, for example <code class="inline">5 2 3 * +</code>.</li>
+            <li>Check balanced parentheses using a stack implemented with an array.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-14">
+        <h2><span class="sec-no">7.14</span>Queue Data Structure</h2>
+        <div class="def-box">
+          <span class="def-label">Queue</span>
+          <p>
+            A queue is a linear data structure that follows the
+            <strong class="kw">FIFO</strong> principle: First In, First Out.
+          </p>
+        </div>
+        <ul>
+          <li>Elements are added and removed from both ends.</li>
+          <li>Elements are added at the <strong class="kw">rear (tail)</strong>.</li>
+          <li>Elements are removed from the <strong class="kw">front (head)</strong>.</li>
+        </ul>
+      </section>
+
+      <section class="chapter-section" id="sec-15">
+        <h2><span class="sec-no">7.15</span>Queue Operations</h2>
+        <ul>
+          <li><strong class="kw">Enqueue</strong> — add an element at the rear.</li>
+          <li><strong class="kw">Dequeue</strong> — remove an element from the front.</li>
+          <li><strong class="kw">Peek/Front</strong> — retrieve the front element without removing it.</li>
+          <li><strong class="kw">IsEmpty</strong> — check whether the queue is empty.</li>
+          <li><strong class="kw">IsFull</strong> — check whether the queue is full for an array implementation.</li>
+        </ul>
+        <div class="viz" id="linear-queue-viz">
+          <div class="viz-title">Queue: enqueue one element at a time, then dequeue</div>
+          <div class="viz-sub">Begin empty, enqueue 2 through 8, remove 2 from the front, then enqueue 9.</div>
+          <div class="diagram" style="margin:0;">
+            <div class="list-scroll">
+              <div class="list-line" id="linear-queue-list"></div>
+            </div>
+          </div>
+          <div class="viz-label" id="linear-queue-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="linear-queue-play" type="button">Play</button>
+            <button id="linear-queue-step" type="button">Step</button>
+            <button id="linear-queue-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-16">
+        <h2><span class="sec-no">7.16</span>Circular Queue Operations</h2>
+        <p>
+          In a circular queue, location 1 immediately follows location n:
+          the queue <strong class="kw">wraps around</strong>.
+        </p>
+        <div class="viz" id="queue-viz">
+          <div class="viz-title">Circular queue: start empty and enqueue one by one</div>
+          <div class="viz-sub">Begin with head = tail = 7, build the slide’s queue, wrap around, then dequeue 15.</div>
+          <div class="queue-stage">
+            <div class="queue-cells" id="queue-cells"></div>
+          </div>
+          <div class="viz-label" id="queue-label" aria-live="polite"></div>
+          <div class="viz-controls">
+            <button class="primary" id="queue-play" type="button">Play</button>
+            <button id="queue-step" type="button">Step</button>
+            <button id="queue-reset" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="queue-rules">
+          <div class="rule-card">
+            <span>Queue is empty</span>
+            <code>Q.head = Q.tail</code>
+          </div>
+          <div class="rule-card">
+            <span>After enqueuing one element</span>
+            <code>Q.head = Q.head<br>Q.tail = Q.head + 1</code>
+          </div>
+          <div class="rule-card">
+            <span>Queue is full</span>
+            <code>Q.head = Q.tail + 1<br>or<br>(Q.head = 1 and Q.tail = Q.size)</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-17">
+        <h2><span class="sec-no">7.17</span>Queue Applications and Abstract Data Types</h2>
+        <h3>Applications of queues</h3>
+        <ul>
+          <li>CPU scheduling and disk scheduling.</li>
+          <li>Buffer management.</li>
+          <li>Handling packets in routers.</li>
+          <li>Ticketing queues.</li>
+        </ul>
+
+        <h3>Abstract Data Types</h3>
+        <div class="def-box">
+          <span class="def-label">ADT</span>
+          <p>
+            An abstract data type describes the logical behavior of a data structure
+            without specifying its implementation. It defines <strong>what</strong>
+            operations are available, not <strong>how</strong> they are implemented.
+          </p>
+        </div>
+        <table class="tbl">
+          <thead>
+            <tr><th>Abstract data type</th><th>Principle</th><th>Operations</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Stack</td><td>LIFO</td><td>push, pop, peek</td></tr>
+            <tr><td>Queue</td><td>FIFO</td><td>enqueue, dequeue, peek</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <nav class="chapter-nav">
+        <a href="chapter6.html">← Chapter 6</a>
+        <a href="topics.html">All Topics</a>
+        <span>Chapter 8 →</span>
+      </nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>NMCC509 · Advanced Data Structures and Algorithms</span>
+      <span>IIT (ISM) Dhanbad</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function escapeCode(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function highlightPython(source) {
+        var keywords = {
+          "and": 1, "as": 1, "assert": 1, "async": 1, "await": 1,
+          "break": 1, "case": 1, "class": 1, "continue": 1, "def": 1,
+          "del": 1, "elif": 1, "else": 1, "except": 1, "False": 1,
+          "finally": 1, "for": 1, "from": 1, "global": 1, "if": 1,
+          "import": 1, "in": 1, "is": 1, "lambda": 1, "match": 1,
+          "None": 1, "nonlocal": 1, "not": 1, "or": 1, "pass": 1,
+          "raise": 1, "return": 1, "True": 1, "try": 1, "while": 1,
+          "with": 1, "yield": 1
+        };
+        var builtins = {
+          "bool": 1, "dict": 1, "enumerate": 1, "float": 1, "int": 1,
+          "len": 1, "list": 1, "max": 1, "min": 1, "print": 1,
+          "range": 1, "reversed": 1, "set": 1, "sorted": 1, "str": 1,
+          "sum": 1, "tuple": 1, "zip": 1
+        };
+        var output = "";
+        var index = 0;
+        var expectName = false;
+
+        while (index < source.length) {
+          var char = source[index];
+
+          if (char === "#") {
+            var commentEnd = source.indexOf("\n", index);
+            if (commentEnd === -1) commentEnd = source.length;
+            output += '<span class="py-comment">' +
+              escapeCode(source.slice(index, commentEnd)) + '</span>';
+            index = commentEnd;
+            continue;
+          }
+
+          if (char === '"' || char === "'") {
+            var quote = char;
+            var stringEnd = index + 1;
+            while (stringEnd < source.length) {
+              if (source[stringEnd] === "\\") {
+                stringEnd += 2;
+                continue;
+              }
+              if (source[stringEnd] === quote) {
+                stringEnd += 1;
+                break;
+              }
+              stringEnd += 1;
+            }
+            output += '<span class="py-string">' +
+              escapeCode(source.slice(index, stringEnd)) + '</span>';
+            index = stringEnd;
+            expectName = false;
+            continue;
+          }
+
+          if (/[A-Za-z_]/.test(char)) {
+            var wordEnd = index + 1;
+            while (wordEnd < source.length && /[A-Za-z0-9_]/.test(source[wordEnd])) {
+              wordEnd += 1;
+            }
+            var word = source.slice(index, wordEnd);
+            var tokenClass = "";
+            if (expectName) {
+              tokenClass = "py-function";
+              expectName = false;
+            } else if (keywords[word]) {
+              tokenClass = "py-keyword";
+              if (word === "def" || word === "class") expectName = true;
+            } else if (word === "self") {
+              tokenClass = "py-self";
+            } else if (builtins[word]) {
+              tokenClass = "py-builtin";
+            } else if (/^__.*__$/.test(word)) {
+              tokenClass = "py-builtin";
+            }
+            output += tokenClass
+              ? '<span class="' + tokenClass + '">' + word + '</span>'
+              : word;
+            index = wordEnd;
+            continue;
+          }
+
+          if (/[0-9]/.test(char)) {
+            var numberEnd = index + 1;
+            while (numberEnd < source.length && /[0-9._]/.test(source[numberEnd])) {
+              numberEnd += 1;
+            }
+            output += '<span class="py-number">' +
+              escapeCode(source.slice(index, numberEnd)) + '</span>';
+            index = numberEnd;
+            expectName = false;
+            continue;
+          }
+
+          if (/[=+\-*\/%<>!:]/.test(char)) {
+            var operatorEnd = index + 1;
+            while (operatorEnd < source.length && /[=+\-*\/%<>!:]/.test(source[operatorEnd])) {
+              operatorEnd += 1;
+            }
+            output += '<span class="py-operator">' +
+              escapeCode(source.slice(index, operatorEnd)) + '</span>';
+            index = operatorEnd;
+            continue;
+          }
+
+          output += escapeCode(char);
+          if (!/\s/.test(char)) expectName = false;
+          index += 1;
+        }
+        return output;
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll("pre.code"), function (block) {
+        block.innerHTML = highlightPython(block.textContent);
+        block.classList.add("python");
+      });
+
+      function node(value, options) {
+        var opts = options || {};
+        var classes = ["list-node"];
+        if (opts.isNull) classes.push("null");
+        if (opts.isNew) classes.push("new-node");
+        if (opts.muted) classes.push("muted-node");
+        if (opts.active) classes.push("active-node");
+        var tag = opts.tag ? '<span class="node-tag' + (opts.tagBottom ? ' bottom' : '') + '">' + opts.tag + '</span>' : "";
+        return '<div class="' + classes.join(" ") + '">' + tag +
+          '<span class="data">' + value + '</span><span class="next"></span></div>';
+      }
+
+      function arrow(active) {
+        return '<span class="list-arrow' + (active ? ' active' : '') + '"></span>';
+      }
+
+      function noneText(side) {
+        return '<span style="' + (side === "left" ? 'margin-right' : 'margin-left') +
+          ':10px;font:600 13px var(--font-mono);color:var(--ink-soft);">None</span>';
+      }
+
+      function doubleNode(value, options) {
+        var opts = options || {};
+        return '<div class="list-node' + (opts.active ? ' active-node' : '') + '">' +
+          (opts.tag ? '<span class="node-tag">' + opts.tag + '</span>' : '') +
+          '<span class="prev">•</span><span class="data">' + value + '</span><span class="next">•</span></div>';
+      }
+
+      function doubleArrow(active) {
+        return '<span class="double-arrow"' + (active ? ' style="color:var(--danger);"' : '') + '>⇄</span>';
+      }
+
+      function doubleList(values, activeIndex) {
+        var html = noneText("left");
+        values.forEach(function (value, index) {
+          if (index) html += doubleArrow(false);
+          html += doubleNode(value, {
+            tag: index === 0 ? "head" : "",
+            active: index === activeIndex
+          });
+        });
+        return html + noneText("right");
+      }
+
+      function makePlayer(config) {
+        var index = 0;
+        var timer = null;
+        var playButton = document.getElementById(config.playId);
+        var stepButton = document.getElementById(config.stepId);
+        var resetButton = document.getElementById(config.resetId);
+
+        function render() {
+          config.render(index);
+          stepButton.disabled = index >= config.length - 1;
+        }
+        function stop() {
+          if (timer) window.clearTimeout(timer);
+          timer = null;
+          playButton.textContent = "Play";
+        }
+        function advance() {
+          if (index < config.length - 1) {
+            index += 1;
+            render();
+            return true;
+          }
+          stop();
+          return false;
+        }
+        function tick() {
+          if (advance()) timer = window.setTimeout(tick, config.delay || 1050);
+        }
+
+        playButton.addEventListener("click", function () {
+          if (timer) {
+            stop();
+            return;
+          }
+          if (index >= config.length - 1) index = 0;
+          render();
+          playButton.textContent = "Pause";
+          timer = window.setTimeout(tick, config.delay || 1050);
+        });
+        stepButton.addEventListener("click", function () {
+          stop();
+          advance();
+        });
+        resetButton.addEventListener("click", function () {
+          stop();
+          index = 0;
+          render();
+        });
+        render();
+      }
+
+      var nodeFrames = [
+        {
+          label: "A node contains a data field and a pointer field.",
+          html: node("data", { tag: "node", active: true })
+        },
+        {
+          label: "The pointer stores a reference to the next node.",
+          html: node("data", { tag: "node" }) + arrow(true) +
+            node("data", { tag: "next node", active: true })
+        },
+        {
+          label: "The last node has no next node, so its pointer is None (NULL or \\0).",
+          html: node("data", { tag: "node" }) + arrow(false) +
+            node("data", { tag: "last node", isNull: true, active: true }) + noneText("right")
+        }
+      ];
+      makePlayer({
+        playId: "node-play",
+        stepId: "node-step",
+        resetId: "node-reset",
+        length: nodeFrames.length,
+        render: function (i) {
+          document.getElementById("node-list").innerHTML = nodeFrames[i].html;
+          document.getElementById("node-label").textContent = nodeFrames[i].label;
+        }
+      });
+
+      var singlyFrames = [
+        {
+          label: "head points to the first node, which stores 10.",
+          html: node("10", { tag: "head", active: true })
+        },
+        {
+          label: "The next pointer of 10 points to 20.",
+          html: node("10", { tag: "head" }) + arrow(true) + node("20", { active: true })
+        },
+        {
+          label: "The next pointer of 20 points to 30.",
+          html: node("10", { tag: "head" }) + arrow(false) + node("20") +
+            arrow(true) + node("30", { active: true })
+        },
+        {
+          label: "The next pointer of 30 points to 40.",
+          html: node("10", { tag: "head" }) + arrow(false) + node("20") +
+            arrow(false) + node("30") + arrow(true) + node("40", { active: true })
+        },
+        {
+          label: "40 is the last node, so its next pointer is None.",
+          html: node("10", { tag: "head" }) + arrow(false) + node("20") +
+            arrow(false) + node("30") + arrow(false) +
+            node("40", { isNull: true, active: true }) + noneText("right")
+        }
+      ];
+      makePlayer({
+        playId: "singly-play",
+        stepId: "singly-step",
+        resetId: "singly-reset",
+        length: singlyFrames.length,
+        render: function (i) {
+          document.getElementById("singly-list").innerHTML = singlyFrames[i].html;
+          document.getElementById("singly-label").textContent = singlyFrames[i].label;
+        }
+      });
+
+      var frontFrames = [
+        {
+          label: "Start: the new node is created separately with next = None. head still points to 10.",
+          html: node("new", { isNew: true, isNull: true, tag: "new" }) +
+            '<span style="width:48px;flex:0 0 48px;"></span>' +
+            node("10", { tag: "head" }) + arrow(false) + node("20") + arrow(false) +
+            node("30") + arrow(false) + node("40", { isNull: true })
+        },
+        {
+          label: "Point the new node’s next to the current head.",
+          html: node("new", { isNew: true, tag: "new" }) + arrow(true) +
+            node("10", { tag: "head" }) + arrow(false) + node("20") + arrow(false) +
+            node("30") + arrow(false) + node("40", { isNull: true })
+        },
+        {
+          label: "Update head so that it points to the new node.",
+          html: node("new", { isNew: true, tag: "head" }) + arrow(true) +
+            node("10") + arrow(false) + node("20") + arrow(false) +
+            node("30") + arrow(false) + node("40", { isNull: true })
+        },
+        {
+          label: "Insertion at the front is complete.",
+          html: node("new", { tag: "head" }) + arrow(false) +
+            node("10") + arrow(false) + node("20") + arrow(false) +
+            node("30") + arrow(false) + node("40", { isNull: true })
+        }
+      ];
+      makePlayer({
+        playId: "front-play",
+        stepId: "front-step",
+        resetId: "front-reset",
+        length: frontFrames.length,
+        render: function (i) {
+          document.getElementById("front-list").innerHTML = frontFrames[i].html;
+          document.getElementById("front-label").textContent = frontFrames[i].label;
+        }
+      });
+
+      var middleFrames = [
+        {
+          operation: "temp = self.head",
+          temp: "temp → node 10",
+          retained: false,
+          label: "Store the head address in temp: temp now points to node 10."
+        },
+        {
+          operation: "temp = temp.next",
+          temp: "temp → node 20",
+          retained: false,
+          label: "Advance temp to the node immediately before the insertion position: temp now points to 20."
+        },
+        {
+          operation: "new_node = Node(data)",
+          temp: "temp → node 20",
+          retained: true,
+          label: "Create the new node below the list. temp keeps the address of node 20."
+        },
+        {
+          operation: "new_node.next = temp.next",
+          temp: "temp → node 20",
+          retained: true,
+          label: "First pointer update: new.next copies temp.next and points to 30. temp still points to 20."
+        },
+        {
+          operation: "temp.next = new_node",
+          temp: "temp → node 20",
+          retained: true,
+          label: "Second pointer update: temp.next now points to new. The old direct 20 → 30 link is removed."
+        },
+        {
+          operation: "insertion complete",
+          temp: "temp → node 20",
+          retained: true,
+          label: "Insertion is complete. temp still stores node 20: head → 10 → 20 → new → 30 → 40 → None."
+        }
+      ];
+      makePlayer({
+        playId: "middle-play",
+        stepId: "middle-step",
+        resetId: "middle-reset",
+        length: middleFrames.length,
+        render: function (i) {
+          document.getElementById("middle-canvas").className = "middle-canvas state-" + i;
+          document.getElementById("middle-step-count").textContent =
+            "Step " + (i + 1) + " of " + middleFrames.length;
+          document.getElementById("middle-temp-value").textContent = middleFrames[i].temp;
+          document.getElementById("middle-temp-register").classList.toggle(
+            "retained", middleFrames[i].retained
+          );
+          document.getElementById("middle-operation").textContent = middleFrames[i].operation;
+          document.getElementById("middle-label").textContent = middleFrames[i].label;
+        }
+      });
+
+      var endFrames = [
+        {
+          label: "Start at the head: current = 10.",
+          html: node("10", { tag: "current", tagBottom: true, active: true }) + arrow(false) +
+            node("20") + arrow(false) + node("30") + arrow(false) +
+            node("40", { isNull: true }) + '<span style="width:34px;"></span>' +
+            node("new", { tag: "new", isNew: true })
+        },
+        {
+          label: "current.next is not None, so move current to 20.",
+          html: node("10") + arrow(false) + node("20", { tag: "current", tagBottom: true, active: true }) +
+            arrow(false) + node("30") + arrow(false) + node("40", { isNull: true }) +
+            '<span style="width:34px;"></span>' + node("new", { tag: "new", isNew: true })
+        },
+        {
+          label: "Move current to 30.",
+          html: node("10") + arrow(false) + node("20") + arrow(false) +
+            node("30", { tag: "current", tagBottom: true, active: true }) + arrow(false) +
+            node("40", { isNull: true }) + '<span style="width:34px;"></span>' +
+            node("new", { tag: "new", isNew: true })
+        },
+        {
+          label: "Move current to 40, the last node.",
+          html: node("10") + arrow(false) + node("20") + arrow(false) + node("30") +
+            arrow(false) + node("40", { tag: "current", tagBottom: true, isNull: true, active: true }) +
+            '<span style="width:34px;"></span>' + node("new", { tag: "new", isNew: true })
+        },
+        {
+          label: "Set current.next to the new node. Insertion at the end is complete.",
+          html: node("10") + arrow(false) + node("20") + arrow(false) + node("30") +
+            arrow(false) + node("40", { tag: "current", tagBottom: true }) + arrow(true) +
+            node("new", { tag: "new", isNull: true, active: true })
+        }
+      ];
+      makePlayer({
+        playId: "end-play",
+        stepId: "end-step",
+        resetId: "end-reset",
+        length: endFrames.length,
+        render: function (i) {
+          document.getElementById("end-list").innerHTML = endFrames[i].html;
+          document.getElementById("end-label").textContent = endFrames[i].label;
+        }
+      });
+
+      var doublyFrames = [
+        {
+          operation: "temp = node B",
+          label: "Start with A ⇄ B ⇄ C ⇄ D. temp points to B, the node before the insertion position."
+        },
+        {
+          operation: "new_node = DoublyNode(\"X\")",
+          label: "Create X below B and C. It is not linked to either node yet."
+        },
+        {
+          operation: "new_node.next = temp.next",
+          label: "Set X.next → C. Both original B ⇄ C pointers remain unchanged."
+        },
+        {
+          operation: "new_node.prev = temp",
+          label: "Set X.prev → B. X now points to both neighbours; B and C still point to each other."
+        },
+        {
+          operation: "new_node.next.prev = new_node",
+          label: "Replace C.prev → B with C.prev → X. The old backward B ← C pointer disappears."
+        },
+        {
+          operation: "temp.next = new_node",
+          label: "Replace B.next → C with B.next → X. All four new pointers are now correct."
+        },
+        {
+          operation: "insertion complete",
+          label: "Insertion is complete: None ← A ⇄ B ⇄ X ⇄ C ⇄ D → None."
+        }
+      ];
+      makePlayer({
+        playId: "doubly-play",
+        stepId: "doubly-step",
+        resetId: "doubly-reset",
+        length: doublyFrames.length,
+        render: function (i) {
+          var frame = doublyFrames[i];
+          document.getElementById("dbl-insert-canvas").className =
+            "dbl-insert-canvas state-" + i;
+          document.getElementById("dbl-step-count").textContent =
+            "Step " + (i + 1) + " of " + doublyFrames.length;
+          document.getElementById("dbl-operation").textContent = frame.operation;
+          document.getElementById("doubly-label").textContent = frame.label;
+        }
+      });
+
+      var circularFrames = [
+        {
+          label: "head points to node 1.",
+          html: node("1", { tag: "head", active: true }),
+          closed: false
+        },
+        {
+          label: "Set node 1’s next pointer to node 2.",
+          html: node("1", { tag: "head" }) + arrow(true) + node("2", { active: true }),
+          closed: false
+        },
+        {
+          label: "Set node 2’s next pointer to node 3.",
+          html: node("1", { tag: "head" }) + arrow(false) +
+            node("2") + arrow(true) + node("3", { active: true }),
+          closed: false
+        },
+        {
+          label: "Set the last node’s next pointer back to head. No pointer is None.",
+          html: node("1", { tag: "head", active: true }) + arrow(false) +
+            node("2") + arrow(false) + node("3", { tag: "last", tagBottom: true, active: true }),
+          closed: true
+        }
+      ];
+      makePlayer({
+        playId: "circular-play",
+        stepId: "circular-step",
+        resetId: "circular-reset",
+        length: circularFrames.length,
+        render: function (i) {
+          document.getElementById("circular-list").innerHTML = circularFrames[i].html;
+          document.getElementById("circular-return").classList.toggle("off", !circularFrames[i].closed);
+          document.getElementById("circular-label").textContent = circularFrames[i].label;
+        }
+      });
+
+      function queueLine(values, activeIndex) {
+        if (!values.length) {
+          return '<div class="queue-empty-state">empty queue</div>';
+        }
+        return values.map(function (value, index) {
+          var options = { active: index === activeIndex };
+          if (index === 0) options.tag = "front / head";
+          if (index === values.length - 1) options.tag = "rear / tail";
+          return (index ? arrow(false) : "") + node(String(value), options);
+        }).join("");
+      }
+
+      var linearQueueFrames = [
+        {
+          label: "Start with an empty queue.",
+          html: queueLine([], -1)
+        },
+        {
+          label: "Enqueue 2 at the rear. It is also the front because it is the only element.",
+          html: queueLine([2], 0)
+        },
+        {
+          label: "Enqueue 3 at the rear.",
+          html: queueLine([2, 3], 1)
+        },
+        {
+          label: "Enqueue 4 at the rear.",
+          html: queueLine([2, 3, 4], 2)
+        },
+        {
+          label: "Enqueue 5 at the rear.",
+          html: queueLine([2, 3, 4, 5], 3)
+        },
+        {
+          label: "Enqueue 6 at the rear.",
+          html: queueLine([2, 3, 4, 5, 6], 4)
+        },
+        {
+          label: "Enqueue 7 at the rear.",
+          html: queueLine([2, 3, 4, 5, 6, 7], 5)
+        },
+        {
+          label: "Enqueue 8 at the rear.",
+          html: queueLine([2, 3, 4, 5, 6, 7, 8], 6)
+        },
+        {
+          label: "Dequeue removes 2 from the front. The new front is 3.",
+          html: '<strong style="margin-right:14px;color:var(--danger);font-family:var(--font-mono);">2 ← out</strong>' +
+            queueLine([3, 4, 5, 6, 7, 8], 0)
+        },
+        {
+          label: "Enqueue adds 9 at the rear.",
+          html: queueLine([3, 4, 5, 6, 7, 8, 9], 6)
+        }
+      ];
+      makePlayer({
+        playId: "linear-queue-play",
+        stepId: "linear-queue-step",
+        resetId: "linear-queue-reset",
+        length: linearQueueFrames.length,
+        render: function (i) {
+          document.getElementById("linear-queue-list").innerHTML = linearQueueFrames[i].html;
+          document.getElementById("linear-queue-label").textContent = linearQueueFrames[i].label;
+        }
+      });
+
+      var stackFrames = [
+        { values: [], top: 0, operation: "STACK-EMPTY(S)", label: "Start with an empty stack. S.top = 0." },
+        { values: [15], top: 1, operation: "PUSH(S, 15)", label: "Push 15. It becomes the first and top element." },
+        { values: [15, 6], top: 2, operation: "PUSH(S, 6)", label: "Push 6 above 15. S.top = 2." },
+        { values: [15, 6, 2], top: 3, operation: "PUSH(S, 2)", label: "Push 2. S.top = 3." },
+        { values: [15, 6, 2, 9], top: 4, operation: "PUSH(S, 9)", label: "Push 9. S.top = 4." },
+        { values: [15, 6, 2, 9, 17], top: 5, operation: "PUSH(S, 17)", label: "Push 17. S.top = 5." },
+        { values: [15, 6, 2, 9, 17, 3], top: 6, operation: "PUSH(S, 3)", label: "Push 3. It becomes the top element. S.top = 6." },
+        { values: [15, 6, 2, 9, 17], top: 5, operation: "POP(S)", returned: 3, label: "POP(S): remove and return 3. S.top = 5." }
+      ];
+      makePlayer({
+        playId: "stack-play",
+        stepId: "stack-step",
+        resetId: "stack-reset",
+        length: stackFrames.length,
+        delay: 1150,
+        render: function (i) {
+          var frame = stackFrames[i];
+          document.getElementById("stack-shell").innerHTML = frame.values.map(function (value, index) {
+            return '<div class="stack-item' + (index === frame.values.length - 1 ? ' top' : '') + '">' + value + '</div>';
+          }).join("");
+          document.getElementById("stack-operation").textContent = frame.operation;
+          document.getElementById("stack-top").textContent = frame.top;
+          document.getElementById("stack-return").innerHTML = frame.returned !== undefined
+            ? 'returned: <strong>' + frame.returned + '</strong>'
+            : "";
+          document.getElementById("stack-label").textContent = frame.label;
+        }
+      });
+
+      var queueFrames = [
+        {
+          values: [null, null, null, null, null, null, null, null, null, null, null, null],
+          head: 7,
+          tail: 7,
+          changed: [],
+          label: "Start with an empty circular queue: Q.head = Q.tail = 7."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, null, null, null, null, null],
+          head: 7,
+          tail: 8,
+          changed: [7],
+          label: "Enqueue(Q, 15): place 15 at location 7 and advance Q.tail to 8."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, 6, null, null, null, null],
+          head: 7,
+          tail: 9,
+          changed: [8],
+          label: "Enqueue(Q, 6): place 6 at location 8 and advance Q.tail to 9."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, 6, 9, null, null, null],
+          head: 7,
+          tail: 10,
+          changed: [9],
+          label: "Enqueue(Q, 9): place 9 at location 9 and advance Q.tail to 10."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, 6, 9, 8, null, null],
+          head: 7,
+          tail: 11,
+          changed: [10],
+          label: "Enqueue(Q, 8): place 8 at location 10 and advance Q.tail to 11."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, 6, 9, 8, 4, null],
+          head: 7,
+          tail: 12,
+          changed: [11],
+          label: "Enqueue(Q, 4): place 4 at location 11 and advance Q.tail to 12."
+        },
+        {
+          values: [null, null, null, null, null, null, 15, 6, 9, 8, 4, 17],
+          head: 7,
+          tail: 1,
+          changed: [12],
+          label: "Enqueue(Q, 17): place 17 at location 12, then wrap Q.tail to location 1."
+        },
+        {
+          values: [3, null, null, null, null, null, 15, 6, 9, 8, 4, 17],
+          head: 7,
+          tail: 2,
+          changed: [1],
+          label: "Enqueue(Q, 3): place 3 at location 1 and advance Q.tail to 2."
+        },
+        {
+          values: [3, 5, null, null, null, null, 15, 6, 9, 8, 4, 17],
+          head: 7,
+          tail: 3,
+          changed: [2],
+          label: "Enqueue(Q, 5): place 5 at location 2 and advance Q.tail to 3."
+        },
+        {
+          values: [3, 5, null, null, null, null, null, 6, 9, 8, 4, 17],
+          head: 8,
+          tail: 3,
+          changed: [7],
+          label: "Dequeue(Q): remove 15 from the front and advance Q.head from 7 to 8."
+        }
+      ];
+      makePlayer({
+        playId: "queue-play",
+        stepId: "queue-step",
+        resetId: "queue-reset",
+        length: queueFrames.length,
+        delay: 1200,
+        render: function (i) {
+          var frame = queueFrames[i];
+          document.getElementById("queue-cells").innerHTML = frame.values.map(function (value, index) {
+            var location = index + 1;
+            var classes = ["queue-cell"];
+            if (value !== null) classes.push("filled");
+            if (frame.changed.indexOf(location) !== -1) classes.push("changed");
+            var pointers = "";
+            if (location === frame.head) pointers += '<span class="queue-pointer">Q.head = ' + frame.head + '</span>';
+            if (location === frame.tail) pointers += '<span class="queue-pointer" style="' +
+              (location === frame.head ? 'bottom:-58px;' : '') + '">Q.tail = ' + frame.tail + '</span>';
+            return '<div class="' + classes.join(" ") + '"><span class="queue-index">' + location +
+              '</span>' + (value === null ? "" : value) + pointers + '</div>';
+          }).join("");
+          document.getElementById("queue-label").textContent = frame.label;
+        }
+      });
+
+      var sections = Array.prototype.slice.call(document.querySelectorAll(".chapter-section"));
+      var tocLinks = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
+      if ("IntersectionObserver" in window) {
+        var revealObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: .08 });
+        sections.forEach(function (section) {
+          section.classList.add("reveal");
+          revealObserver.observe(section);
+        });
+
+        var tocObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            tocLinks.forEach(function (link) {
+              link.classList.toggle("current", link.getAttribute("href") === "#" + entry.target.id);
+            });
+          });
+        }, { rootMargin: "-18% 0px -68% 0px", threshold: 0 });
+        sections.forEach(function (section) { tocObserver.observe(section); });
+      } else {
+        sections.forEach(function (section) { section.classList.add("in"); });
+      }
+    }());
+  </script>
+</body>
+</html>
