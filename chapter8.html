@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8 · Trees and Binary Search Trees · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
+
+:root {
+  --paper: #f7f9fc;
+  --card: #ffffff;
+  --ink: #101c33;
+  --ink-soft: #46536b;
+  --line: #dbe4f0;
+  --grid: #e7edf6;
+  --accent: #0b7285;
+  --accent-dark: #085a68;
+  --accent-soft: #e0f1f4;
+  --amber: #b45309;
+  --amber-soft: #fdf1df;
+  --code-bg: #0f1a2e;
+  --code-text: #dbe7ff;
+  --radius: 10px;
+  --maxw: 1180px;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 16.5px;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-dark); }
+
+code, pre { font-family: var(--font-mono); }
+
+/* ---------- Top navigation ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav {
+  max-width: var(--maxw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--ink); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-text strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .01em; }
+.brand-text span { font-size: 12px; color: var(--ink-soft); }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: block; padding: 8px 14px; border-radius: 8px;
+  color: var(--ink-soft); font-weight: 500; font-size: 15px;
+}
+.nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.nav-links a.active { background: var(--ink); color: #fff; }
+
+/* ---------- Hero (graph-paper motif) ---------- */
+.hero {
+  background:
+    linear-gradient(180deg, rgba(247,249,252,0) 0%, var(--paper) 96%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 72px 24px 64px;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4.4vw, 3.3rem);
+  letter-spacing: -0.02em; max-width: 780px;
+}
+.hero p.lede { margin-top: 16px; max-width: 640px; color: var(--ink-soft); font-size: 1.08rem; }
+.hero-meta { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-chip {
+  font-size: 13.5px; color: var(--ink-soft);
+  background: var(--card); border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px;
+}
+.hero-actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 15px; font-family: var(--font-display);
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: #1c2c4d; color: #fff; }
+.btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+/* ---------- Generic page section ---------- */
+.page { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 80px; }
+.section-title { font-size: 1.6rem; margin-bottom: 6px; }
+.section-sub { color: var(--ink-soft); margin-bottom: 28px; }
+
+/* ---------- Chapter cards (Topics page) ---------- */
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.chapter-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: translateY(-2px); }
+.chapter-num {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-card h3 { font-size: 1.15rem; color: var(--ink); }
+.chapter-card p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: var(--font-mono); font-size: 11.5px;
+  background: var(--accent-soft); color: var(--accent-dark);
+  padding: 3px 9px; border-radius: 6px;
+}
+.chapter-card.locked { opacity: .62; background: #fbfcfe; }
+.chapter-card.locked h3 { color: var(--ink-soft); }
+.badge-soon {
+  align-self: flex-start; font-size: 11.5px; font-family: var(--font-mono);
+  color: var(--ink-soft); border: 1px dashed var(--line);
+  padding: 3px 9px; border-radius: 6px;
+}
+
+/* ---------- Chapter page layout ---------- */
+.chapter-layout {
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; grid-template-columns: 250px minmax(0, 1fr);
+  gap: 44px; padding: 40px 24px 90px;
+}
+.toc {
+  position: sticky; top: 86px; align-self: start;
+  max-height: calc(100vh - 110px); overflow-y: auto;
+  padding-right: 6px;
+}
+.toc h4 {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
+}
+.toc ol { list-style: none; border-left: 2px solid var(--line); }
+.toc li a {
+  display: block; padding: 6px 14px; font-size: 13.8px; color: var(--ink-soft);
+  border-left: 2px solid transparent; margin-left: -2px; line-height: 1.4;
+}
+.toc li a:hover { color: var(--accent-dark); }
+.toc li a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+.chapter-body { min-width: 0; }
+.chapter-kicker {
+  font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-body > h1 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); letter-spacing: -0.02em; margin: 8px 0 10px; }
+.chapter-intro { color: var(--ink-soft); max-width: 720px; margin-bottom: 8px; }
+
+.chapter-section { margin-top: 54px; }
+.chapter-section > h2 {
+  font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chapter-section h3 { font-size: 1.13rem; margin: 26px 0 10px; }
+.chapter-section p { margin-bottom: 14px; max-width: 76ch; }
+.chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+.chapter-section li { margin-bottom: 7px; max-width: 72ch; }
+.sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
+
+/* ---------- Content blocks ---------- */
+.def-box {
+  background: var(--accent-soft); border: 1px solid #bfdee5;
+  border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
+}
+.def-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 6px;
+}
+.note-box {
+  background: var(--amber-soft); border: 1px solid #f3ddb4;
+  border-radius: var(--radius); padding: 16px 20px; margin: 18px 0;
+}
+.note-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
+}
+
+pre.code {
+  background: var(--code-bg); color: var(--code-text);
+  border-radius: var(--radius); padding: 18px 20px;
+  overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
+}
+code.inline {
+  background: #eaeff7; color: #24344f;
+  padding: 2px 7px; border-radius: 5px; font-size: .88em;
+}
+.o-chip {
+  display: inline-block; font-family: var(--font-mono); font-size: .82em;
+  background: var(--amber-soft); color: var(--amber);
+  border: 1px solid #f0d9ac; padding: 2px 9px; border-radius: 999px;
+  font-weight: 600; white-space: nowrap;
+}
+
+table.tbl {
+  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; font-size: 15px;
+}
+table.tbl th, table.tbl td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+table.tbl th {
+  background: var(--ink); color: #fff; font-family: var(--font-display);
+  font-weight: 600; font-size: 14px;
+}
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl tr:nth-child(even) td { background: #fbfcfe; }
+
+.example-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px; margin: 14px 0;
+}
+.example-card .ex-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.example-card .ex-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.example-card pre.code { margin-bottom: 8px; }
+.example-card .ex-why { font-size: 14.3px; color: var(--ink-soft); margin: 0; }
+
+/* ---------- Bubble sort visualizer ---------- */
+.viz {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin: 20px 0;
+}
+.viz-title { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
+.viz-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+.viz-bars {
+  display: flex; align-items: flex-end; gap: 10px;
+  height: 170px; padding: 6px 2px 0;
+}
+.viz-bar {
+  flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
+  background: #c6d4e8; position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  transition: height .25s ease, background .18s ease;
+}
+.viz-bar span {
+  color: #fff; font-family: var(--font-mono); font-size: 13px;
+  font-weight: 600; padding-bottom: 6px;
+}
+.viz-bar.compare { background: var(--amber); }
+.viz-bar.swap { background: #c2410c; }
+.viz-bar.sorted { background: var(--accent); }
+.viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.viz-controls button {
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+}
+.viz-controls button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
+.viz-status { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+.viz-controls .viz-status { margin-left: auto; text-align: right; }
+#rep-status { flex-basis: 100%; margin-left: 0; text-align: left; }
+
+/* ---------- Chapter prev/next footer ---------- */
+.chapter-nav {
+  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.chapter-nav a, .chapter-nav span.disabled {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+}
+.chapter-nav span.disabled { color: #9aa7bd; }
+
+/* ---------- Footer ---------- */
+.site-footer { border-top: 1px solid var(--line); background: var(--card); }
+.footer-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 26px 24px;
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  font-size: 14px; color: var(--ink-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
+  .toc { position: static; max-height: none; border: 1px solid var(--line);
+         border-radius: var(--radius); padding: 16px; background: var(--card); margin-bottom: 22px; }
+  .nav { flex-direction: column; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+/* ---------- Chapter 8: trees and traversal programs ---------- */
+.fig {
+  width: 100%; max-width: none; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin: 18px 0;
+  box-shadow: 0 8px 24px rgba(16,28,51,.06);
+}
+.fig figcaption {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line);
+  color: var(--ink-soft); font: 12.5px/1.55 var(--font-mono);
+}
+.fig figcaption b { color: var(--accent-dark); }
+.viz { box-shadow: 0 10px 28px rgba(16,28,51,.06); overflow: hidden; }
+.fig, .viz, .representation-panel, .state-panel, .code-grid > * { min-width: 0; }
+.viz-label {
+  min-height: 48px; margin-top: 14px; padding: 10px 12px;
+  color: var(--ink); background: var(--amber-soft);
+  border: 1px solid #f0d9ac; border-radius: 8px;
+  font: 13px/1.55 var(--font-mono);
+}
+.control-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ink-soft); font-size: 13px;
+}
+.viz-controls select {
+  padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 8px;
+  background: var(--card); color: var(--ink);
+  font: 600 13px var(--font-display);
+}
+
+.tree-stage {
+  position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 10px;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px), #fbfcfe;
+  background-size: 28px 28px;
+}
+.tree-canvas, .mini-tree {
+  display: block; width: 100%; max-width: 100%; height: auto;
+  image-rendering: auto;
+}
+.stage-badge {
+  position: absolute; top: 10px; right: 10px;
+  padding: 4px 9px; border: 1px solid #bfdee5; border-radius: 999px;
+  color: var(--accent-dark); background: rgba(255,255,255,.92);
+  font: 600 11px var(--font-mono);
+}
+.legend-row {
+  display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 12px;
+  color: var(--ink-soft); font-size: 13px;
+}
+.legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-row i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+.term-grid, .type-grid, .problem-grid, .code-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;
+}
+.term-card, .type-card, .problem-card {
+  padding: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+}
+.type-card { display: flex; flex-direction: column; }
+.term-card strong, .type-card strong, .problem-card strong {
+  display: block; margin-bottom: 5px; color: var(--accent-dark);
+  font-family: var(--font-display);
+}
+.term-card p, .type-card p, .problem-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.type-card canvas { margin-top: auto; padding-top: 10px; border-radius: 8px; background: #fbfcfe; }
+.type-list {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0;
+}
+.type-list div {
+  padding: 12px; border: 1px solid var(--line); border-radius: 9px;
+  background: #fbfcfe; color: var(--ink-soft); font-size: 13px;
+}
+.type-list b { color: var(--accent-dark); }
+
+.representation-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: stretch;
+}
+.representation-panel {
+  display: flex; flex-direction: column; min-width: 0;
+  padding: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+}
+.representation-panel h3 { margin: 0 0 5px; font-size: 1rem; }
+.representation-panel > pre.code:last-child { margin-top: auto; margin-bottom: 0; }
+.array-strip {
+  display: flex; overflow-x: auto; padding: 8px 2px 24px; margin-top: 12px;
+}
+.array-cell {
+  flex: 0 0 50px; height: 50px; display: grid; place-items: center; position: relative;
+  border: 1px solid #93a4bc; border-right: 0; background: #fff;
+  font: 600 15px var(--font-mono); transition: background .2s ease, transform .2s ease;
+}
+.array-cell:last-child { border-right: 1px solid #93a4bc; }
+.array-cell::after {
+  content: attr(data-index); position: absolute; top: 54px; color: var(--ink-soft);
+  font: 10px var(--font-mono);
+}
+.array-cell.active { background: var(--amber-soft); transform: translateY(-5px); }
+.pointer-node {
+  display: grid; grid-template-columns: 34px 58px 34px; width: max-content; overflow: hidden;
+  margin: 14px auto; border: 2px solid #52617a; border-radius: 8px;
+  font: 600 12px var(--font-mono);
+}
+.pointer-node span, .pointer-node b { display: grid; place-items: center; padding: 9px 4px; }
+.pointer-node span { color: var(--ink-soft); background: #dbe4f0; }
+.pointer-node b { color: #fff; background: var(--accent); }
+.pointer-children {
+  display: flex; justify-content: center; align-items: center;
+  gap: 42px; min-width: 0;
+}
+
+.traversal-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.sequence-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px; min-height: 43px;
+  margin-top: 12px;
+}
+.sequence-chip {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  border: 1px solid var(--line); border-radius: 50%; background: #fff;
+  color: var(--ink); font: 600 13px var(--font-mono);
+  animation: chipIn .3s ease both;
+}
+.sequence-chip.latest { color: #fff; background: var(--accent); border-color: var(--accent); }
+.sequence-chip.done { color: var(--accent-dark); background: var(--accent-soft); border-color: #9cced7; }
+.state-grid {
+  display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(190px, .6fr);
+  gap: 14px; align-items: stretch;
+}
+.state-panel {
+  display: flex; flex-direction: column; min-width: 0;
+  padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: #fbfcfe;
+}
+.state-panel h4 {
+  margin-bottom: 10px; color: var(--ink-soft);
+  font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .08em;
+}
+.state-items {
+  display: flex; flex: 1; flex-direction: column-reverse;
+  gap: 6px; min-height: 126px; justify-content: flex-start;
+}
+.state-item {
+  padding: 8px 10px; text-align: center; border: 1px solid #9cced7; border-radius: 7px;
+  color: var(--accent-dark); background: var(--accent-soft); font: 600 13px var(--font-mono);
+}
+.queue-items { display: flex; gap: 6px; flex-wrap: wrap; min-height: 42px; }
+.queue-items .state-item { min-width: 38px; }
+
+.reconstruct-sequences {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+}
+.sequence-box {
+  padding: 12px; border: 1px solid var(--line); border-radius: 8px;
+  background: #fff; font: 13px/1.6 var(--font-mono);
+}
+.sequence-box b { color: var(--accent-dark); }
+.answer-sequence {
+  padding: 10px 12px; margin-top: 12px; border-left: 4px solid var(--accent);
+  background: var(--accent-soft); color: var(--accent-dark); border-radius: 0 8px 8px 0;
+  font: 600 14px var(--font-mono);
+}
+
+pre.code.syntax-colored { color: #dbe7ff; }
+pre.code { max-width: 100%; }
+.syn-keyword { color: #ff79c6; font-weight: 600; }
+.syn-number { color: #bd93f9; }
+.syn-comment { color: #8fa2c3; font-style: italic; }
+.syn-operator { color: #ffb86c; }
+.syn-name { color: #8be9fd; }
+.syn-title { color: #50fa7b; font-weight: 600; }
+.kw { color: #c2179b; }
+
+details.ans { margin-top: 10px; }
+details.ans summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; color: var(--accent-dark); background: var(--accent-soft);
+  border: 1px solid #bfdee5; border-radius: 8px; user-select: none;
+  font: 600 13.5px var(--font-display);
+}
+details.ans summary::-webkit-details-marker { display: none; }
+details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; }
+details.ans[open] summary::before { content: "\2212"; }
+details.ans .ans-body { margin-top: 10px; }
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .62s ease, transform .62s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+.chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+.chapter-body > h1 { animation-delay: .08s; }
+.chapter-intro { animation-delay: .16s; }
+
+@media (max-width: 760px) {
+  html { scroll-padding-top: 140px; }
+  .chapter-layout { padding: 20px 16px 64px; }
+  .toc {
+    display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%;
+    padding: 8px; margin-bottom: 18px; border-radius: 10px;
+    scrollbar-width: thin;
+  }
+  .toc h4 { display: none; }
+  .toc ol {
+    display: flex; width: max-content; border-left: 0; gap: 6px;
+  }
+  .toc li a {
+    margin: 0; padding: 7px 10px; white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 7px;
+    background: #fbfcfe; font-size: 12.5px;
+  }
+  .toc li a.current {
+    border-color: var(--accent); background: var(--accent-soft);
+  }
+  .term-grid, .type-grid, .problem-grid, .code-grid,
+  .representation-grid, .state-grid, .reconstruct-sequences {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .type-list { grid-template-columns: 1fr; }
+  .fig, .viz { padding: 14px; }
+  .array-cell { flex: 1 1 44px; min-width: 34px; height: 44px; font-size: 14px; }
+  .array-cell::after { top: 48px; }
+  .pointer-children { gap: 12px; }
+  .viz-controls .viz-status { flex-basis: 100%; margin-left: 0; }
+  .traversal-head { align-items: flex-start; }
+  table.tbl { display: block; overflow-x: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+  .chapter-kicker, .chapter-body > h1, .chapter-intro, .sequence-chip { animation: none; }
+}
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">O(n)</div>
+      <div class="brand-text">
+        <strong>Design &amp; Analysis of Algorithms</strong>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="topics.html" class="active">Topics</a></li>
+      <li><a href="practical.html">Practical</a></li>
+      <li><a href="tutorials.html">Tutorials</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="chapter-layout">
+
+  <aside class="toc">
+    <h4>In this chapter</h4>
+    <ol>
+      <li><a href="#sec-1">8.1 What is a Tree?</a></li>
+      <li><a href="#sec-2">8.2 Terminology</a></li>
+      <li><a href="#sec-3">8.3 Types of Trees</a></li>
+      <li><a href="#sec-4">8.4 Binary Tree Representation</a></li>
+      <li><a href="#sec-5">8.5 Binary Tree Traversals</a></li>
+      <li><a href="#sec-6">8.6 Recursive Traversals</a></li>
+      <li><a href="#sec-7">8.7 Iterative Traversals</a></li>
+      <li><a href="#sec-8">8.8 Level-Order Traversal</a></li>
+      <li><a href="#sec-9">8.9 Binary Tree Problems</a></li>
+      <li><a href="#sec-10">8.10 Reconstructing a Tree</a></li>
+      <li><a href="#sec-11">8.11 Binary Search Trees</a></li>
+      <li><a href="#sec-12">8.12 BST Construction</a></li>
+      <li><a href="#sec-13">8.13 Questions &amp; Self Study</a></li>
+    </ol>
+  </aside>
+
+  <main class="chapter-body">
+    <span class="chapter-kicker">Chapter 08 · NMCC509</span>
+    <h1>Trees and Binary Search Trees</h1>
+    <p class="chapter-intro">
+      Trees organise data hierarchically. This chapter introduces tree terminology,
+      binary-tree representations, recursive and iterative traversals, breadth-first
+      search, common binary-tree problems, and binary search tree construction.
+    </p>
+
+    <section class="chapter-section" id="sec-1">
+      <h2><span class="sec-no">8.1</span>What is a Tree?</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Tree</span>
+        A tree is a <strong class="kw">hierarchical, non-linear data structure</strong>
+        consisting of nodes. The top node is the <strong>root</strong>, and nodes are
+        connected by <strong>edges</strong>.
+      </div>
+      <div class="viz" id="anatomy-viz">
+        <div class="viz-title">Build the lecture tree, one relationship at a time</div>
+        <div class="viz-sub">Each child has exactly one parent, and the structure contains no cycles.</div>
+        <div class="tree-stage">
+          <canvas class="tree-canvas" id="anatomy-canvas" width="820" height="430"
+                  aria-label="Animated general tree with nodes 1 through 10"></canvas>
+          <span class="stage-badge">general tree</span>
+        </div>
+        <div class="viz-label" id="anatomy-label">Start with the root node.</div>
+        <div class="viz-controls">
+          <button class="primary" id="anatomy-play">Play</button>
+          <button id="anatomy-step">Step</button>
+          <button id="anatomy-reset">Reset</button>
+          <label class="control-label">speed
+            <select id="anatomy-speed">
+              <option value="1250">slow</option>
+              <option value="760" selected>normal</option>
+              <option value="420">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="anatomy-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-2">
+      <h2><span class="sec-no">8.2</span>Tree Terminology</h2>
+      <div class="term-grid">
+        <div class="term-card"><strong>Root</strong><p>The topmost node in a tree.</p></div>
+        <div class="term-card"><strong>Edge</strong><p>A connection between two nodes.</p></div>
+        <div class="term-card"><strong>Child</strong><p>A node derived from a parent.</p></div>
+        <div class="term-card"><strong>Parent</strong><p>A node with one or more children.</p></div>
+        <div class="term-card"><strong>Leaf</strong><p>A node with no children.</p></div>
+      </div>
+      <div class="note-box">
+        <span class="def-label">From the lecture tree</span>
+        Node 1 is the root. Node 4 is a child of node 1 and the parent of nodes 8 and 9.
+        Nodes 5, 6, 8, 9, and 10 are leaves.
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-3">
+      <h2><span class="sec-no">8.3</span>Types of Trees</h2>
+      <div class="type-grid">
+        <div class="type-card">
+          <strong>Binary Tree</strong>
+          <p>Each node has at most two children: zero, one, or two.</p>
+          <canvas class="mini-tree" data-mini="binary" width="360" height="190"
+                  aria-label="Example binary tree"></canvas>
+        </div>
+        <div class="type-card">
+          <strong>Not a Binary Tree</strong>
+          <p>Node 1 has three children, so the binary-tree rule is violated.</p>
+          <canvas class="mini-tree" data-mini="nonbinary" width="360" height="190"
+                  aria-label="Tree whose root has three children"></canvas>
+        </div>
+        <div class="type-card">
+          <strong>Full Binary Tree</strong>
+          <p>Every node has either zero or two children.</p>
+          <canvas class="mini-tree" data-mini="full" width="360" height="190"
+                  aria-label="Full binary tree"></canvas>
+        </div>
+        <div class="type-card">
+          <strong>Complete Binary Tree</strong>
+          <p>Every level is full except possibly the last, which fills from left to right.</p>
+          <canvas class="mini-tree" data-mini="complete" width="360" height="190"
+                  aria-label="Complete binary tree"></canvas>
+        </div>
+      </div>
+      <div class="def-box">
+        <span class="def-label">Binary Search Tree</span>
+        A binary tree in which every key in the left subtree is less than the root key,
+        and every key in the right subtree is greater than the root key.
+      </div>
+      <div class="type-list">
+        <div><b>AVL Tree</b><br>A self-balancing BST.</div>
+        <div><b>Heap</b><br>A tree with a maximum or minimum property.</div>
+        <div><b>B-Tree</b><br>A balanced tree designed for disk storage.</div>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-4">
+      <h2><span class="sec-no">8.4</span>Binary Tree Representation</h2>
+      <div class="representation-grid">
+        <div class="representation-panel">
+          <h3>Array representation</h3>
+          <p>For a node at index <code class="inline">i</code>:</p>
+          <ul>
+            <li>left child = <code class="inline">2i + 1</code></li>
+            <li>right child = <code class="inline">2i + 2</code></li>
+          </ul>
+          <div class="tree-stage">
+            <canvas class="tree-canvas" id="rep-canvas" width="720" height="340"
+                    aria-label="Binary tree synchronized with its array representation"></canvas>
+          </div>
+          <div class="array-strip" id="rep-array"></div>
+          <div class="viz-controls">
+            <button class="primary" id="rep-play">Play</button>
+            <button id="rep-step">Step</button>
+            <button id="rep-reset">Reset</button>
+            <span class="viz-status" id="rep-status"></span>
+          </div>
+        </div>
+        <div class="representation-panel">
+          <h3>Linked representation</h3>
+          <p>Each node stores data plus pointers to its left and right children.</p>
+          <div class="pointer-node"><span>L</span><b>1</b><span>R</span></div>
+          <div class="pointer-children">
+            <div class="pointer-node"><span>L</span><b>2</b><span>R</span></div>
+            <div class="pointer-node"><span>L</span><b>3</b><span>R</span></div>
+          </div>
+          <pre class="code">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+class Tree:
+    def __init__(self):
+        self.root = None</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-5">
+      <h2><span class="sec-no">8.5</span>Binary Tree Traversals</h2>
+      <table class="tbl">
+        <thead><tr><th>Traversal</th><th>Order</th><th>Lecture sequence</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inorder</strong></td><td>Left, Root, Right</td><td>4 → 2 → 5 → 1 → 6 → 3 → 7</td></tr>
+          <tr><td><strong>Preorder</strong></td><td>Root, Left, Right</td><td>1 → 2 → 4 → 5 → 3 → 6 → 7</td></tr>
+          <tr><td><strong>Postorder</strong></td><td>Left, Right, Root</td><td>4 → 5 → 2 → 6 → 7 → 3 → 1</td></tr>
+        </tbody>
+      </table>
+      <div class="viz" id="traversal-viz">
+        <div class="traversal-head">
+          <div>
+            <div class="viz-title">Traversal laboratory</div>
+            <div class="viz-sub">Select an order, then watch the exact lecture tree.</div>
+          </div>
+          <label class="control-label">order
+            <select id="trav-mode">
+              <option value="inorder">Inorder · Left, Root, Right</option>
+              <option value="preorder">Preorder · Root, Left, Right</option>
+              <option value="postorder">Postorder · Left, Right, Root</option>
+            </select>
+          </label>
+        </div>
+        <div class="legend-row">
+          <span><i style="background:#dbe4f0"></i> not visited</span>
+          <span><i style="background:var(--amber)"></i> current node</span>
+          <span><i style="background:var(--accent)"></i> visited</span>
+        </div>
+        <div class="tree-stage">
+          <canvas class="tree-canvas" id="trav-canvas" width="820" height="390"
+                  aria-label="Animated binary tree traversal"></canvas>
+        </div>
+        <div class="sequence-row" id="trav-output"></div>
+        <div class="viz-label" id="trav-label">Choose Play or Step.</div>
+        <div class="viz-controls">
+          <button class="primary" id="trav-play">Play</button>
+          <button id="trav-step">Step</button>
+          <button id="trav-reset">Reset</button>
+          <label class="control-label">speed
+            <select id="trav-speed">
+              <option value="1100">slow</option>
+              <option value="680" selected>normal</option>
+              <option value="360">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="trav-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-6">
+      <h2><span class="sec-no">8.6</span>Recursive Traversals</h2>
+      <div class="code-grid">
+        <div>
+          <h3>Inorder</h3>
+          <pre class="code">InorderTraversal(node):
+    if node is not NULL:
+        InorderTraversal(node.left)
+        Visit(node)
+        InorderTraversal(node.right)</pre>
+        </div>
+        <div>
+          <h3>Preorder</h3>
+          <pre class="code">PreorderTraversal(node):
+    if node is not NULL:
+        Visit(node)
+        PreorderTraversal(node.left)
+        PreorderTraversal(node.right)</pre>
+        </div>
+      </div>
+      <h3>Postorder</h3>
+      <pre class="code">PostorderTraversal(node):
+    if node is not NULL:
+        PostorderTraversal(node.left)
+        PostorderTraversal(node.right)
+        Visit(node)</pre>
+      <div class="note-box">
+        <span class="def-label">Applications from the slides</span>
+        Preorder can transfer a directory structure. Postorder is useful when deleting
+        an entire tree because every child is processed before its parent.
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-7">
+      <h2><span class="sec-no">8.7</span>Iterative Traversals with Stacks</h2>
+      <div class="viz" id="iter-viz">
+        <div class="traversal-head">
+          <div>
+            <div class="viz-title">Watch the stack change after every operation</div>
+            <div class="viz-sub">The tree, stack state, and printed sequence stay synchronized.</div>
+          </div>
+          <label class="control-label">algorithm
+            <select id="iter-mode">
+              <option value="inorder">Iterative inorder</option>
+              <option value="preorder">Iterative preorder</option>
+              <option value="postorder">Postorder · two stacks</option>
+            </select>
+          </label>
+        </div>
+        <div class="state-grid">
+          <div class="tree-stage">
+            <canvas class="tree-canvas" id="iter-canvas" width="720" height="430"
+                    aria-label="Binary tree with iterative traversal state"></canvas>
+          </div>
+          <div class="state-panel">
+            <h4 id="iter-stack-title">Stack · bottom to top</h4>
+            <div class="state-items" id="iter-stack"></div>
+            <div id="iter-second-wrap" hidden>
+              <h4 style="margin-top:14px;">Stack 2 · bottom to top</h4>
+              <div class="state-items" id="iter-stack2" style="min-height:80px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sequence-row" id="iter-output"></div>
+        <div class="viz-label" id="iter-label">Initialize the traversal.</div>
+        <div class="viz-controls">
+          <button class="primary" id="iter-play">Play</button>
+          <button id="iter-step">Step</button>
+          <button id="iter-reset">Reset</button>
+          <label class="control-label">speed
+            <select id="iter-speed">
+              <option value="1200">slow</option>
+              <option value="720" selected>normal</option>
+              <option value="380">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="iter-status"></span>
+        </div>
+      </div>
+
+      <details class="ans"><summary>show the iterative algorithms</summary>
+        <div class="ans-body">
+          <h3>Iterative inorder</h3>
+          <pre class="code">IterativeInorderTraversal(root):
+    Initialize an empty stack
+    current = root
+    while current is not NULL or stack is not empty:
+        while current is not NULL:
+            Push current to stack
+            current = current.left
+        current = Pop from stack
+        Visit(current)
+        current = current.right</pre>
+          <h3>Iterative preorder using one stack</h3>
+          <pre class="code">IterativePreorder(root):
+    if root == NULL: return
+    Push root into stack S
+    while S is not empty:
+        node = S.pop()
+        Visit(node)
+        if node.right != NULL: Push node.right
+        if node.left != NULL: Push node.left</pre>
+          <h3>Iterative postorder using two stacks</h3>
+          <pre class="code">IterativePostorder(root):
+    if root == NULL: return
+    Push root into S1
+    while S1 is not empty:
+        node = S1.pop()
+        Push node into S2
+        if node.left != NULL: Push node.left into S1
+        if node.right != NULL: Push node.right into S1
+    while S2 is not empty:
+        Visit(S2.pop())</pre>
+        </div>
+      </details>
+      <div class="note-box">
+        <span class="def-label">Single-stack variant</span>
+        Iterative postorder can also be implemented with one stack; the two-stack
+        version above makes the processing order easier to see.
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-8">
+      <h2><span class="sec-no">8.8</span>Level-Order Traversal — BFS</h2>
+      <pre class="code">LEVEL-ORDER(root):
+1. Initialize an empty queue
+2. Enqueue the root node
+3. Repeat until the queue is empty:
+   a. Dequeue a node and process it
+   b. Enqueue its left child, if it exists
+   c. Enqueue its right child, if it exists</pre>
+      <div class="viz" id="bfs-viz">
+        <div class="viz-title">Breadth-first search with a live queue</div>
+        <div class="viz-sub">Nodes are processed level by level: 1, 2, 3, 4, 5, 6, 7.</div>
+        <div class="state-grid">
+          <div class="tree-stage">
+            <canvas class="tree-canvas" id="bfs-canvas" width="720" height="390"
+                    aria-label="Level-order traversal of the binary tree"></canvas>
+          </div>
+          <div class="state-panel">
+            <h4>Queue · front to rear</h4>
+            <div class="queue-items" id="bfs-queue"></div>
+            <h4 style="margin-top:18px;">Output</h4>
+            <div class="queue-items" id="bfs-output"></div>
+          </div>
+        </div>
+        <div class="viz-label" id="bfs-label">Initialize an empty queue.</div>
+        <div class="viz-controls">
+          <button class="primary" id="bfs-play">Play</button>
+          <button id="bfs-step">Step</button>
+          <button id="bfs-reset">Reset</button>
+          <span class="viz-status" id="bfs-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-9">
+      <h2><span class="sec-no">8.9</span>Problems on Binary Trees</h2>
+      <div class="problem-grid">
+        <div class="problem-card"><strong>Size</strong><p>Count the number of nodes.</p></div>
+        <div class="problem-card"><strong>Search</strong><p>Find a given key.</p></div>
+        <div class="problem-card"><strong>Minimum / Maximum</strong><p>Find the smallest and largest values.</p></div>
+        <div class="problem-card"><strong>Delete the tree</strong><p>Process children before their parent.</p></div>
+        <div class="problem-card"><strong>Height</strong><p>Find the longest root-to-leaf path.</p></div>
+        <div class="problem-card"><strong>Deepest node</strong><p>Find the node at maximum depth.</p></div>
+        <div class="problem-card"><strong>Same structure</strong><p>Compare two binary-tree shapes.</p></div>
+        <div class="problem-card"><strong>Sum</strong><p>Add every element in the tree.</p></div>
+      </div>
+      <div class="code-grid">
+        <pre class="code">Height(root):
+1. if root == NULL: return 0
+2. left_height = Height(root.left)
+3. right_height = Height(root.right)
+4. return 1 + max(left_height, right_height)</pre>
+        <pre class="code">SumTree(root):
+1. if root == NULL: return 0
+2. left_sum = SumTree(root.left)
+3. right_sum = SumTree(root.right)
+4. return root.data + left_sum + right_sum</pre>
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-10">
+      <h2><span class="sec-no">8.10</span>Reconstructing a Tree from Traversals</h2>
+      <div class="reconstruct-sequences">
+        <div class="sequence-box"><b>Inorder</b><br>D B E A F C</div>
+        <div class="sequence-box"><b>Preorder</b><br>A B D E C F</div>
+      </div>
+      <div class="viz" id="reconstruct-viz">
+        <div class="viz-title">Build the exact tree, one split at a time</div>
+        <div class="viz-sub">Preorder identifies each root; inorder separates its left and right subtrees.</div>
+        <div class="tree-stage">
+          <canvas class="tree-canvas" id="reconstruct-canvas" width="820" height="400"
+                  aria-label="Reconstruction of a binary tree from inorder and preorder"></canvas>
+        </div>
+        <div class="answer-sequence" id="reconstruct-answer">Postorder: —</div>
+        <div class="viz-label" id="reconstruct-label">The first preorder element A is the root.</div>
+        <div class="viz-controls">
+          <button class="primary" id="reconstruct-play">Play</button>
+          <button id="reconstruct-step">Step</button>
+          <button id="reconstruct-reset">Reset</button>
+          <span class="viz-status" id="reconstruct-status"></span>
+        </div>
+      </div>
+      <div class="note-box">
+        <span class="def-label">Identification rule</span>
+        With distinct node values, inorder paired with preorder or postorder uniquely
+        identifies the tree. Without inorder, the tree is not uniquely determined in general.
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-11">
+      <h2><span class="sec-no">8.11</span>Binary Search Tree — Searching</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · BST</span>
+        Every value in the left subtree is smaller than the root value, and every value
+        in the right subtree is greater.
+      </div>
+      <pre class="code">SEARCH(root, key):
+1. if root == NULL: return NULL
+2. if root.data == key: return root
+3. if key < root.data:
+       return SEARCH(root.left, key)
+4. return SEARCH(root.right, key)</pre>
+      <div class="viz" id="search-viz">
+        <div class="traversal-head">
+          <div>
+            <div class="viz-title">Follow one BST search path</div>
+            <div class="viz-sub">Every comparison discards an entire subtree.</div>
+          </div>
+          <label class="control-label">key
+            <select id="search-key">
+              <option value="12" selected>12</option>
+              <option value="7">7</option>
+              <option value="6">6 · absent</option>
+            </select>
+          </label>
+        </div>
+        <div class="tree-stage">
+          <canvas class="tree-canvas" id="search-canvas" width="820" height="400"
+                  aria-label="Animated search in a binary search tree"></canvas>
+        </div>
+        <div class="viz-label" id="search-label">Begin at the root.</div>
+        <div class="viz-controls">
+          <button class="primary" id="search-play">Play</button>
+          <button id="search-step">Step</button>
+          <button id="search-reset">Reset</button>
+          <span class="viz-status" id="search-status"></span>
+        </div>
+      </div>
+      <div class="note-box">
+        <span class="def-label">Time complexity</span>
+        Searching takes O(log n) in a balanced BST, but can take O(n) in a skewed BST.
+      </div>
+    </section>
+
+    <section class="chapter-section" id="sec-12">
+      <h2><span class="sec-no">8.12</span>BST Construction</h2>
+      <pre class="code">Insert(node, key):
+1. if node is NULL:
+       return a new node containing key
+2. if key < node.data:
+       node.left = Insert(node.left, key)
+3. else if key > node.data:
+       node.right = Insert(node.right, key)
+4. return node</pre>
+      <div class="viz" id="build-viz">
+        <div class="traversal-head">
+          <div>
+            <div class="viz-title">Insert each value and watch the tree grow</div>
+            <div class="viz-sub">Compare average-order insertion with sorted-order insertion.</div>
+          </div>
+          <label class="control-label">input
+            <select id="build-mode">
+              <option value="average">10, 5, 15, 3, 7, 12, 18</option>
+              <option value="skewed">3, 5, 7, 10, 12, 15, 18</option>
+              <option value="balanced">balanced from sorted array</option>
+            </select>
+          </label>
+        </div>
+        <div class="tree-stage">
+          <canvas class="tree-canvas" id="build-canvas" width="820" height="440"
+                  aria-label="Animated binary search tree construction"></canvas>
+        </div>
+        <div class="sequence-row" id="build-input"></div>
+        <div class="viz-label" id="build-label">The tree is empty.</div>
+        <div class="viz-controls">
+          <button class="primary" id="build-play">Play</button>
+          <button id="build-step">Step</button>
+          <button id="build-reset">Reset</button>
+          <label class="control-label">speed
+            <select id="build-speed">
+              <option value="1200">slow</option>
+              <option value="700" selected>normal</option>
+              <option value="380">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="build-status"></span>
+        </div>
+      </div>
+      <div class="code-grid">
+        <div class="note-box">
+          <span class="def-label">Average construction</span>
+          For a reasonably balanced insertion order, inserting n elements takes
+          <strong>O(n log n)</strong>.
+        </div>
+        <div class="note-box">
+          <span class="def-label">Worst construction</span>
+          Sorted input produces a right-skewed BST and takes <strong>O(n²)</strong>.
+        </div>
+      </div>
+      <details class="ans"><summary>show balanced construction from a sorted array</summary>
+        <div class="ans-body">
+          <pre class="code">build_tree(arr):
+    if not arr: return None
+    mid = len(arr) // 2
+    node = Node(arr[mid])
+    node.left = build_tree(arr[:mid])
+    node.right = build_tree(arr[mid + 1:])
+    return node</pre>
+        </div>
+      </details>
+    </section>
+
+    <section class="chapter-section" id="sec-13">
+      <h2><span class="sec-no">8.13</span>Questions and Self Study</h2>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Worst time to find the minimum in a right-skewed BST?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <p class="ex-why ans-body"><span class="o-chip">O(1)</span> The root has no left child, so it is already the minimum.</p>
+        </details>
+      </div>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Worst time to find the minimum in a left-skewed BST?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <p class="ex-why ans-body"><span class="o-chip">O(n)</span> Follow the left pointer through every node.</p>
+        </details>
+      </div>
+      <div class="note-box">
+        <span class="def-label">Self study</span>
+        Delete an element from a binary search tree.
+      </div>
+    </section>
+
+    <nav class="chapter-nav">
+      <a href="chapter7.html">← Chapter 7: Linked Lists, Stacks and Queues</a>
+      <a href="topics.html">All topics</a>
+      <span class="disabled">Chapter 9 (coming soon) →</span>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Design and Analysis of Algorithms</span>
+    <span>© 2026
+      <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+        Dr. Alakesh Kalita
+      </a>
+      · Mathematics and Computing · IIT (ISM) Dhanbad</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var COLORS = {
+    ink: "#101c33",
+    soft: "#46536b",
+    line: "#9aa7bd",
+    pale: "#eaeff7",
+    blue: "#dbe7ff",
+    teal: "#0b7285",
+    tealSoft: "#c9edf1",
+    amber: "#b45309",
+    amberSoft: "#fdf1df",
+    red: "#c2410c",
+    white: "#ffffff"
+  };
+
+  var PERFECT = {
+    nodes: [
+      { id: "1", x: .50, y: .13 },
+      { id: "2", x: .27, y: .42 }, { id: "3", x: .73, y: .42 },
+      { id: "4", x: .15, y: .76 }, { id: "5", x: .38, y: .76 },
+      { id: "6", x: .62, y: .76 }, { id: "7", x: .85, y: .76 }
+    ],
+    edges: [["1","2"],["1","3"],["2","4"],["2","5"],["3","6"],["3","7"]]
+  };
+
+  var GENERAL = {
+    nodes: [
+      { id: "1", x: .50, y: .10 },
+      { id: "2", x: .19, y: .31 }, { id: "3", x: .42, y: .31 }, { id: "4", x: .72, y: .31 },
+      { id: "5", x: .10, y: .56 }, { id: "6", x: .27, y: .56 }, { id: "7", x: .42, y: .56 },
+      { id: "8", x: .63, y: .56 }, { id: "9", x: .81, y: .56 },
+      { id: "10", x: .42, y: .82 }
+    ],
+    edges: [["1","2"],["1","3"],["1","4"],["2","5"],["2","6"],["3","7"],["4","8"],["4","9"],["7","10"]]
+  };
+
+  function asSet(values) {
+    return new Set((values || []).map(String));
+  }
+
+  function prepareCanvas(canvas) {
+    if (!canvas.dataset.logicalWidth) {
+      canvas.dataset.logicalWidth = String(canvas.width);
+      canvas.dataset.logicalHeight = String(canvas.height);
+    }
+    var width = Number(canvas.dataset.logicalWidth);
+    var height = Number(canvas.dataset.logicalHeight);
+    var scale = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+    var pixelWidth = Math.round(width * scale);
+    var pixelHeight = Math.round(height * scale);
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+    var context = canvas.getContext("2d");
+    context.setTransform(scale, 0, 0, scale, 0, 0);
+    context.imageSmoothingEnabled = true;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    return { context:context, width:width, height:height };
+  }
+
+  function drawTree(canvas, spec, state) {
+    if (!canvas) return;
+    state = state || {};
+    var surface = prepareCanvas(canvas);
+    var context = surface.context;
+    var width = surface.width;
+    var height = surface.height;
+    var padX = 45;
+    var padY = 28;
+    var plotWidth = width - padX * 2;
+    var plotHeight = height - padY * 2;
+    var nodesById = {};
+    spec.nodes.forEach(function (node) { nodesById[String(node.id)] = node; });
+    var visible = state.visible ? asSet(state.visible) : asSet(spec.nodes.map(function (node) { return node.id; }));
+    var visited = asSet(state.visited);
+    var path = asSet(state.path);
+    var active = state.active === null || state.active === undefined ? null : String(state.active);
+    var found = state.found === null || state.found === undefined ? null : String(state.found);
+    var radius = spec.nodes.length > 8 ? 20 : 23;
+    context.clearRect(0, 0, width, height);
+
+    function point(node) {
+      return { x: padX + node.x * plotWidth, y: padY + node.y * plotHeight };
+    }
+
+    spec.edges.forEach(function (edge) {
+      var fromId = String(edge[0]);
+      var toId = String(edge[1]);
+      if (!visible.has(fromId) || !visible.has(toId)) return;
+      var from = point(nodesById[fromId]);
+      var to = point(nodesById[toId]);
+      var highlightedEdge =
+        (visited.has(fromId) && visited.has(toId)) ||
+        (path.has(fromId) && path.has(toId));
+      context.strokeStyle = highlightedEdge ? "#63bac6" : COLORS.line;
+      context.lineWidth = highlightedEdge ? 3 : 2;
+      context.beginPath();
+      context.moveTo(from.x, from.y);
+      context.lineTo(to.x, to.y);
+      context.stroke();
+    });
+
+    spec.nodes.forEach(function (node, index) {
+      var id = String(node.id);
+      if (!visible.has(id)) return;
+      var p = point(node);
+      var fill = index === 0 ? COLORS.blue : COLORS.white;
+      var stroke = "#52617a";
+      var text = COLORS.ink;
+      if (path.has(id)) { fill = COLORS.tealSoft; stroke = "#63bac6"; }
+      if (visited.has(id)) { fill = COLORS.teal; stroke = "#085a68"; text = COLORS.white; }
+      if (id === active) { fill = COLORS.amberSoft; stroke = COLORS.amber; text = "#7a3607"; }
+      if (id === found) { fill = COLORS.teal; stroke = "#064e5a"; text = COLORS.white; }
+      context.fillStyle = fill;
+      context.strokeStyle = stroke;
+      context.lineWidth = id === active || id === found ? 4 : 2;
+      context.beginPath();
+      context.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.fillStyle = text;
+      context.font = "600 " + (id.length > 1 ? "15px" : "17px") + " IBM Plex Mono, monospace";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText(id, p.x, p.y + 1);
+    });
+
+    (state.annotations || []).forEach(function (annotation) {
+      context.fillStyle = annotation.color || COLORS.red;
+      context.font = "600 14px IBM Plex Mono, monospace";
+      context.textAlign = annotation.align || "left";
+      context.textBaseline = "middle";
+      context.fillText(annotation.text, annotation.x * width, annotation.y * height);
+    });
+  }
+
+  function renderChips(element, values, latest, doneValues) {
+    element.innerHTML = "";
+    var done = asSet(doneValues);
+    values.forEach(function (value) {
+      var chip = document.createElement("span");
+      chip.className = "sequence-chip";
+      if (done.has(value)) chip.classList.add("done");
+      if (String(value) === String(latest)) chip.classList.add("latest");
+      chip.textContent = value;
+      element.appendChild(chip);
+    });
+  }
+
+  function renderStateItems(element, values) {
+    element.innerHTML = "";
+    values.forEach(function (value) {
+      var item = document.createElement("span");
+      item.className = "state-item";
+      item.textContent = value;
+      element.appendChild(item);
+    });
+  }
+
+  function createPlayer(options) {
+    var frames = [];
+    var position = 0;
+    var timer = null;
+    var playButton = document.getElementById(options.play);
+    var stepButton = document.getElementById(options.step);
+    var resetButton = document.getElementById(options.reset);
+    var speedElement = options.speed ? document.getElementById(options.speed) : null;
+
+    function pause() {
+      window.clearInterval(timer);
+      timer = null;
+      playButton.textContent = "Play";
+    }
+    function render() {
+      options.render(frames[position], position, frames.length);
+      var ended = position === frames.length - 1;
+      playButton.disabled = ended;
+      stepButton.disabled = ended;
+      if (ended && timer) pause();
+    }
+    function step() {
+      if (position < frames.length - 1) position += 1;
+      render();
+    }
+    function play() {
+      step();
+      if (position < frames.length - 1) {
+        timer = window.setInterval(step, speedElement ? Number(speedElement.value) : (options.interval || 760));
+        playButton.textContent = "Pause";
+      }
+    }
+    function reset() {
+      if (timer) pause();
+      frames = options.frames();
+      position = 0;
+      playButton.disabled = false;
+      stepButton.disabled = false;
+      render();
+    }
+    playButton.addEventListener("click", function () { timer ? pause() : play(); });
+    stepButton.addEventListener("click", step);
+    resetButton.addEventListener("click", reset);
+    if (speedElement) {
+      speedElement.addEventListener("change", function () {
+        if (!timer) return;
+        pause();
+        timer = window.setInterval(step, Number(speedElement.value));
+        playButton.textContent = "Pause";
+      });
+    }
+    reset();
+    return { reset: reset, pause: pause };
+  }
+
+  /* Syntax colouring */
+  (function () {
+    function escapeHtml(value) {
+      return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    var pattern = /(\/\/.*$)|\b(InorderTraversal|PreorderTraversal|PostorderTraversal|IterativeInorderTraversal|IterativePreorder|IterativePostorder|LEVEL-ORDER|SEARCH|Insert|Height|SumTree|build_tree)\b|\b(class|def|if|else|elif|return|while|for|not|or|and|is|NULL|None|Push|Pop|Visit|Initialize|Set|Create|Repeat|Enqueue|Dequeue)\b|\b(self|node|root|current|stack|key|left|right|data|queue|mid|arr|S|S1|S2)\b|(\d+)|(&lt;=|&gt;=|==|!=|←|≤|≥|≠|−|=|\+|-|\*|\/|&lt;|&gt;|·)/g;
+    document.querySelectorAll("pre.code").forEach(function (block) {
+      var html = block.textContent.split("\n").map(function (line) {
+        return escapeHtml(line).replace(pattern, function (token, comment, title, keyword, name, number) {
+          if (comment) return '<span class="syn-comment">' + token + "</span>";
+          if (title) return '<span class="syn-title">' + token + "</span>";
+          if (keyword) return '<span class="syn-keyword">' + token + "</span>";
+          if (name) return '<span class="syn-name">' + token + "</span>";
+          if (number) return '<span class="syn-number">' + token + "</span>";
+          return '<span class="syn-operator">' + token + "</span>";
+        });
+      }).join("\n");
+      block.innerHTML = html;
+      block.classList.add("syntax-colored");
+    });
+  })();
+
+  /* TOC and reveal */
+  (function () {
+    var links = document.querySelectorAll(".toc a");
+    var sections = document.querySelectorAll(".chapter-section");
+    if ("IntersectionObserver" in window) {
+      var byId = {};
+      links.forEach(function (link) { byId[link.getAttribute("href").slice(1)] = link; });
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          links.forEach(function (link) { link.classList.remove("current"); });
+          if (byId[entry.target.id]) byId[entry.target.id].classList.add("current");
+        });
+      }, { rootMargin: "-20% 0px -70% 0px" });
+      sections.forEach(function (section) { spy.observe(section); });
+    }
+    var revealElements = document.querySelectorAll(".chapter-section, .viz, .fig");
+    if (!("IntersectionObserver" in window)) {
+      revealElements.forEach(function (element) { element.classList.add("in"); });
+      return;
+    }
+    revealElements.forEach(function (element) { element.classList.add("reveal"); });
+    var reveal = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("in");
+        reveal.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: .04 });
+    revealElements.forEach(function (element) { reveal.observe(element); });
+  })();
+
+  /* Mini type diagrams */
+  (function () {
+    var specs = {
+      binary: PERFECT,
+      nonbinary: {
+        nodes: [
+          {id:"1",x:.5,y:.13},{id:"2",x:.2,y:.76},{id:"3",x:.5,y:.76},{id:"4",x:.8,y:.76}
+        ],
+        edges: [["1","2"],["1","3"],["1","4"]]
+      },
+      full: PERFECT,
+      complete: {
+        nodes: [
+          {id:"1",x:.5,y:.14},{id:"2",x:.28,y:.45},{id:"3",x:.72,y:.45},
+          {id:"4",x:.17,y:.78},{id:"5",x:.39,y:.78}
+        ],
+        edges: [["1","2"],["1","3"],["2","4"],["2","5"]]
+      }
+    };
+    document.querySelectorAll(".mini-tree").forEach(function (canvas) {
+      drawTree(canvas, specs[canvas.dataset.mini], {});
+    });
+  })();
+
+  /* General-tree anatomy */
+  (function () {
+    var canvas = document.getElementById("anatomy-canvas");
+    var label = document.getElementById("anatomy-label");
+    var status = document.getElementById("anatomy-status");
+    var frames = [
+      { visible:["1"], active:"1", label:"Node 1 is the root: the topmost node." },
+      { visible:["1","2","3","4"], active:"4", label:"Nodes 2, 3, and 4 are children of node 1." },
+      { visible:["1","2","3","4","5","6"], active:"2", label:"Node 2 is the parent of nodes 5 and 6." },
+      { visible:["1","2","3","4","5","6","7"], active:"7", label:"Node 3 connects to child 7 through one edge." },
+      { visible:["1","2","3","4","5","6","7","8","9"], active:"9", label:"Nodes 8 and 9 are children of node 4." },
+      { visible:["1","2","3","4","5","6","7","8","9","10"], active:"10", label:"Node 10 is a leaf: it has no children." },
+      {
+        visible:["1","2","3","4","5","6","7","8","9","10"],
+        label:"Complete tree: every child has one parent, and no cycle is present.",
+        annotations:[
+          {text:"root",x:.53,y:.05},{text:"parent",x:.77,y:.24},
+          {text:"leaf",x:.86,y:.61},{text:"child",x:.59,y:.61}
+        ]
+      }
+    ];
+    createPlayer({
+      play:"anatomy-play", step:"anatomy-step", reset:"anatomy-reset", speed:"anatomy-speed",
+      frames:function () { return frames; },
+      render:function (frame, position) {
+        drawTree(canvas, GENERAL, frame);
+        label.textContent = frame.label;
+        status.textContent = "step " + (position + 1) + "/" + frames.length;
+      }
+    });
+  })();
+
+  /* Array representation */
+  (function () {
+    var canvas = document.getElementById("rep-canvas");
+    var arrayElement = document.getElementById("rep-array");
+    var status = document.getElementById("rep-status");
+    var values = ["1","2","3","4","5","6","7"];
+    values.forEach(function (value, index) {
+      var cell = document.createElement("span");
+      cell.className = "array-cell";
+      cell.dataset.index = index;
+      cell.textContent = value;
+      arrayElement.appendChild(cell);
+    });
+    var frames = [{ index:-1, label:"The root is stored at index 0." }];
+    values.forEach(function (value, index) {
+      var labelText = index === 0
+        ? "A[0] = 1 is the root."
+        : "A[" + index + "] = " + value + "; parent index = " + Math.floor((index - 1) / 2) + ".";
+      frames.push({ index:index, label:labelText });
+    });
+    createPlayer({
+      play:"rep-play", step:"rep-step", reset:"rep-reset", interval:680,
+      frames:function () { return frames; },
+      render:function (frame) {
+        var visited = frame.index < 0 ? [] : values.slice(0, frame.index + 1);
+        drawTree(canvas, PERFECT, { active:frame.index < 0 ? null : values[frame.index], visited:visited.slice(0, -1) });
+        arrayElement.querySelectorAll(".array-cell").forEach(function (cell, index) {
+          cell.classList.toggle("active", index === frame.index);
+        });
+        status.textContent = frame.label;
+      }
+    });
+  })();
+
+  /* Recursive traversal laboratory */
+  (function () {
+    var sequences = {
+      inorder:["4","2","5","1","6","3","7"],
+      preorder:["1","2","4","5","3","6","7"],
+      postorder:["4","5","2","6","7","3","1"]
+    };
+    var names = { inorder:"Inorder", preorder:"Preorder", postorder:"Postorder" };
+    var mode = document.getElementById("trav-mode");
+    var canvas = document.getElementById("trav-canvas");
+    var output = document.getElementById("trav-output");
+    var label = document.getElementById("trav-label");
+    var status = document.getElementById("trav-status");
+    var player = createPlayer({
+      play:"trav-play", step:"trav-step", reset:"trav-reset", speed:"trav-speed",
+      frames:function () {
+        var order = sequences[mode.value];
+        var result = [{ active:null, visited:[], output:[], label:names[mode.value] + " traversal is ready." }];
+        order.forEach(function (node, index) {
+          result.push({
+            active:node, visited:order.slice(0, index + 1), output:order.slice(0, index + 1),
+            label:"Visit node " + node + "; append it to the " + names[mode.value].toLowerCase() + " sequence."
+          });
+        });
+        return result;
+      },
+      render:function (frame, position, length) {
+        drawTree(canvas, PERFECT, { active:frame.active, visited:frame.visited });
+        renderChips(output, frame.output, frame.active);
+        label.textContent = frame.label;
+        status.textContent = "visited " + frame.output.length + "/7 · step " + (position + 1) + "/" + length;
+      }
+    });
+    mode.addEventListener("change", player.reset);
+  })();
+
+  var LEFT = {"1":"2","2":"4","3":"6"};
+  var RIGHT = {"1":"3","2":"5","3":"7"};
+
+  function iterativeFrames(mode) {
+    var frames = [];
+    function pushFrame(stack, stack2, output, visited, active, label) {
+      frames.push({
+        stack:stack.slice(), stack2:stack2.slice(), output:output.slice(),
+        visited:visited.slice(), active:active, label:label
+      });
+    }
+    var stack = [];
+    var stack2 = [];
+    var output = [];
+    var visited = [];
+
+    if (mode === "inorder") {
+      var current = "1";
+      pushFrame(stack, stack2, output, visited, current, "Set current = root (1); the stack is empty.");
+      while (current || stack.length) {
+        while (current) {
+          stack.push(current);
+          var pushed = current;
+          current = LEFT[current] || null;
+          pushFrame(stack, stack2, output, visited, pushed,
+            "Push " + pushed + "; move current to its left child" + (current ? " (" + current + ")." : " (NULL)."));
+        }
+        var node = stack.pop();
+        output.push(node);
+        visited.push(node);
+        current = RIGHT[node] || null;
+        pushFrame(stack, stack2, output, visited, node,
+          "Pop and visit " + node + "; move current to its right child" + (current ? " (" + current + ")." : " (NULL)."));
+      }
+    } else if (mode === "preorder") {
+      stack.push("1");
+      pushFrame(stack, stack2, output, visited, null, "Push root 1 into stack S.");
+      while (stack.length) {
+        var preNode = stack.pop();
+        output.push(preNode);
+        visited.push(preNode);
+        pushFrame(stack, stack2, output, visited, preNode, "Pop and visit " + preNode + ".");
+        if (RIGHT[preNode]) {
+          stack.push(RIGHT[preNode]);
+          pushFrame(stack, stack2, output, visited, preNode, "Push right child " + RIGHT[preNode] + " first.");
+        }
+        if (LEFT[preNode]) {
+          stack.push(LEFT[preNode]);
+          pushFrame(stack, stack2, output, visited, preNode, "Push left child " + LEFT[preNode] + " so it is processed next.");
+        }
+      }
+    } else {
+      stack.push("1");
+      pushFrame(stack, stack2, output, visited, null, "Push root 1 into S1; S2 is empty.");
+      while (stack.length) {
+        var postNode = stack.pop();
+        stack2.push(postNode);
+        pushFrame(stack, stack2, output, visited, postNode, "Pop " + postNode + " from S1 and push it into S2.");
+        if (LEFT[postNode]) {
+          stack.push(LEFT[postNode]);
+          pushFrame(stack, stack2, output, visited, postNode, "Push left child " + LEFT[postNode] + " into S1.");
+        }
+        if (RIGHT[postNode]) {
+          stack.push(RIGHT[postNode]);
+          pushFrame(stack, stack2, output, visited, postNode, "Push right child " + RIGHT[postNode] + " into S1.");
+        }
+      }
+      while (stack2.length) {
+        var visitNode = stack2.pop();
+        output.push(visitNode);
+        visited.push(visitNode);
+        pushFrame(stack, stack2, output, visited, visitNode, "Pop and visit " + visitNode + " from S2.");
+      }
+    }
+    pushFrame(stack, stack2, output, visited, null, "Traversal complete: " + output.join(" → ") + ".");
+    return frames;
+  }
+
+  /* Iterative traversal laboratory */
+  (function () {
+    var mode = document.getElementById("iter-mode");
+    var canvas = document.getElementById("iter-canvas");
+    var stackElement = document.getElementById("iter-stack");
+    var stack2Element = document.getElementById("iter-stack2");
+    var secondWrap = document.getElementById("iter-second-wrap");
+    var output = document.getElementById("iter-output");
+    var label = document.getElementById("iter-label");
+    var status = document.getElementById("iter-status");
+    var player = createPlayer({
+      play:"iter-play", step:"iter-step", reset:"iter-reset", speed:"iter-speed",
+      frames:function () { return iterativeFrames(mode.value); },
+      render:function (frame, position, length) {
+        secondWrap.hidden = mode.value !== "postorder";
+        drawTree(canvas, PERFECT, { active:frame.active, visited:frame.visited });
+        renderStateItems(stackElement, frame.stack);
+        renderStateItems(stack2Element, frame.stack2);
+        renderChips(output, frame.output, frame.active);
+        label.textContent = frame.label;
+        status.textContent = "operation " + (position + 1) + "/" + length;
+      }
+    });
+    mode.addEventListener("change", player.reset);
+  })();
+
+  /* Level-order traversal */
+  (function () {
+    var frames = [];
+    var queue = [];
+    var output = [];
+    var visited = [];
+    function push(active, label) {
+      frames.push({ queue:queue.slice(), output:output.slice(), visited:visited.slice(), active:active, label:label });
+    }
+    push(null, "Initialize an empty queue.");
+    queue.push("1");
+    push("1", "Enqueue the root node 1.");
+    while (queue.length) {
+      var node = queue.shift();
+      output.push(node);
+      visited.push(node);
+      push(node, "Dequeue and process node " + node + ".");
+      if (LEFT[node]) {
+        queue.push(LEFT[node]);
+        push(node, "Enqueue left child " + LEFT[node] + ".");
+      }
+      if (RIGHT[node]) {
+        queue.push(RIGHT[node]);
+        push(node, "Enqueue right child " + RIGHT[node] + ".");
+      }
+    }
+    push(null, "The queue is empty; level-order traversal is complete.");
+    var canvas = document.getElementById("bfs-canvas");
+    var queueElement = document.getElementById("bfs-queue");
+    var outputElement = document.getElementById("bfs-output");
+    var label = document.getElementById("bfs-label");
+    var status = document.getElementById("bfs-status");
+    createPlayer({
+      play:"bfs-play", step:"bfs-step", reset:"bfs-reset", interval:720,
+      frames:function () { return frames; },
+      render:function (frame, position, length) {
+        drawTree(canvas, PERFECT, { active:frame.active, visited:frame.visited });
+        renderStateItems(queueElement, frame.queue);
+        renderStateItems(outputElement, frame.output);
+        label.textContent = frame.label;
+        status.textContent = "step " + (position + 1) + "/" + length;
+      }
+    });
+  })();
+
+  /* Reconstruct from inorder and preorder */
+  (function () {
+    var spec = {
+      nodes:[
+        {id:"A",x:.5,y:.13},{id:"B",x:.28,y:.43},{id:"C",x:.72,y:.43},
+        {id:"D",x:.16,y:.76},{id:"E",x:.40,y:.76},{id:"F",x:.62,y:.76}
+      ],
+      edges:[["A","B"],["A","C"],["B","D"],["B","E"],["C","F"]]
+    };
+    var frames = [
+      {visible:["A"],active:"A",label:"Preorder begins with A, so A is the root."},
+      {visible:["A","B"],active:"B",label:"Inorder splits at A: D B E is the left subtree; B is its root."},
+      {visible:["A","B","D","E"],active:"E",label:"Inorder D B E places D left of B and E right of B."},
+      {visible:["A","B","D","E","C"],active:"C",label:"The right inorder segment F C has root C."},
+      {visible:["A","B","D","E","C","F"],active:"F",label:"F appears left of C, so F becomes C's left child."},
+      {visible:["A","B","D","E","C","F"],visited:["D","E","B","F","C","A"],label:"Postorder is D → E → B → F → C → A.",answer:true}
+    ];
+    var canvas = document.getElementById("reconstruct-canvas");
+    var answer = document.getElementById("reconstruct-answer");
+    var label = document.getElementById("reconstruct-label");
+    var status = document.getElementById("reconstruct-status");
+    createPlayer({
+      play:"reconstruct-play", step:"reconstruct-step", reset:"reconstruct-reset", interval:850,
+      frames:function () { return frames; },
+      render:function (frame, position) {
+        drawTree(canvas, spec, frame);
+        answer.textContent = frame.answer ? "Postorder: D E B F C A" : "Postorder: —";
+        label.textContent = frame.label;
+        status.textContent = "construction step " + (position + 1) + "/" + frames.length;
+      }
+    });
+  })();
+
+  var BST_SPEC = {
+    nodes:[
+      {id:"10",x:.5,y:.12},{id:"5",x:.27,y:.42},{id:"15",x:.73,y:.42},
+      {id:"3",x:.14,y:.76},{id:"7",x:.39,y:.76},{id:"12",x:.61,y:.76},{id:"18",x:.86,y:.76}
+    ],
+    edges:[["10","5"],["10","15"],["5","3"],["5","7"],["15","12"],["15","18"]]
+  };
+
+  /* BST search */
+  (function () {
+    var children = {
+      "10":{left:"5",right:"15"}, "5":{left:"3",right:"7"},
+      "15":{left:"12",right:"18"}, "3":{}, "7":{}, "12":{}, "18":{}
+    };
+    var keyElement = document.getElementById("search-key");
+    var canvas = document.getElementById("search-canvas");
+    var label = document.getElementById("search-label");
+    var status = document.getElementById("search-status");
+    var player = createPlayer({
+      play:"search-play", step:"search-step", reset:"search-reset", interval:850,
+      frames:function () {
+        var key = Number(keyElement.value);
+        var current = "10";
+        var path = [];
+        var frames = [{active:null,path:[],label:"Start at the root and search for key " + key + ".",comparisons:0}];
+        while (current) {
+          path.push(current);
+          var currentValue = Number(current);
+          if (key === currentValue) {
+            frames.push({active:current,path:path.slice(),found:current,
+              label:key + " = " + current + "; the key is found.",comparisons:path.length});
+            return frames;
+          }
+          var direction = key < currentValue ? "left" : "right";
+          frames.push({active:current,path:path.slice(),
+            label:key + (key < currentValue ? " < " : " > ") + current + "; continue into the " + direction + " subtree.",
+            comparisons:path.length});
+          current = children[current][direction] || null;
+        }
+        frames.push({active:null,path:path.slice(),label:"The next pointer is NULL; key " + key + " is absent.",comparisons:path.length});
+        return frames;
+      },
+      render:function (frame) {
+        drawTree(canvas, BST_SPEC, frame);
+        label.textContent = frame.label;
+        status.textContent = "comparisons: " + frame.comparisons;
+      }
+    });
+    keyElement.addEventListener("change", player.reset);
+  })();
+
+  function insertNode(root, value) {
+    if (!root) return { value:value, left:null, right:null };
+    var current = root;
+    while (true) {
+      if (value < current.value) {
+        if (!current.left) { current.left = {value:value,left:null,right:null}; break; }
+        current = current.left;
+      } else {
+        if (!current.right) { current.right = {value:value,left:null,right:null}; break; }
+        current = current.right;
+      }
+    }
+    return root;
+  }
+
+  var SKEWED_SPEC = {
+    nodes:[
+      {id:"3",x:.18,y:.08},{id:"5",x:.29,y:.21},{id:"7",x:.40,y:.34},
+      {id:"10",x:.51,y:.47},{id:"12",x:.62,y:.60},{id:"15",x:.73,y:.73},
+      {id:"18",x:.84,y:.86}
+    ],
+    edges:[["3","5"],["5","7"],["7","10"],["10","12"],["12","15"],["15","18"]]
+  };
+
+  function stableBuildSpec(mode, inserted) {
+    var fullSpec = mode === "skewed" ? SKEWED_SPEC : BST_SPEC;
+    var shown = asSet(inserted);
+    return {
+      nodes:fullSpec.nodes.filter(function (node) { return shown.has(String(node.id)); }),
+      edges:fullSpec.edges.filter(function (edge) {
+        return shown.has(String(edge[0])) && shown.has(String(edge[1]));
+      })
+    };
+  }
+
+  function buildFrames(mode) {
+    var display = [10,5,15,3,7,12,18];
+    var order = display.slice();
+    if (mode === "skewed") display = order = [3,5,7,10,12,15,18];
+    if (mode === "balanced") {
+      display = [3,5,7,10,12,15,18];
+      order = [10,5,3,7,15,12,18];
+    }
+    var root = null;
+    var inserted = [];
+    var frames = [{spec:stableBuildSpec(mode, inserted),active:null,inserted:[],display:display,
+      label:"The tree is empty.",count:0,mode:mode}];
+    order.forEach(function (value) {
+      if (mode === "balanced") {
+        root = insertNode(root, value);
+        inserted.push(String(value));
+        frames.push({
+          spec:stableBuildSpec(mode, inserted), active:String(value),
+          inserted:inserted.slice(), display:display,
+          label:"Choose " + value + " as the midpoint root of its current subarray.",
+          count:inserted.length, mode:mode
+        });
+        return;
+      }
+      if (!root) {
+        root = insertNode(root, value);
+        inserted.push(String(value));
+        frames.push({spec:stableBuildSpec(mode, inserted),active:String(value),inserted:inserted.slice(),display:display,
+          label:"Insert " + value + " as the root.",count:1,mode:mode});
+        return;
+      }
+      var current = root;
+      var path = [];
+      while (current) {
+        path.push(String(current.value));
+        frames.push({spec:stableBuildSpec(mode, inserted),active:String(current.value),
+          inserted:inserted.slice(),display:display,
+          label:value + (value < current.value ? " < " : " > ") + current.value +
+            "; follow the " + (value < current.value ? "left" : "right") + " pointer.",
+          count:inserted.length,mode:mode,path:path.slice()});
+        var next = value < current.value ? current.left : current.right;
+        if (!next) break;
+        current = next;
+      }
+      root = insertNode(root, value);
+      inserted.push(String(value));
+      frames.push({spec:stableBuildSpec(mode, inserted),active:String(value),inserted:inserted.slice(),display:display,
+        label:"The pointer is NULL; insert " + value + " here.",
+        count:inserted.length,mode:mode,path:path.slice()});
+    });
+    frames.push({spec:stableBuildSpec(mode, inserted),active:null,inserted:inserted.slice(),display:display,
+      label:mode === "skewed" ? "Sorted input creates a right-skewed BST." :
+        mode === "balanced" ? "Middle-element construction produces a balanced BST." :
+        "The lecture insertion order produces a balanced BST.",
+      count:7,mode:mode});
+    return frames;
+  }
+
+  /* BST construction */
+  (function () {
+    var mode = document.getElementById("build-mode");
+    var canvas = document.getElementById("build-canvas");
+    var input = document.getElementById("build-input");
+    var label = document.getElementById("build-label");
+    var status = document.getElementById("build-status");
+    var player = createPlayer({
+      play:"build-play", step:"build-step", reset:"build-reset", speed:"build-speed",
+      frames:function () { return buildFrames(mode.value); },
+      render:function (frame) {
+        drawTree(canvas, frame.spec, {active:frame.active,path:frame.path || []});
+        renderChips(input, frame.display.map(String), frame.active, frame.inserted);
+        label.textContent = frame.label;
+        status.textContent = frame.mode === "skewed"
+          ? "inserted " + frame.count + "/7 · worst construction O(n²)"
+          : frame.mode === "balanced"
+            ? "placed " + frame.count + "/7 · choose each midpoint"
+            : "inserted " + frame.count + "/7 · average construction O(n log n)";
+      }
+    });
+    mode.addEventListener("change", player.reset);
+  })();
+})();
+</script>
+</body>
+</html>
