@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5 · Recursion and Divide &amp; Conquer · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+
+
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
+
+:root {
+  --paper: #f7f9fc;
+  --card: #ffffff;
+  --ink: #101c33;
+  --ink-soft: #46536b;
+  --line: #dbe4f0;
+  --grid: #e7edf6;
+  --accent: #0b7285;
+  --accent-dark: #085a68;
+  --accent-soft: #e0f1f4;
+  --amber: #b45309;
+  --amber-soft: #fdf1df;
+  --code-bg: #0f1a2e;
+  --code-text: #dbe7ff;
+  --radius: 10px;
+  --maxw: 1180px;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 16.5px;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-dark); }
+
+code, pre { font-family: var(--font-mono); }
+
+/* ---------- Top navigation ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav {
+  max-width: var(--maxw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--ink); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-text strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .01em; }
+.brand-text span { font-size: 12px; color: var(--ink-soft); }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: block; padding: 8px 14px; border-radius: 8px;
+  color: var(--ink-soft); font-weight: 500; font-size: 15px;
+}
+.nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.nav-links a.active { background: var(--ink); color: #fff; }
+
+/* ---------- Hero (graph-paper motif) ---------- */
+.hero {
+  background:
+    linear-gradient(180deg, rgba(247,249,252,0) 0%, var(--paper) 96%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 72px 24px 64px;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4.4vw, 3.3rem);
+  letter-spacing: -0.02em; max-width: 780px;
+}
+.hero p.lede { margin-top: 16px; max-width: 640px; color: var(--ink-soft); font-size: 1.08rem; }
+.hero-meta { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-chip {
+  font-size: 13.5px; color: var(--ink-soft);
+  background: var(--card); border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px;
+}
+.hero-actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 15px; font-family: var(--font-display);
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: #1c2c4d; color: #fff; }
+.btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+/* ---------- Generic page section ---------- */
+.page { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 80px; }
+.section-title { font-size: 1.6rem; margin-bottom: 6px; }
+.section-sub { color: var(--ink-soft); margin-bottom: 28px; }
+
+/* ---------- Chapter cards (Topics page) ---------- */
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.chapter-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: translateY(-2px); }
+.chapter-num {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-card h3 { font-size: 1.15rem; color: var(--ink); }
+.chapter-card p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: var(--font-mono); font-size: 11.5px;
+  background: var(--accent-soft); color: var(--accent-dark);
+  padding: 3px 9px; border-radius: 6px;
+}
+.chapter-card.locked { opacity: .62; background: #fbfcfe; }
+.chapter-card.locked h3 { color: var(--ink-soft); }
+.badge-soon {
+  align-self: flex-start; font-size: 11.5px; font-family: var(--font-mono);
+  color: var(--ink-soft); border: 1px dashed var(--line);
+  padding: 3px 9px; border-radius: 6px;
+}
+
+/* ---------- Chapter page layout ---------- */
+.chapter-layout {
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; grid-template-columns: 250px minmax(0, 1fr);
+  gap: 44px; padding: 40px 24px 90px;
+}
+.toc {
+  position: sticky; top: 86px; align-self: start;
+  max-height: calc(100vh - 110px); overflow-y: auto;
+  padding-right: 6px;
+}
+.toc h4 {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
+}
+.toc ol { list-style: none; border-left: 2px solid var(--line); }
+.toc li a {
+  display: block; padding: 6px 14px; font-size: 13.8px; color: var(--ink-soft);
+  border-left: 2px solid transparent; margin-left: -2px; line-height: 1.4;
+}
+.toc li a:hover { color: var(--accent-dark); }
+.toc li a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+.chapter-body { min-width: 0; }
+.chapter-kicker {
+  font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-body > h1 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); letter-spacing: -0.02em; margin: 8px 0 10px; }
+.chapter-intro { color: var(--ink-soft); max-width: 720px; margin-bottom: 8px; }
+
+.chapter-section { margin-top: 54px; }
+.chapter-section > h2 {
+  font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chapter-section h3 { font-size: 1.13rem; margin: 26px 0 10px; }
+.chapter-section p { margin-bottom: 14px; max-width: 76ch; }
+.chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+.chapter-section li { margin-bottom: 7px; max-width: 72ch; }
+.sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
+
+/* ---------- Content blocks ---------- */
+.def-box {
+  background: var(--accent-soft); border: 1px solid #bfdee5;
+  border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
+}
+.def-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 6px;
+}
+.note-box {
+  background: var(--amber-soft); border: 1px solid #f3ddb4;
+  border-radius: var(--radius); padding: 16px 20px; margin: 18px 0;
+}
+.note-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
+}
+
+pre.code {
+  background: var(--code-bg); color: var(--code-text);
+  border-radius: var(--radius); padding: 18px 20px;
+  overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
+}
+code.inline {
+  background: #eaeff7; color: #24344f;
+  padding: 2px 7px; border-radius: 5px; font-size: .88em;
+}
+.o-chip {
+  display: inline-block; font-family: var(--font-mono); font-size: .82em;
+  background: var(--amber-soft); color: var(--amber);
+  border: 1px solid #f0d9ac; padding: 2px 9px; border-radius: 999px;
+  font-weight: 600; white-space: nowrap;
+}
+
+table.tbl {
+  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; font-size: 15px;
+}
+table.tbl th, table.tbl td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+table.tbl th {
+  background: var(--ink); color: #fff; font-family: var(--font-display);
+  font-weight: 600; font-size: 14px;
+}
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl tr:nth-child(even) td { background: #fbfcfe; }
+
+.example-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px; margin: 14px 0;
+}
+.example-card .ex-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.example-card .ex-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.example-card pre.code { margin-bottom: 8px; }
+.example-card .ex-why { font-size: 14.3px; color: var(--ink-soft); margin: 0; }
+
+/* ---------- Bubble sort visualizer ---------- */
+.viz {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin: 20px 0;
+}
+.viz-title { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
+.viz-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+.viz-bars {
+  display: flex; align-items: flex-end; gap: 10px;
+  height: 170px; padding: 6px 2px 0;
+}
+.viz-bar {
+  flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
+  background: #c6d4e8; position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  transition: height .25s ease, background .18s ease;
+}
+.viz-bar span {
+  color: #fff; font-family: var(--font-mono); font-size: 13px;
+  font-weight: 600; padding-bottom: 6px;
+}
+.viz-bar.compare { background: var(--amber); }
+.viz-bar.swap { background: #c2410c; }
+.viz-bar.sorted { background: var(--accent); }
+.viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.viz-controls button {
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+}
+.viz-controls button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
+.viz-status { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- Chapter prev/next footer ---------- */
+.chapter-nav {
+  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.chapter-nav a, .chapter-nav span.disabled {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+}
+.chapter-nav span.disabled { color: #9aa7bd; }
+
+/* ---------- Footer ---------- */
+.site-footer { border-top: 1px solid var(--line); background: var(--card); }
+.footer-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 26px 24px;
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  font-size: 14px; color: var(--ink-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
+  .toc { position: static; max-height: none; border: 1px solid var(--line);
+         border-radius: var(--radius); padding: 16px; background: var(--card); margin-bottom: 22px; }
+  .nav { flex-direction: column; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+
+
+
+    /* Slide figures */
+    .fig {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 12px; margin: 16px 0; max-width: 700px;
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+    .fig-md { max-width: 560px; margin-left: auto; margin-right: auto; }
+    .fig-sm { max-width: 400px; margin-left: auto; margin-right: auto; }
+    .fig:hover { box-shadow: 0 10px 26px rgba(16,28,51,.12); transform: translateY(-2px); }
+    .fig img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    .fig figcaption {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
+      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
+    }
+    .fig figcaption b { color: var(--accent-dark); }
+
+    /* Scroll-reveal animation */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Chapter title entrance */
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+    .chapter-body > h1 { animation-delay: .08s; }
+    .chapter-intro { animation-delay: .16s; }
+
+    /* Insertion sort visualizer extras */
+    .viz-bar.key { background: var(--amber); box-shadow: 0 6px 14px rgba(240,163,63,.45); }
+    .viz-bar.shift { background: #c2410c; }
+    .viz-bar.prefix { background: #79c6d4; }
+    .viz-bar.lifted { transform: translateY(-16px); }
+    .viz-bar { transition: height .3s ease, background .2s ease, transform .3s ease; }
+    .viz-legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px;
+      font-size: 13px; color: var(--ink-soft);
+    }
+    .viz-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .viz-legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+    .viz-idx { display: flex; gap: 10px; }
+    .viz-idx b {
+      flex: 1; max-width: 76px; text-align: center;
+      font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; color: var(--ink-soft);
+    }
+    .viz-controls select {
+      font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    }
+    .viz-label {
+      font-family: var(--font-mono); font-size: 13px; color: var(--ink);
+      background: var(--amber-soft); border: 1px solid #f0d9ac; border-radius: 8px;
+      padding: 8px 12px; margin-top: 14px; min-height: 20px;
+    }
+    /* Keyword highlight */
+    .kw { color: #c2179b; }
+    /* Collapsible answers */
+    details.ans { margin-top: 10px; }
+    details.ans summary {
+      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+      color: var(--accent-dark); background: var(--accent-soft);
+      padding: 7px 14px; border-radius: 8px; user-select: none;
+      border: 1px solid #bfdee5;
+    }
+    details.ans summary::-webkit-details-marker { display: none; }
+    details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
+    details.ans[open] summary::before { content: "\2212"; }
+    details.ans .ans-body { margin-top: 10px; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; }
+      .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
+    }
+
+    /* Binary search demo (chapter 3 only) */
+    .bs-cells { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+    .bs-cell {
+      width: 52px; padding: 8px 0 4px; text-align: center;
+      background: #eaeff7; border: 2px solid transparent; border-radius: 8px;
+      font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: #24344f;
+      transition: background .18s ease, opacity .18s ease;
+    }
+    .bs-cell small { display: block; font-weight: 400; font-size: 10.5px; color: var(--ink-soft); }
+    .bs-cell.dead { opacity: .28; }
+    .bs-cell.mid { background: var(--amber-soft); border-color: var(--amber); }
+    .bs-cell.found { background: var(--accent); color: #fff; }
+    .bs-cell.found small { color: #d9f2f6; }
+    .bs-pointers { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+  
+  
+
+    .plot-svg { width: 100%; height: auto; display: block; }
+    .prop-list { list-style: none; margin: 10px 0 16px !important; }
+    .prop-list li {
+      font-family: var(--font-mono); font-size: 14px; color: var(--ink);
+      background: #fbfcfe; border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 14px; margin-bottom: 8px !important; max-width: 640px;
+    }
+    .prop-list li b { color: var(--accent-dark); font-weight: 600; }
+    /* Big-O playground */
+    .pg-svg { width: 100%; max-width: 660px; background: #fbfcfe; border: 1px solid var(--line); border-radius: 10px; display: block; }
+    .pg-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
+    .pg-controls label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
+    .pg-controls input[type="range"] { accent-color: var(--accent); width: 140px; }
+    .pg-controls select { font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+    .pg-val { font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark); min-width: 44px; }
+    .pg-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
+    .pg-legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  
+  </style>
+  <style>
+    /* Call-stack animation */
+    .stack-wrap { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-end; }
+    .stack-col { display: flex; flex-direction: column-reverse; gap: 6px; min-width: 210px; min-height: 240px; justify-content: flex-start; }
+    .stack-frame {
+      font-family: var(--font-mono); font-size: 14px; font-weight: 600;
+      background: var(--accent-soft); color: var(--accent-dark);
+      border: 1.5px solid #bfdee5; border-radius: 8px; padding: 10px 14px;
+      animation: pushin .3s ease both;
+    }
+    .stack-frame.top { background: var(--amber-soft); color: var(--amber); border-color: #f0d9ac; }
+    .stack-frame.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    @keyframes pushin { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+    .stack-base { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); text-align: center; border-top: 2px solid var(--line); padding-top: 6px; }
+    @media (prefers-reduced-motion: reduce) { .stack-frame { animation: none; } }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">O(n)</div>
+      <div class="brand-text">
+        <strong>Design &amp; Analysis of Algorithms</strong>
+        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="topics.html" class="active">Topics</a></li>
+      <li><a href="practical.html">Practical</a></li>
+      <li><a href="tutorials.html">Tutorials</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="chapter-layout">
+
+  <aside class="toc">
+    <h4>In this chapter</h4>
+    <ol>
+      <li><a href="#sec-1">5.1 Functions — a Refresher</a></li>
+      <li><a href="#sec-2">5.2 Recursive Functions</a></li>
+      <li><a href="#sec-3">5.3 Example: Factorial</a></li>
+      <li><a href="#sec-4">5.4 From Recursion to Recurrences</a></li>
+      <li><a href="#sec-5">5.5 The Substitution Method</a></li>
+      <li><a href="#sec-6">5.6 The Recursion-Tree Method</a></li>
+      <li><a href="#sec-7">5.7 The Master Theorem</a></li>
+      <li><a href="#sec-8">5.8 Master Theorem: Worked Examples</a></li>
+      <li><a href="#sec-9">5.9 Master Theorem: Decreasing Functions</a></li>
+      <li><a href="#sec-10">5.10 Master Theorem: Dividing Functions</a></li>
+      <li><a href="#sec-11">5.11 The Master Calculator</a></li>
+      <li><a href="#sec-12">5.12 Binary Search: Iterative vs Recursive</a></li>
+      <li><a href="#sec-13">5.13 Recursion Practice Problems</a></li>
+      <li><a href="#sec-14">5.14 Divide and Conquer</a></li>
+      <li><a href="#sec-15">5.15 D&amp;C: Pros, Cons, and Examples</a></li>
+    </ol>
+  </aside>
+
+  <main class="chapter-body">
+    <span class="chapter-kicker">Chapter 05</span>
+    <h1>Recursion and Divide &amp; Conquer</h1>
+    <p class="chapter-intro">
+      Chapters 3 and 4 analysed loops. This chapter analyses functions that call
+      themselves: what recursion is, how its cost becomes a recurrence relation, and
+      three ways to solve recurrences — substitution, recursion trees, and the Master
+      theorem (in its classic, decreasing, and dividing forms). We close with the design
+      paradigm built on recursion: divide and conquer.
+    </p>
+
+    <!-- 5.1 -->
+    <section class="chapter-section" id="sec-1">
+      <h2><span class="sec-no">5.1</span>Functions — a Quick Refresher</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Function</span>
+        A reusable block of code that performs a specific task: takes input,
+        processes it, and may return an output.
+      </div>
+      <pre class="code">def function(arguments):
+    steps
+    return result</pre>
+      <p>Why functions are used:</p>
+      <ul>
+        <li><strong class="kw">Code reusability</strong> — write once, use many times.</li>
+        <li><strong class="kw">Modularity</strong> — break a large problem into smaller parts.</li>
+        <li><strong class="kw">Readability</strong> — the program becomes easier to understand.</li>
+        <li><strong class="kw">Maintainability</strong> — easy to debug and modify.</li>
+      </ul>
+    </section>
+
+    <!-- 5.2 -->
+    <section class="chapter-section" id="sec-2">
+      <h2><span class="sec-no">5.2</span>Recursive Functions</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Recursive function</span>
+        A function that <strong>calls itself</strong>.
+      </div>
+      <pre class="code">def recursive_function(parameters):
+    if base_case_condition:
+        return result
+    else:
+        return recursive_function(smaller_problem)</pre>
+      <h3>Key features</h3>
+      <ul>
+        <li><strong class="kw">Base case(s)</strong> — to terminate the recursion.</li>
+        <li><strong class="kw">Recursive case(s)</strong> — to break the problem into smaller instances.</li>
+      </ul>
+      <div class="note-box">
+        <span class="def-label">No base case?</span>
+        Without a reachable base case the function calls itself forever — in practice the
+        call stack overflows and the program crashes. Every recursive design starts by
+        asking: <em>what is the smallest input I can answer directly?</em>
+      </div>
+      <h3>Applications</h3>
+      <p>Factorial computation, the Fibonacci sequence, tree traversals, and many more.</p>
+    </section>
+
+    <!-- 5.3 -->
+    <section class="chapter-section" id="sec-3">
+      <h2><span class="sec-no">5.3</span>Example: Factorial</h2>
+      <pre class="code">def fact(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * fact(n - 1)</pre>
+      <p>
+        Calling <code class="inline">fact(5)</code> unfolds into a chain:
+        5 &#215; fact(4) &#8594; 4 &#215; fact(3) &#8594; 3 &#215; fact(2) &#8594; 2 &#215; fact(1) &#8594; 1.
+        Each call <em>waits</em> for the next one on the call stack; only when
+        <code class="inline">fact(1)</code> returns do the multiplications happen, in reverse.
+      </p>
+
+      <div class="viz" id="stk">
+        <div class="viz-title">Watch it: the call stack of fact(5)</div>
+        <div class="viz-sub">Calls are pushed until the base case, then pop in reverse while the products are computed. Amber = the frame currently executing; teal = returned with its value.</div>
+        <div class="stack-wrap">
+          <div>
+            <div class="stack-col" id="stk-col"></div>
+            <div class="stack-base">call stack (grows upward)</div>
+          </div>
+        </div>
+        <div class="viz-label" id="stk-label">Press Play or Step to start.</div>
+        <div class="viz-controls">
+          <button class="primary" id="stk-play">Play</button>
+          <button id="stk-step">Step</button>
+          <button id="stk-reset">Reset</button>
+          <span class="viz-status" id="stk-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5.4 -->
+    <section class="chapter-section" id="sec-4">
+      <h2><span class="sec-no">5.4</span>From Recursion to Recurrences</h2>
+      <p>
+        What is the running time of <code class="inline">fact(n)</code>? Each call does constant
+        work c (the comparison and one multiplication) plus <em>the time of the smaller
+        call</em>: T(n) = T(n&#8722;1) + c, unwinding as T(n&#8722;1) + c &#8594; T(n&#8722;2) + c + c &#8594; &#8230;
+        down to T(1). The cost of a recursive function is naturally another recursive
+        expression:
+      </p>
+      <div class="def-box">
+        <span class="def-label">Recurrence for fact(n)</span>
+        T(n) = 1 &nbsp;&nbsp;when n &#8804; 1
+        <br>
+        T(n) = T(n&#8722;1) + 1 &nbsp;&nbsp;when n &#62; 1
+      </div>
+      <p>Equations of this shape are called <strong class="kw">recurrence relations</strong>. Four standard techniques solve them:</p>
+      <ul>
+        <li><strong class="kw">Substitution method</strong> — unroll the recurrence step by step (&#167;5.5).</li>
+        <li><strong class="kw">Recursion-tree method</strong> — draw the calls as a tree and sum level by level (&#167;5.6).</li>
+        <li><strong class="kw">Master method</strong> — a ready-made theorem for common shapes (&#167;5.7&#8211;5.10).</li>
+        <li><strong class="kw">Akra&#8211;Bazzi method</strong> — a generalisation for unequal splits (beyond this course's scope).</li>
+      </ul>
+    </section>
+
+    <!-- 5.5 -->
+    <section class="chapter-section" id="sec-5">
+      <h2><span class="sec-no">5.5</span>The Substitution Method</h2>
+      <p>Unroll the recurrence until the pattern is clear, then close it with the base case — exactly as we did for binary search in Chapter 3:</p>
+      <pre class="code">T(n) = T(n−1) + c
+     = T(n−2) + c + c
+     = T(n−3) + c + c + c
+     ⋮
+     = T(n−k) + k·c
+
+Let n − k = 1  ⇒  k = n − 1
+Since T(1) = 1:  T(n) = 1 + (n−1)·c  ⇒  O(n)</pre>
+
+      <h3>Exercises — solve using the substitution method</h3>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q1 — T(n) = T(n&#8722;1) + n, with T(1) = 1</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(n&#178;)</span>
+          <pre class="code" style="margin-top:8px;">T(n) = T(n−1) + n
+     = T(n−2) + (n−1) + n
+     = T(n−3) + (n−2) + (n−1) + n
+     ⋮
+     = T(1) + 2 + 3 + ⋯ + n
+     = n(n+1)/2  ⇒  O(n²)</pre>
+          <p class="ex-why">Each level adds the current n, so the total is the arithmetic series — the same
+          triangular sum behind selection sort's recurrence (Chapter 3).</p></div>
+        </details>
+      </div>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q2 — T(n) = T(n&#8722;1) + log n, with T(1) = 1</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(n log n)</span>
+          <pre class="code" style="margin-top:8px;">T(n) = T(1) + log 2 + log 3 + ⋯ + log n
+     = 1 + log(2 · 3 · ⋯ · n)
+     = 1 + log(n!)  ≈  n log n        (Stirling)</pre>
+          <p class="ex-why">The sum of logarithms is the log of the product — log(n!) — which grows as
+          &#920;(n log n). A useful identity to remember.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.6 -->
+    <section class="chapter-section" id="sec-6">
+      <h2><span class="sec-no">5.6</span>The Recursion-Tree Method</h2>
+      <p>
+        Draw every recursive call as a node labelled with its <em>local</em> cost, sum
+        each level, then sum the levels. Three trees tell most of the story:
+      </p>
+
+      <h3>A balanced split: T(n) = 2T(n/2) + n</h3>
+      <figure class="fig">
+        <svg class="plot-svg" viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balanced recursion tree for T(n) = 2T(n/2) + n">
+          <text x="14" y="45" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <text x="14" y="105" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/2</text>
+          <text x="14" y="165" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/4</text>
+          <text x="6" y="225" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">&#8230;</text>
+          <line x1="294.6" y1="47.1" x2="195.4" y2="92.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="325.4" y1="47.1" x2="424.6" y2="92.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="167.1" y1="111.1" x2="122.9" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="192.9" y1="111.1" x2="237.1" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="427.1" y1="111.1" x2="382.9" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="452.9" y1="111.1" x2="497.1" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="310" cy="40" r="17" fill="#0b7285"/><text x="310" y="45" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n</text>
+          <circle cx="180" cy="100" r="17" fill="#0b7285"/><text x="180" y="105" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/2</text>
+          <circle cx="440" cy="100" r="17" fill="#0b7285"/><text x="440" y="105" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/2</text>
+          <circle cx="110" cy="160" r="15" fill="#0b7285"/><text x="110" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="250" cy="160" r="15" fill="#0b7285"/><text x="250" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="370" cy="160" r="15" fill="#0b7285"/><text x="370" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="510" cy="160" r="15" fill="#0b7285"/><text x="510" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <text x="110" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="250" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="370" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="510" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="606" y="45" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">n</text>
+          <text x="606" y="105" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">n/2 + n/2 = n</text>
+          <text x="606" y="165" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">4 &#215; n/4 = n</text>
+          <line x1="0" y1="266" x2="620" y2="266" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="286" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">height = log&#8322;n levels &#183; total cost = n &#215; log&#8322;n = &#920;(n log n)</text>
+          </svg>
+        <figcaption><b>Fig 5.1</b> &#183; Every level costs exactly n (two halves of n at level 1, four quarters at level 2, &#8230;), and halving reaches 1 after log&#8322;n levels — total &#920;(n log n). This is merge sort's recurrence.</figcaption>
+      </figure>
+
+      <h3>An unbalanced split: T(n) = T(n/3) + T(2n/3) + n</h3>
+      <figure class="fig">
+        <svg class="plot-svg" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Unbalanced recursion tree for T(n) = T(n/3) + T(2n/3) + n">
+          <line x1="137.1" y1="47.1" x2="92.9" y2="84.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="165.4" y1="43.1" x2="264.6" y2="88.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="72.4" y1="111.2" x2="57.6" y2="140.8" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="92.9" y1="107.1" x2="137.1" y2="144.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="268.0" y1="108.0" x2="232.0" y2="144.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="295.2" y1="103.6" x2="384.8" y2="148.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="400.0" y1="173.0" x2="400.0" y2="199.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="150" cy="36" r="17" fill="#0b7285"/><text x="150" y="41" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n</text>
+          <circle cx="80" cy="96" r="15" fill="#0b7285"/><text x="80" y="101" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/3</text>
+          <circle cx="280" cy="96" r="16" fill="#0b7285"/><text x="280" y="101" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2n/3</text>
+          <circle cx="50" cy="156" r="14" fill="#0b7285"/><text x="50" y="161" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/9</text>
+          <circle cx="150" cy="156" r="14" fill="#0b7285"/><text x="150" y="161" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2n/9</text>
+          <circle cx="220" cy="156" r="14" fill="#0b7285"/><text x="220" y="161" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2n/9</text>
+          <circle cx="400" cy="156" r="14" fill="#0b7285"/><text x="400" y="161" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">4n/9</text>
+          <circle cx="400" cy="216" r="14" fill="#9aa7bd"/><text x="400" y="221" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8230;</text>
+          <text x="12" y="41" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <text x="12" y="101" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">&#8804; n</text>
+          <text x="12" y="161" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">&#8804; n</text>
+          <text x="460" y="222" font-size="12" font-family="IBM Plex Mono, monospace" fill="#085a68">deepest path: keep taking 2n/3</text>
+          <line x1="0" y1="286" x2="620" y2="286" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="306" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">each level costs at most n &#183; height = log&#8323;&#8725;&#8322;n (the 2n/3 branch shrinks slowest) &#183; total O(n log n)</text>
+          </svg>
+        <figcaption><b>Fig 5.2</b> &#183; Levels still cost at most n, but the deepest path follows the 2n/3 side, giving height log&#8323;&#8725;&#8322;n. Total: O(n log n) — an uneven split changes the constant, not the growth rate.</figcaption>
+      </figure>
+
+      <h3>The general picture: T(n) = a&#183;T(n/b) + f(n)</h3>
+      <figure class="fig">
+        <svg class="plot-svg" viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="General recursion tree for T(n) = a T(n/b) + f(n)">
+          <line x1="294.0" y1="41.7" x2="156.0" y2="90.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="310.0" y1="53.0" x2="310.0" y2="79.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="326.0" y1="41.7" x2="464.0" y2="90.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="129.1" y1="109.1" x2="100.9" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="140.0" y1="113.0" x2="140.0" y2="139.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="150.9" y1="109.1" x2="179.1" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="299.1" y1="109.1" x2="270.9" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="310.0" y1="113.0" x2="310.0" y2="139.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="320.9" y1="109.1" x2="349.1" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="469.1" y1="109.1" x2="440.9" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="480.0" y1="113.0" x2="480.0" y2="139.0" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="490.9" y1="109.1" x2="519.1" y2="142.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="310" cy="36" r="18" fill="#0b7285"/><text x="310" y="41" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">f(n)</text>
+          <circle cx="140" cy="96" r="15" fill="#0b7285"/><text x="140" y="101" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">f(n/b)</text>
+          <circle cx="310" cy="96" r="15" fill="#0b7285"/><text x="310" y="101" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">f(n/b)</text>
+          <circle cx="480" cy="96" r="15" fill="#0b7285"/><text x="480" y="101" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">f(n/b)</text>
+          <circle cx="90" cy="156" r="11" fill="#9aa7bd"/><text x="90" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="140" cy="156" r="11" fill="#9aa7bd"/><text x="140" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="190" cy="156" r="11" fill="#9aa7bd"/><text x="190" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="260" cy="156" r="11" fill="#9aa7bd"/><text x="260" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="310" cy="156" r="11" fill="#9aa7bd"/><text x="310" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="360" cy="156" r="11" fill="#9aa7bd"/><text x="360" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="430" cy="156" r="11" fill="#9aa7bd"/><text x="430" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="480" cy="156" r="11" fill="#9aa7bd"/><text x="480" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <circle cx="530" cy="156" r="11" fill="#9aa7bd"/><text x="530" y="161" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">&#8942;</text>
+          <text x="606" y="42" text-anchor="end" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">a children per node</text>
+          <text x="14" y="41" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">1 node</text>
+          <text x="14" y="101" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">a nodes</text>
+          <text x="14" y="161" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">a&#178; nodes</text>
+          <text x="310" y="230" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">&#8942;</text>
+          <text x="310" y="256" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#b45309" font-weight="600">height = log&#8271;n &#183; leaves = a^(log&#8271;n) = n^(log&#8271;a), each doing &#920;(1) work</text>
+          <line x1="0" y1="284" x2="620" y2="284" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="298" font-size="12" font-family="IBM Plex Mono, monospace" fill="#46536b">total = (cost of all internal f(n) calls) + (n^log&#8271;a &#183; leaf cost) &#8212; the Master theorem compares these two</text>
+          </svg>
+        <figcaption><b>Fig 5.3</b> &#183; Each node spawns a children of size n/b; the height is log&#8258;n and the number of leaves is <strong>n^log&#8258;a</strong>. Whether the root's cost f(n) or the leaves' cost n^log&#8258;a dominates is precisely what the Master theorem decides.</figcaption>
+      </figure>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Exercise — write the recurrence for the Fibonacci series and solve it with a recursion tree</span></div>
+        <pre class="code">def fib(n):
+    if n <= 1: return n
+    return fib(n - 1) + fib(n - 2)</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(2&#8319;)</span>
+          <pre class="code" style="margin-top:8px;">T(n) = T(n−1) + T(n−2) + c ,   T(0) = T(1) = 1
+
+Tree: every node has 2 children; the shallowest path
+(always n−2) has depth n/2, the deepest (always n−1) has depth n.
+Number of nodes is therefore between 2^(n/2) and 2^n.</pre>
+          <p class="ex-why">Each node does constant work, so T(n) grows exponentially — between
+          2^(n/2) and 2&#8319;, i.e. O(2&#8319;). The tree also shows <em>why</em>: fib(n&#8722;2), fib(n&#8722;3), &#8230;
+          are recomputed again and again in different branches — the redundancy that dynamic
+          programming (Unit 4) will later eliminate.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Exercise — T(n) = 3T(n/4) + c&#183;n&#178; (Cormen, pp. 111&#8211;112)</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n&#178;)</span>
+          <pre class="code" style="margin-top:8px;">Level i cost:  3^i · c·(n/4^i)²  =  (3/16)^i · c·n²
+Total:  c·n² · Σ (3/16)^i  ≤  c·n² · 1/(1 − 3/16)  =  (16/13)·c·n²</pre>
+          <p class="ex-why">The per-level costs shrink geometrically (ratio 3/16 &#60; 1), so the root
+          dominates and T(n) = &#920;(n&#178;). When a level-sum forms a decreasing geometric series, the
+          whole tree costs only a constant factor more than its root.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.7 -->
+    <section class="chapter-section" id="sec-7">
+      <h2><span class="sec-no">5.7</span>The Master Theorem</h2>
+      <p>
+        For recurrences of the form <code class="inline">T(n) = a&#183;T(n/b) + f(n)</code> (a &#8805; 1, b &#62; 1),
+        the Master theorem reads the answer off Fig 5.3's tree by comparing f(n) — the root's
+        cost — against <strong class="kw">n^log&#8258;a</strong> — the leaves' cost:
+      </p>
+      <table class="tbl">
+        <thead><tr><th style="width:90px;">Case</th><th>Condition</th><th>Meaning</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Case 1</strong></td>
+            <td>f(n) = O(n^(log&#8258;a &#8722; &#949;)) for some &#949; &#62; 0</td>
+            <td>f(n) grows <strong class="kw">polynomially slower</strong> than n^log&#8258;a (by an n&#7511; factor) — the leaves dominate</td>
+            <td><span class="o-chip">&#920;(n^log&#8258;a)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Case 2</strong></td>
+            <td>f(n) = &#920;(n^log&#8258;a &#183; lg&#7584;n) for some k &#8805; 0</td>
+            <td>f(n) and n^log&#8258;a grow at <strong class="kw">similar rates</strong> — every level contributes</td>
+            <td><span class="o-chip">&#920;(n^log&#8258;a &#183; lg&#7584;&#8314;&#185;n)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Case 3</strong></td>
+            <td>f(n) = &#937;(n^(log&#8258;a + &#949;)) for some &#949; &#62; 0, and the <strong class="kw">regularity condition</strong> a&#183;f(n/b) &#8804; c&#183;f(n) holds for some c &#60; 1</td>
+            <td>f(n) grows <strong class="kw">polynomially faster</strong> — the root dominates</td>
+            <td><span class="o-chip">&#920;(f(n))</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note-box">
+        <span class="def-label">Intuition</span>
+        Case 1 = the tree is bottom-heavy (leaves win). Case 3 = top-heavy (root wins).
+        Case 2 = perfectly balanced, so the log n levels each pay their share, adding one
+        logarithm to the answer.
+      </div>
+    </section>
+
+    <!-- 5.8 -->
+    <section class="chapter-section" id="sec-8">
+      <h2><span class="sec-no">5.8</span>Master Theorem: Worked Examples</h2>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Ex 1 — T(n) = 4T(n/2) + n</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n&#178;)</span>
+          <p class="ex-why" style="margin-top:8px;">a = 4, b = 2 &#8658; n^log&#8258;a = n&#178;; f(n) = n.
+          <strong>Case 1</strong>: f(n) = O(n^(2&#8722;&#949;)) with &#949; = 1. Therefore T(n) = &#920;(n&#178;).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Ex 2 — T(n) = 4T(n/2) + n&#178;</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n&#178; lg n)</span>
+          <p class="ex-why" style="margin-top:8px;">a = 4, b = 2 &#8658; n^log&#8258;a = n&#178;; f(n) = n&#178;.
+          <strong>Case 2</strong>: f(n) = &#920;(n&#178; lg&#8304;n), that is, k = 0. Therefore T(n) = &#920;(n&#178; lg n).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Ex 3 — T(n) = 4T(n/2) + n&#179;</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n&#179;)</span>
+          <p class="ex-why" style="margin-top:8px;">a = 4, b = 2 &#8658; n^log&#8258;a = n&#178;; f(n) = n&#179;.
+          <strong>Case 3</strong>: f(n) = &#937;(n^(2+&#949;)) with &#949; = 1, and the regularity condition holds:
+          4&#183;(n/2)&#179; = n&#179;/2 &#8804; c&#183;n&#179; with c = 1/2 &#60; 1. Therefore T(n) = &#920;(n&#179;).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Ex 4 — T(n) = 4T(n/2) + n&#178;/lg n</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">Master method does not apply</span>
+          <p class="ex-why" style="margin-top:8px;">a = 4, b = 2 &#8658; n^log&#8258;a = n&#178;; f(n) = n&#178;/lg n. It is not Case 1:
+          for every constant &#949; &#62; 0 we have n&#7511; = &#969;(lg n), so f(n) is not polynomially smaller than n&#178;.
+          And it is not Case 2 with k &#8805; 0 (it would need k = &#8722;1). The classic three-case theorem is
+          silent here — the extended dividing form in &#167;5.10 (with p = &#8722;1) handles it:
+          T(n) = &#920;(n&#178; lg lg n).</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.9 -->
+    <section class="chapter-section" id="sec-9">
+      <h2><span class="sec-no">5.9</span>Master Theorem for Decreasing Functions</h2>
+      <div class="def-box">
+        <span class="def-label">General form · decreasing function</span>
+        T(n) = a&#183;T(n&#8722;b) + f(n), &nbsp; where a &#62; 0, b &#62; 0, and f(n) = O(n&#7584;), k &#8805; 0
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Condition</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td>a &#60; 1</td><td>O(n&#7584;) &nbsp;i.e.&nbsp; O(f(n))</td></tr>
+          <tr><td>a = 1</td><td>O(n&#7584;&#8314;&#185;) &nbsp;i.e.&nbsp; O(n &#183; f(n))</td></tr>
+          <tr><td>a &#62; 1</td><td>O(a&#8319;&#4907;&#7590; &#183; n&#7584;) &nbsp;i.e.&nbsp; O(a&#8319;&#4907;&#7590; &#183; f(n))</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Intuition: subtracting b gives a chain of n/b levels. With a = 1 the chain just sums
+        f over n levels; with a &#62; 1 the number of calls <em>multiplies</em> at every level —
+        exponential blow-up.
+      </p>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Quiz — classify all six from the lecture</span></div>
+        <pre class="code">1) T(n) = T(n−1) + 1        4) T(n) = 2T(n−1) + 1
+2) T(n) = T(n−1) + n        5) T(n) = 3T(n−1) + 1
+3) T(n) = T(n−1) + log n    6) T(n) = 2T(n−1) + n</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">a = 1 vs a &#62; 1</span>
+          <p class="ex-why" style="margin-top:8px;">
+          With a = 1 (add one level of f each time): <strong>1) O(n)</strong>, <strong>2) O(n&#178;)</strong>,
+          <strong>3) O(n log n)</strong> — exactly our substitution results from &#167;5.5.
+          With a &#62; 1 and b = 1: <strong>4) O(2&#8319;)</strong>, <strong>5) O(3&#8319;)</strong>,
+          <strong>6) O(n&#183;2&#8319;)</strong> — the a&#8319; term takes over.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Question — complexity of the recursive Fibonacci program via this theorem</span></div>
+        <pre class="code">T(n) = 2T(n−1) + 1</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(2&#8319;)</span>
+          <p class="ex-why" style="margin-top:8px;">Treating T(n) = T(n&#8722;1) + T(n&#8722;2) + c as at most 2T(n&#8722;1) + 1:
+          a = 2 &#62; 1, b = 1, k = 0 &#8658; O(a&#8319;&#4907;&#7590;&#183;n&#7584;) = <strong>O(2&#8319;)</strong> — agreeing with the recursion-tree
+          answer from &#167;5.6.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.10 -->
+    <section class="chapter-section" id="sec-10">
+      <h2><span class="sec-no">5.10</span>Master Theorem for Dividing Functions</h2>
+      <div class="def-box">
+        <span class="def-label">General form · dividing function</span>
+        T(n) = a&#183;T(n/b) + f(n), &nbsp; where a &#8805; 1, b &#62; 1, and f(n) = &#920;(n&#7584; log&#7510;n), k &#8805; 0
+      </div>
+      <p><strong>Step 1</strong>: determine log&#8258;a and k, then compare:</p>
+      <table class="tbl">
+        <thead><tr><th>Comparison</th><th>Sub-condition</th><th>Solution</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="1">log&#8258;a &#62; k</td><td>&#8212;</td><td>&#920;(n^log&#8258;a)</td></tr>
+          <tr><td rowspan="3">log&#8258;a = k</td><td>p &#62; &#8722;1</td><td>&#920;(n&#7584; log&#7510;&#8314;&#185;n)</td></tr>
+          <tr><td>p = &#8722;1</td><td>&#920;(n&#7584; log log n)</td></tr>
+          <tr><td>p &#60; &#8722;1</td><td>&#920;(n&#7584;)</td></tr>
+          <tr><td rowspan="2">log&#8258;a &#60; k</td><td>p &#8805; 0</td><td>&#920;(n&#7584; log&#7510;n)</td></tr>
+          <tr><td>p &#60; 0</td><td>O(n&#7584;)</td></tr>
+        </tbody>
+      </table>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Example — T(n) = 2T(n/2) + O(n) &nbsp;(merge sort's recurrence)</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(n log n)</span>
+          <p class="ex-why" style="margin-top:8px;">log&#8322;2 = 1 and k = 1 (p = 0): the "equal" row with p &#62; &#8722;1 gives
+          &#920;(n&#185; log&#8304;&#8314;&#185;n) = &#920;(n log n) — matching the balanced tree of Fig 5.1. And &#167;5.8's Ex 4
+          resolves here too: log&#8322;4 = 2 = k, p = &#8722;1 &#8658; &#920;(n&#178; log log n).</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.11 -->
+    <section class="chapter-section" id="sec-11">
+      <h2><span class="sec-no">5.11</span>Try it: The Master Calculator</h2>
+      <p>Pick a, b, and f(n) = n&#7584;; the calculator computes log&#8258;a, decides the case, and states T(n).</p>
+      <div class="viz" id="mc">
+        <div class="viz-title">T(n) = a&#183;T(n/b) + n&#7584; &nbsp;&#8594;&nbsp; ?</div>
+        <div class="viz-sub">Recreate the four worked examples (a = 4, b = 2, k = 1, 2, 3) — or invent your own and check your case-reasoning against the calculator's.</div>
+        <div class="viz-controls" style="margin-top:0;">
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">a
+            <select id="mc-a"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">b
+            <select id="mc-b"><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">k &nbsp;(f(n) = n&#7584;)
+            <select id="mc-k"><option>0</option><option selected>1</option><option>2</option><option>3</option></select>
+          </label>
+        </div>
+        <div class="viz-label" id="mc-out"></div>
+      </div>
+    </section>
+
+    <!-- 5.12 -->
+    <section class="chapter-section" id="sec-12">
+      <h2><span class="sec-no">5.12</span>Binary Search: Iterative vs Recursive</h2>
+      <p>The same algorithm, written both ways — recursion replaces the while-loop with self-calls on a half-sized range:</p>
+      <h3>Iterative (Chapter 3)</h3>
+      <pre class="code">BinarySearch(array, key):
+    1. Set low = 0
+    2. Set high = length(array) − 1
+    3. While low <= high:
+        a. Set mid = low + (high − low) // 2
+        b. If array[mid] == key:      return mid
+        c. Else if array[mid] < key:  Set low = mid + 1
+        d. Else:                      Set high = mid − 1
+    4. return −1   // Target not found</pre>
+      <h3>Recursive</h3>
+      <pre class="code">def binary_search_recursive(arr, low, high, target):
+    # Base case: If the range is invalid, the target is not found
+    if low > high:
+        return -1
+    mid = (low + high) // 2
+    if arr[mid] == target:
+        return mid
+    elif target < arr[mid]:
+        return binary_search_recursive(arr, low, mid - 1, target)
+    else:
+        return binary_search_recursive(arr, mid + 1, high, target)</pre>
+      <div class="note-box">
+        <span class="def-label">Its recurrence</span>
+        T(n) = T(n/2) + c — one recursive call on half the range. By the dividing form
+        (a = 1, b = 2 &#8658; log&#8322;1 = 0 = k, p = 0): &#920;(log n), agreeing with Chapter 3's
+        substitution. Note the trade-off: the recursive version is shorter but spends
+        O(log n) <strong class="kw">stack memory</strong> on its calls; the iterative one uses O(1).
+      </div>
+    </section>
+
+    <!-- 5.13 -->
+    <section class="chapter-section" id="sec-13">
+      <h2><span class="sec-no">5.13</span>Recursion Practice Problems</h2>
+      <p>Write a recursive solution (base case first!), then find its recurrence and complexity:</p>
+      <ul>
+        <li>Fibonacci sequence</li>
+        <li>Sum of n natural numbers</li>
+        <li>Reverse a string</li>
+        <li>Check if a string is a palindrome</li>
+        <li>Count digits in a number</li>
+        <li>Print all elements of an array</li>
+      </ul>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Hints &amp; expected complexities</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">recurrences</span>
+          <p class="ex-why" style="margin-top:8px;">
+          Fibonacci: T(n) = T(n&#8722;1) + T(n&#8722;2) + c &#8594; O(2&#8319;).
+          Sum of n numbers: T(n) = T(n&#8722;1) + c &#8594; O(n).
+          Reverse a string / palindrome check: T(n) = T(n&#8722;2) + c (peel both ends) or T(n&#8722;1) + c &#8594; O(n).
+          Count digits: T(n) = T(n/10) + c &#8594; O(log&#8321;&#8320;n) = O(log n).
+          Print an array: T(n) = T(n&#8722;1) + c &#8594; O(n).</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 5.14 -->
+    <section class="chapter-section" id="sec-14">
+      <h2><span class="sec-no">5.14</span>Divide and Conquer</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Divide and conquer</span>
+        A strategy to solve problems by <strong>breaking them into smaller subproblems</strong>,
+        solving these subproblems <strong>recursively</strong>, and <strong>combining</strong> their solutions.
+      </div>
+      <h3>The three steps</h3>
+      <ul>
+        <li><strong class="kw">Divide</strong> — split the problem into smaller, independent subproblems.</li>
+        <li><strong class="kw">Conquer</strong> — solve the subproblems recursively.</li>
+        <li><strong class="kw">Combine</strong> — merge the solutions of subproblems to get the solution to the original problem.</li>
+      </ul>
+      <h3>General algorithmic template</h3>
+      <pre class="code">def divide_and_conquer(problem):
+    if base_case(problem):
+        return base_solution(problem)
+    subproblems = divide(problem)
+    subresults  = [divide_and_conquer(sub) for sub in subproblems]
+    return combine(subresults)</pre>
+      <h3>Characteristics a problem must exhibit</h3>
+      <ul>
+        <li><strong class="kw">Subproblem optimality</strong> — subproblems are simpler versions of the original.</li>
+        <li><strong class="kw">Independent subproblems</strong> — subproblems can be solved separately.</li>
+        <li><strong class="kw">Merge step</strong> — a way to combine the solutions effectively.</li>
+      </ul>
+      <h3>Binary search through the D&amp;C lens</h3>
+      <ul>
+        <li><strong>Divide</strong>: split the sorted array into two halves at mid.</li>
+        <li><strong>Conquer</strong>: recursively search only the relevant half.</li>
+        <li><strong>Combine</strong>: nothing to merge — the result is returned directly.</li>
+      </ul>
+    </section>
+
+    <!-- 5.15 -->
+    <section class="chapter-section" id="sec-15">
+      <h2><span class="sec-no">5.15</span>D&amp;C: Advantages, Disadvantages, and Examples</h2>
+      <div class="grid" style="display:grid;grid-template-columns:1fr;gap:0;">
+      <table class="tbl">
+        <thead><tr><th>Advantages</th><th>Disadvantages</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Efficiency</strong> — reduces the problem size logarithmically and takes advantage of parallelism (independent subproblems can run on different cores).</td>
+            <td><strong>Overhead</strong> — recursive calls use extra <strong class="kw">stack memory</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Simplicity</strong> — a clear three-step structure for problem-solving.</td>
+            <td><strong>Combine-step complexity</strong> — the merging process can sometimes be inefficient.</td>
+          </tr>
+          <tr>
+            <td><strong>Proven track record</strong> — sorting (Merge Sort, Quick Sort), searching (Binary Search), matrix multiplication (Strassen&#8217;s algorithm).</td>
+            <td><strong>Not always ideal</strong> — for problems without optimal substructure, or with <em>overlapping</em> subproblems (those call for dynamic programming instead).</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note-box">
+        <span class="def-label">Where next</span>
+        The next chapters put this machinery to work: merge sort and quick sort are
+        divide-and-conquer through and through, and their recurrences fall straight to
+        the Master theorem you now own.
+      </div>
+    </section>
+
+    <nav class="chapter-nav">
+      <a href="chapter4.html">← Chapter 4: Asymptotic Notations</a>
+      <a href="topics.html">All topics</a>
+      <span class="disabled">Chapter 6 (coming soon) →</span>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Design and Analysis of Algorithms</span>
+    <span>© 2026
+      <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+        Dr. Alakesh Kalita
+      </a>
+      · Mathematics and Computing · IIT (ISM) Dhanbad</span>
+  </div>
+</footer>
+
+<script>
+/* TOC scroll-spy */
+(function () {
+  const links = document.querySelectorAll(".toc a");
+  const sections = document.querySelectorAll(".chapter-section");
+  if (!links.length || !sections.length) return;
+  const byId = {};
+  links.forEach((a) => (byId[a.getAttribute("href").slice(1)] = a));
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          links.forEach((a) => a.classList.remove("current"));
+          const a = byId[e.target.id];
+          if (a) a.classList.add("current");
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -70% 0px" }
+  );
+  sections.forEach((s) => obs.observe(s));
+})();
+
+/* fact(5) call-stack animation */
+(function () {
+  var col = document.getElementById("stk-col");
+  if (!col) return;
+  var frames = [];
+  // push phase
+  var stack = [];
+  for (var n = 5; n >= 1; n--) {
+    stack.push({ label: "fact(" + n + ")", val: null });
+    frames.push({ s: JSON.parse(JSON.stringify(stack)),
+      label: n > 1 ? "fact(" + n + ") needs " + n + " × fact(" + (n - 1) + ") — push fact(" + (n - 1) + ")."
+                   : "fact(1) is the base case: return 1. Now the stack unwinds." });
+  }
+  // pop phase
+  var acc = 1;
+  for (var m = 1; m <= 5; m++) {
+    acc = acc * m;
+    stack[stack.length - 1].val = acc;
+    frames.push({ s: JSON.parse(JSON.stringify(stack)),
+      label: m === 1 ? "fact(1) returns 1." : "fact(" + m + ") returns " + m + " × " + (acc / m) + " = " + acc + "." });
+    stack.pop();
+  }
+  frames.push({ s: [], label: "Stack empty — fact(5) = 120. Five pushes, five pops: Θ(n) time and Θ(n) stack space." });
+
+  var pos = 0, timer = null;
+  var playBtn = document.getElementById("stk-play");
+  var stepBtn = document.getElementById("stk-step");
+  var resetBtn = document.getElementById("stk-reset");
+  var labelEl = document.getElementById("stk-label");
+  var statusEl = document.getElementById("stk-status");
+
+  function render() {
+    var f = frames[pos];
+    col.innerHTML = "";
+    f.s.forEach(function (fr, i) {
+      var d = document.createElement("div");
+      d.className = "stack-frame" + (fr.val !== null ? " done" : (i === f.s.length - 1 ? " top" : ""));
+      d.textContent = fr.label + (fr.val !== null ? " = " + fr.val : "");
+      col.appendChild(d);
+    });
+    labelEl.textContent = f.label;
+    statusEl.textContent = "frames on stack: " + f.s.length;
+    var end = pos >= frames.length - 1;
+    stepBtn.disabled = end; playBtn.disabled = end;
+    if (end && timer) { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  }
+  function step() { if (pos < frames.length - 1) { pos++; render(); } }
+  function reset() { pos = 0; if (timer) { clearInterval(timer); timer = null; } playBtn.textContent = "Play"; playBtn.disabled = false; render(); }
+  playBtn.addEventListener("click", function () {
+    if (timer) { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+    else { playBtn.textContent = "Pause"; timer = setInterval(step, 1100); }
+  });
+  stepBtn.addEventListener("click", step);
+  resetBtn.addEventListener("click", reset);
+  reset();
+})();
+
+/* Master calculator */
+(function () {
+  var out = document.getElementById("mc-out");
+  if (!out) return;
+  var aEl = document.getElementById("mc-a"), bEl = document.getElementById("mc-b"), kEl = document.getElementById("mc-k");
+  function fmtPow(x) {
+    if (Math.abs(x - Math.round(x)) < 1e-9) {
+      var r = Math.round(x);
+      return r === 0 ? "1" : (r === 1 ? "n" : "n^" + r);
+    }
+    return "n^" + x.toFixed(2);
+  }
+  function render() {
+    var a = parseInt(aEl.value, 10), b = parseInt(bEl.value, 10), k = parseInt(kEl.value, 10);
+    var L = Math.log(a) / Math.log(b);
+    var Ltxt = "log_" + b + "(" + a + ") = " + (Math.abs(L - Math.round(L)) < 1e-9 ? Math.round(L) : L.toFixed(2));
+    var msg = "T(n) = " + a + "·T(n/" + b + ") + " + (k === 0 ? "1" : (k === 1 ? "n" : "n^" + k)) + "   →   " + Ltxt + " vs k = " + k + ".  ";
+    var EPS = 1e-9;
+    if (L > k + EPS) {
+      msg += "Case 1 (leaves dominate): T(n) = Θ(" + fmtPow(L) + ").";
+    } else if (Math.abs(L - k) <= EPS) {
+      msg += "Case 2 (balanced): T(n) = Θ(" + (k === 0 ? "log n" : fmtPow(k) + " · log n") + ").";
+    } else {
+      msg += "Case 3 (root dominates; regularity holds for n^k since a/b^k = " + (a / Math.pow(b, k)).toFixed(2) + " < 1): T(n) = Θ(" + fmtPow(k) + ").";
+    }
+    out.textContent = msg;
+  }
+  [aEl, bEl, kEl].forEach(function (el) { el.addEventListener("change", render); });
+  render();
+})();
+</script>
+<script>
+/* Scroll-reveal */
+(function () {
+  var els = document.querySelectorAll(".chapter-section, .fig, .viz");
+  if (!("IntersectionObserver" in window)) return;
+  els.forEach(function (el) { el.classList.add("reveal"); });
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  els.forEach(function (el) { obs.observe(el); });
+})();
+</script>
+</body>
+</html>
