@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Topics</title>
+  <title>Topics · Design &amp; Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -360,7 +360,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -377,22 +377,21 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   <div class="topics-head">
     <div>
       <h2 class="section-title">Topics</h2>
-      <p class="section-sub" style="margin-bottom:0;">One page per chapter — figures from the slides, interactive demos, and self-quiz answers. Published chapters are clickable.</p>
+      <p class="section-sub" style="margin-bottom:0;">Chapters 1–7 — slide-based explanations, exact diagrams, colored code, and interactive animations.</p>
     </div>
   </div>
 
   <div class="topics-tools">
-    <input type="search" class="topic-search" id="topic-search" placeholder="Search chapters — e.g. binary search, Big-O, arrays…" aria-label="Search chapters">
+    <input type="search" class="topic-search" id="topic-search" placeholder="Search chapters — e.g. merge sort, recursion, linked lists…" aria-label="Search chapters">
     <button class="filter-chip on" data-filter="all">All</button>
     <button class="filter-chip" data-filter="live">Published</button>
-    <button class="filter-chip" data-filter="locked">Coming soon</button>
   </div>
 
   <div class="chapter-grid" id="chapter-grid">
 
     <a class="chapter-card reveal" data-status="live" href="chapter1.html">
       <span class="chapter-num">Chapter 01</span>
-      <h3>Introduction to Data, Information, Data Structure and Algorithms</h3>
+      <h3>Introduction, Data Structures &amp; Arrays</h3>
       <p>Data vs information, why we organise data with data structures, and a close
          look at arrays — operations, strengths, and how 1D and 2D array elements are
          addressed in memory.</p>
@@ -419,9 +418,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     <a class="chapter-card reveal" data-status="live" href="chapter3.html">
       <span class="chapter-num">Chapter 03</span>
       <h3>Analyzing Algorithms</h3>
-      <p>Insertion sort and correctness by loop invariants, the assumptions behind the
-         cost model, best/worst/average cases, linear and binary search, and first
-         recurrence relations — solved by substitution.</p>
+      <p>Insertion sort and correctness through loop invariants, the assumptions behind
+         the cost model, best/worst/average cases, linear and binary search, recurrence
+         analysis, and selection sort.</p>
       <div class="card-tags">
         <span class="tag">insertion sort</span>
         <span class="tag">loop invariant</span>
@@ -443,31 +442,52 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
     </a>
 
-    <div class="chapter-card locked reveal" data-status="locked">
+    <a class="chapter-card reveal" data-status="live" href="chapter5.html">
       <span class="chapter-num">Chapter 05</span>
-      <h3>Divide and Conquer</h3>
-      <p>Recurrences, merge sort, quick sort, and the master theorem.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
+      <h3>Recursion and Divide &amp; Conquer</h3>
+      <p>Recursive functions and factorial, recurrence relations, substitution,
+         exact recursion trees, the Master Theorem, binary search, and the
+         divide-and-conquer design strategy.</p>
+      <div class="card-tags">
+        <span class="tag">recursion</span>
+        <span class="tag">recursion trees</span>
+        <span class="tag">Master Theorem</span>
+        <span class="tag">binary search</span>
+      </div>
+    </a>
 
-    <div class="chapter-card locked reveal" data-status="locked">
+    <a class="chapter-card reveal" data-status="live" href="chapter6.html">
       <span class="chapter-num">Chapter 06</span>
-      <h3>Advanced Data Structures</h3>
-      <p>Heaps, balanced trees, and hashing.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
+      <h3>Divide and Conquer Algorithms</h3>
+      <p>Merge sort and in-place merging, quicksort and partitioning, probabilistic
+         and randomized analysis, the Hiring Problem, matrix multiplication,
+         Strassen’s algorithm, and powering a number.</p>
+      <div class="card-tags">
+        <span class="tag">merge sort</span>
+        <span class="tag">quicksort</span>
+        <span class="tag">randomized analysis</span>
+        <span class="tag">Strassen</span>
+      </div>
+    </a>
 
-    <div class="chapter-card locked reveal" data-status="locked">
+    <a class="chapter-card reveal" data-status="live" href="chapter7.html">
       <span class="chapter-num">Chapter 07</span>
-      <h3>Graph Algorithms</h3>
-      <p>Traversals, shortest paths, and spanning trees.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
+      <h3>Linked Lists, Stacks and Queues</h3>
+      <p>Singly, doubly, and circular linked lists with insertion and deletion,
+         followed by stack and queue operations, circular queues, applications,
+         and abstract data types.</p>
+      <div class="card-tags">
+        <span class="tag">linked lists</span>
+        <span class="tag">stack</span>
+        <span class="tag">queue</span>
+        <span class="tag">ADT</span>
+      </div>
+    </a>
 
   </div>
 
   <div class="no-match" id="no-match">
-    No chapter matches your search. Try a broader term — e.g. "sort", "array", or "notation".
+    No chapter matches your search. Try a broader term — e.g. "sort", "recursion", or "queue".
   </div>
 
 </main>
