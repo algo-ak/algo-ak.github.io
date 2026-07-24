@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 6 · Divide and Conquer Algorithms · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+
+
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
+
+:root {
+  --paper: #f7f9fc;
+  --card: #ffffff;
+  --ink: #101c33;
+  --ink-soft: #46536b;
+  --line: #dbe4f0;
+  --grid: #e7edf6;
+  --accent: #0b7285;
+  --accent-dark: #085a68;
+  --accent-soft: #e0f1f4;
+  --amber: #b45309;
+  --amber-soft: #fdf1df;
+  --code-bg: #0f1a2e;
+  --code-text: #dbe7ff;
+  --radius: 10px;
+  --maxw: 1180px;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 16.5px;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-dark); }
+
+code, pre { font-family: var(--font-mono); }
+
+/* ---------- Top navigation ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav {
+  max-width: var(--maxw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--ink); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-text strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .01em; }
+.brand-text span { font-size: 12px; color: var(--ink-soft); }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: block; padding: 8px 14px; border-radius: 8px;
+  color: var(--ink-soft); font-weight: 500; font-size: 15px;
+}
+.nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.nav-links a.active { background: var(--ink); color: #fff; }
+
+/* ---------- Hero (graph-paper motif) ---------- */
+.hero {
+  background:
+    linear-gradient(180deg, rgba(247,249,252,0) 0%, var(--paper) 96%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 72px 24px 64px;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4.4vw, 3.3rem);
+  letter-spacing: -0.02em; max-width: 780px;
+}
+.hero p.lede { margin-top: 16px; max-width: 640px; color: var(--ink-soft); font-size: 1.08rem; }
+.hero-meta { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-chip {
+  font-size: 13.5px; color: var(--ink-soft);
+  background: var(--card); border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px;
+}
+.hero-actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 15px; font-family: var(--font-display);
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: #1c2c4d; color: #fff; }
+.btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+/* ---------- Generic page section ---------- */
+.page { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 80px; }
+.section-title { font-size: 1.6rem; margin-bottom: 6px; }
+.section-sub { color: var(--ink-soft); margin-bottom: 28px; }
+
+/* ---------- Chapter cards (Topics page) ---------- */
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.chapter-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: translateY(-2px); }
+.chapter-num {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-card h3 { font-size: 1.15rem; color: var(--ink); }
+.chapter-card p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: var(--font-mono); font-size: 11.5px;
+  background: var(--accent-soft); color: var(--accent-dark);
+  padding: 3px 9px; border-radius: 6px;
+}
+.chapter-card.locked { opacity: .62; background: #fbfcfe; }
+.chapter-card.locked h3 { color: var(--ink-soft); }
+.badge-soon {
+  align-self: flex-start; font-size: 11.5px; font-family: var(--font-mono);
+  color: var(--ink-soft); border: 1px dashed var(--line);
+  padding: 3px 9px; border-radius: 6px;
+}
+
+/* ---------- Chapter page layout ---------- */
+.chapter-layout {
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; grid-template-columns: 250px minmax(0, 1fr);
+  gap: 44px; padding: 40px 24px 90px;
+}
+.toc {
+  position: sticky; top: 86px; align-self: start;
+  max-height: calc(100vh - 110px); overflow-y: auto;
+  padding-right: 6px;
+}
+.toc h4 {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
+}
+.toc ol { list-style: none; border-left: 2px solid var(--line); }
+.toc li a {
+  display: block; padding: 6px 14px; font-size: 13.8px; color: var(--ink-soft);
+  border-left: 2px solid transparent; margin-left: -2px; line-height: 1.4;
+}
+.toc li a:hover { color: var(--accent-dark); }
+.toc li a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+.chapter-body { min-width: 0; }
+.chapter-kicker {
+  font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-body > h1 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  letter-spacing: -0.02em;
+  margin: 8px 0 10px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.chapter-intro { color: var(--ink-soft); max-width: 720px; margin-bottom: 8px; }
+
+.chapter-section { margin-top: 54px; }
+.chapter-section > h2 {
+  font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chapter-section h3 { font-size: 1.13rem; margin: 26px 0 10px; }
+.chapter-section p { margin-bottom: 14px; max-width: 76ch; }
+.chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+.chapter-section li { margin-bottom: 7px; max-width: 72ch; }
+.sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
+
+/* ---------- Content blocks ---------- */
+.def-box {
+  background: var(--accent-soft); border: 1px solid #bfdee5;
+  border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
+}
+.def-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 6px;
+}
+.note-box {
+  background: var(--amber-soft); border: 1px solid #f3ddb4;
+  border-radius: var(--radius); padding: 16px 20px; margin: 18px 0;
+}
+.note-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
+}
+
+pre.code {
+  background: var(--code-bg); color: var(--code-text);
+  border-radius: var(--radius); padding: 18px 20px;
+  overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
+}
+pre.code.python { color: #dbe7ff; }
+.py-keyword { color: #ff79c6; font-weight: 600; }
+.py-string { color: #f1fa8c; }
+.py-comment { color: #8394b1; font-style: italic; }
+.py-number { color: #bd93f9; }
+.py-builtin { color: #8be9fd; }
+.py-self { color: #ffb86c; font-style: italic; }
+.py-function { color: #50fa7b; font-weight: 600; }
+.py-operator { color: #ffb86c; }
+code.inline {
+  background: #eaeff7; color: #24344f;
+  padding: 2px 7px; border-radius: 5px; font-size: .88em;
+}
+.o-chip {
+  display: inline-block; font-family: var(--font-mono); font-size: .82em;
+  background: var(--amber-soft); color: var(--amber);
+  border: 1px solid #f0d9ac; padding: 2px 9px; border-radius: 999px;
+  font-weight: 600; white-space: nowrap;
+}
+
+table.tbl {
+  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; font-size: 15px;
+}
+table.tbl th, table.tbl td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+table.tbl th {
+  background: var(--ink); color: #fff; font-family: var(--font-display);
+  font-weight: 600; font-size: 14px;
+}
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl tr:nth-child(even) td { background: #fbfcfe; }
+
+.example-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px; margin: 14px 0;
+}
+.example-card .ex-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.example-card .ex-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.example-card pre.code { margin-bottom: 8px; }
+.example-card .ex-why { font-size: 14.3px; color: var(--ink-soft); margin: 0; }
+
+/* ---------- Bubble sort visualizer ---------- */
+.viz {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin: 20px 0;
+  min-width: 0; overflow: hidden;
+}
+.viz-title { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
+.viz-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+.viz-bars {
+  display: flex; align-items: flex-end; gap: 10px;
+  height: 170px; padding: 6px 2px 0;
+}
+.viz-bar {
+  flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
+  background: #c6d4e8; position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  transition: height .25s ease, background .18s ease;
+}
+.viz-bar span {
+  color: #fff; font-family: var(--font-mono); font-size: 13px;
+  font-weight: 600; padding-bottom: 6px;
+}
+.viz-bar.compare { background: var(--amber); }
+.viz-bar.swap { background: #c2410c; }
+.viz-bar.sorted { background: var(--accent); }
+.viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.viz-controls button {
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+}
+.viz-controls button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
+.viz-status { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- Chapter prev/next footer ---------- */
+.chapter-nav {
+  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.chapter-nav a, .chapter-nav span.disabled {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+}
+.chapter-nav span.disabled { color: #9aa7bd; }
+
+/* ---------- Footer ---------- */
+.site-footer { border-top: 1px solid var(--line); background: var(--card); }
+.footer-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 26px 24px;
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  font-size: 14px; color: var(--ink-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
+  html { scroll-padding-top: 142px; }
+  .toc {
+    position: static; max-height: none; border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 13px 14px 11px; background: var(--card);
+    margin-bottom: 22px; overflow-x: auto; overscroll-behavior-inline: contain;
+  }
+  .toc h4 { margin-bottom: 7px; }
+  .toc ol { display: flex; min-width: max-content; border-left: 0; }
+  .toc li a {
+    padding: 6px 11px; border-left: 0; border-bottom: 2px solid var(--line);
+    margin-left: 0; white-space: nowrap;
+  }
+  .toc li a.current { border-left-color: transparent; border-bottom-color: var(--accent); }
+  .nav { flex-direction: column; gap: 10px; }
+  .chapter-layout { padding-top: 28px; }
+  .two-list-row { align-items: flex-start; flex-wrap: wrap; }
+  .two-list-cells { max-width: 100%; overflow-x: auto; padding-top: 20px; }
+  .fig { max-width: 100%; overflow: hidden; }
+}
+
+@media (max-width: 520px) {
+  .chapter-layout { padding-right: 16px; padding-left: 16px; }
+  .nav { padding-right: 16px; padding-left: 16px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; }
+  .viz { padding: 16px; }
+  .viz-bars { gap: 5px; height: 150px; }
+  .two-list-row .list-label { width: 100%; }
+  .tl-cell { width: 36px; height: 40px; flex: 0 0 36px; }
+  table.tbl { display: block; overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+
+
+
+    /* Slide figures */
+    .fig {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 12px; margin: 16px 0; max-width: 700px;
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+    .fig-md { max-width: 560px; margin-left: auto; margin-right: auto; }
+    .fig-sm { max-width: 400px; margin-left: auto; margin-right: auto; }
+    .fig:hover { box-shadow: 0 10px 26px rgba(16,28,51,.12); transform: translateY(-2px); }
+    .fig img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    .fig figcaption {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
+      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
+    }
+    .fig figcaption b { color: var(--accent-dark); }
+
+    /* Scroll-reveal animation */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Chapter title entrance */
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+    .chapter-body > h1 { animation-delay: .08s; }
+    .chapter-intro { animation-delay: .16s; }
+
+    /* Insertion sort visualizer extras */
+    .viz-bar.key { background: var(--amber); box-shadow: 0 6px 14px rgba(240,163,63,.45); }
+    .viz-bar.shift { background: #c2410c; }
+    .viz-bar.prefix { background: #79c6d4; }
+    .viz-bar.lifted { transform: translateY(-16px); }
+    .viz-bar { transition: height .3s ease, background .2s ease, transform .3s ease; }
+    .viz-legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px;
+      font-size: 13px; color: var(--ink-soft);
+    }
+    .viz-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .viz-legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+    .viz-idx { display: flex; gap: 10px; }
+    .viz-idx b {
+      flex: 1; max-width: 76px; text-align: center;
+      font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; color: var(--ink-soft);
+    }
+    .viz-controls select {
+      font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    }
+    .viz-label {
+      font-family: var(--font-mono); font-size: 13px; color: var(--ink);
+      background: var(--amber-soft); border: 1px solid #f0d9ac; border-radius: 8px;
+      padding: 8px 12px; margin-top: 14px; min-height: 20px;
+    }
+    /* Keyword highlight */
+    .kw { color: #c2179b; }
+    /* Collapsible answers */
+    details.ans { margin-top: 10px; }
+    details.ans summary {
+      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+      color: var(--accent-dark); background: var(--accent-soft);
+      padding: 7px 14px; border-radius: 8px; user-select: none;
+      border: 1px solid #bfdee5;
+    }
+    details.ans summary::-webkit-details-marker { display: none; }
+    details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
+    details.ans[open] summary::before { content: "\2212"; }
+    details.ans .ans-body { margin-top: 10px; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; }
+      .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
+    }
+
+    /* Binary search demo (chapter 3 only) */
+    .bs-cells { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+    .bs-cell {
+      width: 52px; padding: 8px 0 4px; text-align: center;
+      background: #eaeff7; border: 2px solid transparent; border-radius: 8px;
+      font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: #24344f;
+      transition: background .18s ease, opacity .18s ease;
+    }
+    .bs-cell small { display: block; font-weight: 400; font-size: 10.5px; color: var(--ink-soft); }
+    .bs-cell.dead { opacity: .28; }
+    .bs-cell.mid { background: var(--amber-soft); border-color: var(--amber); }
+    .bs-cell.found { background: var(--accent); color: #fff; }
+    .bs-cell.found small { color: #d9f2f6; }
+    .bs-pointers { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+  
+  
+
+    .plot-svg { width: 100%; height: auto; display: block; }
+    .prop-list { list-style: none; margin: 10px 0 16px !important; }
+    .prop-list li {
+      font-family: var(--font-mono); font-size: 14px; color: var(--ink);
+      background: #fbfcfe; border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 14px; margin-bottom: 8px !important; max-width: 640px;
+    }
+    .prop-list li b { color: var(--accent-dark); font-weight: 600; }
+    /* Big-O playground */
+    .pg-svg { width: 100%; max-width: 660px; background: #fbfcfe; border: 1px solid var(--line); border-radius: 10px; display: block; }
+    .pg-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
+    .pg-controls label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
+    .pg-controls input[type="range"] { accent-color: var(--accent); width: 140px; }
+    .pg-controls select { font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+    .pg-val { font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark); min-width: 44px; }
+    .pg-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
+    .pg-legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  
+    /* ---- Chapter 6 animation styles ---- */
+    .viz-bars.range-mode { position: relative; padding-top: 22px; }
+    .range-bracket {
+      position: absolute; top: 0; height: 14px; border: 2px solid var(--accent);
+      border-bottom: none; border-radius: 6px 6px 0 0; transition: left .3s ease, width .3s ease;
+    }
+    .range-bracket.settled { border-color: #9aa7bd; }
+    .viz-bar.cmp-a { background: var(--amber) !important; }
+    .viz-bar.cmp-b { background: #c2410c !important; }
+    .viz-bar.placed { background: var(--accent) !important; }
+    .viz-bar.settled { background: #bcd6da !important; }
+    .ptr-row { display: flex; gap: 4px; margin-top: 4px; min-height: 18px; }
+    .ptr-row b { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--accent-dark); }
+
+    .two-lists { display: flex; flex-direction: column; gap: 18px; margin: 10px 0; }
+    .two-list-row { display: flex; align-items: center; gap: 14px; }
+    .two-list-row .list-label { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); width: 90px; flex-shrink: 0; }
+    .two-list-cells { display: flex; gap: 6px; }
+    .tl-cell {
+      width: 44px; height: 44px; border-radius: 8px; background: #eaeff7;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-weight: 600; font-size: 15px; color: #24344f;
+      border: 2px solid transparent; transition: all .2s ease; position: relative;
+    }
+    .tl-cell.ptr-i, .tl-cell.ptr-j { border-color: var(--amber); background: var(--amber-soft); }
+    .tl-cell.done { opacity: .35; }
+    .tl-cell.placed { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+    .tl-cell .ptr-tag {
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+      font-size: 10.5px; font-family: var(--font-mono); color: var(--accent-dark); font-weight: 700;
+    }
+    .pivot-tag {
+      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+      font-size: 10px; font-family: var(--font-mono); color: var(--amber); font-weight: 700;
+    }
+
+    .best-worst-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+    .best-worst-toggle button {
+      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+      padding: 8px 16px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink-soft);
+    }
+    .best-worst-toggle button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .tree-wrap { display: none; }
+    .tree-wrap.on { display: block; }
+
+    .strassen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap: 10px; margin: 12px 0; }
+    .strassen-cell {
+      font-family: var(--font-mono); font-size: 13px; background: #fbfcfe;
+      border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; color: var(--ink);
+    }
+    .strassen-cell b { color: var(--accent-dark); }
+
+    /* In-place merge animations */
+    .merge-array-stage {
+      display: grid;
+      gap: 22px;
+      padding: 22px 18px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .merge-array-row {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+    }
+    .merge-array-name {
+      color: var(--ink-soft);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .merge-array-cells {
+      display: flex;
+      gap: 6px;
+      min-height: 48px;
+      align-items: center;
+    }
+    .merge-cell {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      background: #eaeff7;
+      color: #24344f;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+      transition: transform .28s ease, background .28s ease, border-color .28s ease, color .28s ease;
+    }
+    .merge-cell.active-pair {
+      border-color: var(--amber);
+      background: var(--amber-soft);
+      transform: translateY(-5px);
+    }
+    .merge-cell.just-swapped {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      transform: translateY(-5px);
+    }
+    .merge-cell.sorted-cell {
+      border-color: #9bcbd4;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+    .merge-pointer {
+      position: absolute;
+      left: 50%;
+      bottom: -23px;
+      color: var(--accent-dark);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .gap-readout {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      margin-bottom: 12px;
+      padding: 4px 10px;
+      border: 1px solid #bfdee5;
+      border-radius: 7px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    @media (max-width: 520px) {
+      .merge-array-stage { padding: 18px 10px; }
+      .merge-array-row { grid-template-columns: 20px minmax(0, 1fr); gap: 7px; }
+      .merge-array-cells { gap: 3px; }
+      .merge-cell {
+        width: 34px;
+        height: 40px;
+        flex-basis: 34px;
+        font-size: 13px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">O(n)</div>
+      <div class="brand-text">
+        <strong>Design &amp; Analysis of Algorithms</strong>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="topics.html" class="active">Topics</a></li>
+      <li><a href="practical.html">Practical</a></li>
+      <li><a href="tutorials.html">Tutorials</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="chapter-layout">
+
+  <aside class="toc">
+    <h4>In this chapter</h4>
+    <ol>
+      <li><a href="#sec-1">6.1 Merge Sort — Overview</a></li>
+      <li><a href="#sec-2">6.2 The Merge Operation</a></li>
+      <li><a href="#sec-3">6.3 Merge Algorithm &amp; Space</a></li>
+      <li><a href="#sec-4">6.4 Merging Without Extra Space</a></li>
+      <li><a href="#sec-5">6.5 Gap-Merge (Shell-Sort Style)</a></li>
+      <li><a href="#sec-6">6.6 Merge Sort — Full Algorithm</a></li>
+      <li><a href="#sec-7">6.7 Merge Sort — Time Analysis</a></li>
+      <li><a href="#sec-8">6.8 Merge Sort — Space &amp; Verdict</a></li>
+      <li><a href="#sec-9">6.9 Quick Sort — Strategy</a></li>
+      <li><a href="#sec-10">6.10 Quick Sort — Partitioning</a></li>
+      <li><a href="#sec-11">6.11 QuickSort() Algorithm</a></li>
+      <li><a href="#sec-12">6.12 Quick Sort — Best &amp; Worst Case</a></li>
+      <li><a href="#sec-13">6.13 Quick Sort — Discussion</a></li>
+      <li><a href="#sec-14">6.14 Hybrid Quicksort</a></li>
+      <li><a href="#sec-15">6.15 Probabilistic vs Randomized</a></li>
+      <li><a href="#sec-16">6.16 The Hiring Problem</a></li>
+      <li><a href="#sec-17">6.17 Indicator Random Variables</a></li>
+      <li><a href="#sec-18">6.18 Hiring via Indicator Variables</a></li>
+      <li><a href="#sec-19">6.19 Randomized Quicksort Analysis</a></li>
+      <li><a href="#sec-20">6.20 Matrix Multiplication</a></li>
+      <li><a href="#sec-21">6.21 Strassen's Algorithm</a></li>
+      <li><a href="#sec-22">6.22 Powering a Number</a></li>
+    </ol>
+  </aside>
+
+  <main class="chapter-body">
+    <span class="chapter-kicker">Chapter 06</span>
+    <h1>Divide and Conquer Algorithms</h1>
+    <p class="chapter-intro">
+      Merge sort and quick sort using the divide-and-conquer approach, followed
+      by probabilistic and randomized analysis, the Hiring Problem, matrix
+      multiplication, Strassen's method, and powering a number.
+    </p>
+
+    <!-- 6.1 -->
+    <section class="chapter-section" id="sec-1">
+      <h2><span class="sec-no">6.1</span>Merge Sort — Overview</h2>
+      <p>
+        Merge sort is the textbook <strong class="kw">Divide and Conquer</strong> algorithm:
+      </p>
+      <ul>
+        <li><strong class="kw">Divide</strong> — split the array into two halves.</li>
+        <li><strong class="kw">Conquer</strong> — recursively sort each half.</li>
+        <li><strong class="kw">Combine</strong> — merge the two sorted halves into one sorted array.</li>
+      </ul>
+    </section>
+
+    <!-- 6.2 -->
+    <section class="chapter-section" id="sec-2">
+      <h2><span class="sec-no">6.2</span>The Merge Operation</h2>
+      <p>
+        Merging is the heart of merge sort: given two already-sorted lists, produce one
+        sorted list from them. Keep a pointer into each input (<strong class="kw">i</strong> into A,
+        <strong class="kw">j</strong> into B) and a write pointer into the output. Compare the
+        two pointed-at elements, copy the smaller one out, and advance that pointer
+        (and the output pointer):
+      </p>
+      <pre class="code">if A[i] &lt;= B[j]:  C[m] = A[i];  i++;  m++
+else:             C[m] = B[j];  j++;  m++</pre>
+      <p>
+        When one list runs out, the other is already sorted — just copy the rest of it
+        across directly.
+      </p>
+
+      <div class="viz" id="tlm">
+        <div class="viz-title">Try it: merging A = [1, 3, 5, 6] and B = [2, 4, 8, 9]</div>
+        <div class="viz-sub">Watch i and j race down their own lists while C fills up in order.</div>
+        <div class="two-lists">
+          <div class="two-list-row"><span class="list-label">A</span><div class="two-list-cells" id="tlm-a"></div></div>
+          <div class="two-list-row"><span class="list-label">B</span><div class="two-list-cells" id="tlm-b"></div></div>
+          <div class="two-list-row"><span class="list-label">C (output)</span><div class="two-list-cells" id="tlm-c"></div></div>
+        </div>
+        <div class="viz-label" id="tlm-label"></div>
+        <div class="viz-controls">
+          <button class="primary" id="tlm-play">Play</button>
+          <button id="tlm-step">Step</button>
+          <button id="tlm-reset">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="tlm-speed">
+              <option value="1400">slow</option>
+              <option value="900" selected>normal</option>
+              <option value="500">fast</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p>
+        Merging two lists of total length n takes <strong>O(n)</strong> time — every element
+        is looked at, and copied, exactly once.
+      </p>
+    </section>
+
+    <!-- 6.3 -->
+    <section class="chapter-section" id="sec-3">
+      <h2><span class="sec-no">6.3</span>Merge Algorithm &amp; Its Space Cost</h2>
+<pre class="code python-source">def merge(left_half, right_half, arr):
+    i = j = k = 0
+    while i < len(left_half) and j < len(right_half):
+        if left_half[i] < right_half[j]:
+            arr[k] = left_half[i]
+            i += 1
+        else:
+            arr[k] = right_half[j]
+            j += 1
+        k += 1
+    # Copy any remaining elements from the left half
+    while i < len(left_half):
+        arr[k] = left_half[i]
+        i += 1
+        k += 1
+    # Copy any remaining elements from the right half
+    while j < len(right_half):
+        arr[k] = right_half[j]
+        j += 1
+        k += 1</pre>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Question — what is the space complexity of this merge?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(n)</span>
+          <p class="ex-why" style="margin-top:8px;"><code class="inline">left_half</code> and
+          <code class="inline">right_half</code> are separate arrays holding copies of the
+          two halves — together they hold n elements. This straightforward merge is not
+          in-place: it needs auxiliary space proportional to the input size.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 6.4 -->
+    <section class="chapter-section" id="sec-4">
+      <h2><span class="sec-no">6.4</span>Merging Without Extra Space</h2>
+      <p>
+        Can we merge two sorted arrays A (size n) and B (size m) using only O(1) extra
+        space? One approach: compare from the <strong>tail</strong> of A against the
+        <strong>head</strong> of B, swapping whenever they are out of order, then re-sort
+        each array afterward.
+      </p>
+<pre class="code python-source">def merge_two_arrays_no_extra_space(A, B):
+    n, m = len(A), len(B)
+    left, right = n - 1, 0
+    while left >= 0 and right < m:
+        if A[left] > B[right]:
+            swap(A[left], B[right])
+            left -= 1
+            right += 1
+        else:
+            break
+    sort(A)
+    sort(B)</pre>
+      <div class="viz" id="ipm">
+        <div class="viz-title">Animate: merge A = [1, 3, 5, 7] and B = [0, 2, 8, 9, 10]</div>
+        <div class="viz-sub">Compare the tail of A with the head of B, swap misplaced values, then sort both arrays.</div>
+        <div class="merge-array-stage">
+          <div class="merge-array-row">
+            <span class="merge-array-name">A</span>
+            <div class="merge-array-cells" id="ipm-a"></div>
+          </div>
+          <div class="merge-array-row">
+            <span class="merge-array-name">B</span>
+            <div class="merge-array-cells" id="ipm-b"></div>
+          </div>
+        </div>
+        <div class="viz-label" id="ipm-label" aria-live="polite"></div>
+        <div class="viz-controls">
+          <button class="primary" id="ipm-play" type="button">Play</button>
+          <button id="ipm-step" type="button">Step</button>
+          <button id="ipm-reset" type="button">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="ipm-speed">
+              <option value="1300">slow</option>
+              <option value="800" selected>normal</option>
+              <option value="450">fast</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p>
+        The idea: any element of A that is larger than an element of B must belong on
+        B's side (and vice versa) once both are merged, so swapping the offending pairs
+        from the two ends inward gets every value roughly into its correct array —
+        <strong class="kw">re-sorting each array</strong> afterward finishes the job.
+      </p>
+      <div class="note-box">
+        <span class="def-label">Time complexity</span>
+        <strong>O(min(n, m)) + O(n log n) + O(m log m)</strong> — the swap-scan costs at most
+        min(n, m) comparisons, and each array must be re-sorted.
+      </div>
+    </section>
+
+    <!-- 6.5 -->
+    <section class="chapter-section" id="sec-5">
+      <h2><span class="sec-no">6.5</span>Gap-Merge — a Shell-Sort-Style In-Place Merge</h2>
+      <p>
+        A cleverer O(1)-extra-space technique borrows the idea behind <strong class="kw">Shell
+        sort</strong>: instead of only comparing neighbours, compare elements a fixed
+        <strong class="kw">gap</strong> apart across the two arrays laid end to end, swap
+        any out-of-order pair, then shrink the gap and repeat until the gap reaches 1.
+      </p>
+<pre class="code python-source">def merge_gap(arr1, arr2):
+    n, m = len(arr1), len(arr2)
+    total = n + m
+    gap = (total // 2) + (total % 2)        # initial gap = ceil(total / 2)
+
+    while gap > 0:
+        left = 0
+        right = left + gap
+        while right < total:
+            if left < n and right >= n:
+                ...   # compare across arr1 and arr2
+            elif left >= n:
+                ...   # compare within arr2
+            else:
+                ...   # compare within arr1
+            left += 1
+            right += 1
+        if gap == 1:
+            break
+        gap = (gap // 2) + (gap % 2)         # next gap = ceil(gap / 2)</pre>
+      <div class="viz" id="gapm">
+        <div class="viz-title">Animate: gap-merge A = [2, 6, 5, 1] and B = [3, 7, 10, 8, 9]</div>
+        <div class="viz-sub">Treat A and B as one sequence. Compare positions gap places apart and reduce the gap from 5 to 1.</div>
+        <div class="gap-readout" id="gapm-readout">gap = 5</div>
+        <div class="merge-array-stage">
+          <div class="merge-array-row">
+            <span class="merge-array-name">A</span>
+            <div class="merge-array-cells" id="gapm-a"></div>
+          </div>
+          <div class="merge-array-row">
+            <span class="merge-array-name">B</span>
+            <div class="merge-array-cells" id="gapm-b"></div>
+          </div>
+        </div>
+        <div class="viz-label" id="gapm-label" aria-live="polite"></div>
+        <div class="viz-controls">
+          <button class="primary" id="gapm-play" type="button">Play</button>
+          <button id="gapm-step" type="button">Step</button>
+          <button id="gapm-reset" type="button">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="gapm-speed">
+              <option value="1300">slow</option>
+              <option value="800" selected>normal</option>
+              <option value="450">fast</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p>
+        Worked through the lecture's example (n = 4, m = 5, total = 9): the gap
+        sequence runs <strong>5 → 3 → 2 → 1</strong> (each step: ceil(gap/2)), with one
+        comparison-and-possible-swap pass at each gap width, finishing fully sorted
+        after the gap-1 pass.
+      </p>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Open question from the lecture — average and worst-case complexity?</span></div>
+        <p class="ex-why">Find the average-case and worst-case time complexities of the gap-merge algorithm.</p>
+      </div>
+    </section>
+
+    <!-- 6.6 -->
+    <section class="chapter-section" id="sec-6">
+      <h2><span class="sec-no">6.6</span>Merge Sort — the Full Algorithm</h2>
+<pre class="code python-source">def merge_sort(arr):
+    if len(arr) <= 1:
+        return
+
+    mid = len(arr) // 2
+    left_half  = arr[:mid]
+    right_half = arr[mid:]
+
+    # Recursively sort each half
+    merge_sort(left_half)
+    merge_sort(right_half)
+
+    # Merge left_half and right_half back into arr
+    merge(left_half, right_half, arr)</pre>
+
+      <div class="viz" id="ms">
+        <div class="viz-title">Try it: merge sort, divide and merge, in full</div>
+        <div class="viz-sub">The lecture's own example — A = [4, 7, 2, 6, 1, 4, 7, 3]. Watch the recursion split all the way down to single elements, then merge back up into sorted order. The bracket marks the range currently being processed; darker bars are fully sorted within their range.</div>
+        <div class="viz-bars range-mode" id="ms-bars" style="position:relative;">
+          <div class="range-bracket" id="ms-bracket"></div>
+        </div>
+        <div class="viz-label" id="ms-label"></div>
+        <div class="viz-controls">
+          <button class="primary" id="ms-play">Play</button>
+          <button id="ms-step">Step</button>
+          <button id="ms-reset">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="ms-speed">
+              <option value="1200">slow</option>
+              <option value="700" selected>normal</option>
+              <option value="350">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="ms-status"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.7 -->
+    <section class="chapter-section" id="sec-7">
+      <h2><span class="sec-no">6.7</span>Merge Sort — Time Analysis</h2>
+      <p>
+        Every level of the recursion touches every element exactly once (across all the
+        merges at that level combined), and there are log&#8322;n levels:
+      </p>
+      <figure class="fig fig-md">
+        <svg class="plot-svg" viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balanced recursion tree for T(n) = 2T(n/2) + n">
+          <text x="14" y="45" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <text x="14" y="105" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/2</text>
+          <text x="14" y="165" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/4</text>
+          <text x="6" y="225" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">&#8230;</text>
+          <line x1="294.6" y1="47.1" x2="195.4" y2="92.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="325.4" y1="47.1" x2="424.6" y2="92.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="167.1" y1="111.1" x2="122.9" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="192.9" y1="111.1" x2="237.1" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="427.1" y1="111.1" x2="382.9" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="452.9" y1="111.1" x2="497.1" y2="148.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="310" cy="40" r="17" fill="#0b7285"/><text x="310" y="45" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n</text>
+          <circle cx="180" cy="100" r="17" fill="#0b7285"/><text x="180" y="105" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/2</text>
+          <circle cx="440" cy="100" r="17" fill="#0b7285"/><text x="440" y="105" text-anchor="middle" font-size="13" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/2</text>
+          <circle cx="110" cy="160" r="15" fill="#0b7285"/><text x="110" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="250" cy="160" r="15" fill="#0b7285"/><text x="250" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="370" cy="160" r="15" fill="#0b7285"/><text x="370" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <circle cx="510" cy="160" r="15" fill="#0b7285"/><text x="510" y="165" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">n/4</text>
+          <text x="110" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="250" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="370" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="510" y="220" text-anchor="middle" font-size="16" fill="#9aa7bd">&#8942;</text>
+          <text x="606" y="45" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">n</text>
+          <text x="606" y="105" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">n/2 + n/2 = n</text>
+          <text x="606" y="165" text-anchor="end" font-size="13" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">4 &#215; n/4 = n</text>
+          <line x1="0" y1="266" x2="620" y2="266" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="286" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">height = log&#8322;n levels &#183; total cost = n &#215; log&#8322;n = &#920;(n log n)</text>
+          </svg>
+        <figcaption><b>Fig 6.1</b> &#183; Each level costs n, and the tree has log&#8322;n levels.</figcaption>
+      </figure>
+      <div class="def-box">
+        <span class="def-label">Recurrence</span>
+        T(n) = 2T(n/2) + &#920;(n) &nbsp;&#8594;&nbsp;
+        <strong>T(n) = &#920;(n log n)</strong>.
+      </div>
+    </section>
+
+    <!-- 6.8 -->
+    <section class="chapter-section" id="sec-8">
+      <h2><span class="sec-no">6.8</span>Merge Sort — Space, Overall Verdict</h2>
+      <p>
+        Each merge needs temporary arrays sized to the pieces being merged, but those
+        temporaries are freed as soon as that merge call returns — at any single moment
+        the temporaries in use add up to <strong>&#920;(n)</strong>, plus &#920;(log n) for the
+        recursion's own call stack.
+      </p>
+
+      <table class="tbl">
+        <thead><tr><th></th><th>Best</th><th>Worst</th><th>Average</th></tr></thead>
+        <tbody>
+          <tr><td>Time</td><td>&#920;(n log n)</td><td>&#920;(n log n)</td><td>&#920;(n log n)</td></tr>
+        </tbody>
+      </table>
+      <p>Recurrence: T(n) = 2T(n/2) + &#920;(n). Space: &#920;(n) additional (for the temporary merge arrays).</p>
+
+      <h3>Advantages</h3>
+      <ul>
+        <li>Guaranteed &#920;(n log n) time — no input can make it worse.</li>
+        <li><strong class="kw">Stable sort</strong> (preserves the relative order of equal
+            elements) — insertion sort and bubble sort are stable too.</li>
+        <li>Supports <strong class="kw">external sorting</strong> — only part of the data
+            needs to be in RAM at once, useful for datasets too big to fit in memory.</li>
+      </ul>
+      <h3>Disadvantages</h3>
+      <ul>
+        <li>Needs extra space proportional to n — not an <strong class="kw">in-place</strong> algorithm.</li>
+        <li>Recursion overhead makes it a poor choice for small n — insertion sort is
+            typically faster for n &lt; 32 in practice.</li>
+      </ul>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Question — what is the stack space of merge sort?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(log n)</span>
+          <p class="ex-why" style="margin-top:8px;">The recursion always splits the array in
+          half, so the deepest chain of nested calls has length log&#8322;n — that is the
+          maximum number of stack frames alive at once.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 6.9 -->
+    <section class="chapter-section" id="sec-9">
+      <h2><span class="sec-no">6.9</span>Quick Sort — Strategy</h2>
+      <p>
+        Quicksort takes the opposite approach to merge sort. Pick an element as the
+        <strong class="kw">pivot</strong>, and rearrange the array so that the pivot lands in
+        its final, correct sorted position — with every smaller element to its left
+        and every larger element to its right (each side may be internally unordered).
+        Then recurse on the left and right parts.
+      </p>
+    </section>
+
+    <!-- 6.10 -->
+    <section class="chapter-section" id="sec-10">
+      <h2><span class="sec-no">6.10</span>Quick Sort — Partitioning</h2>
+      <p>
+        The classic partition scheme: take the pivot as the first element, and scan
+        with two pointers — <strong class="kw">i</strong> moving right looking for something
+        &#8805; pivot, <strong class="kw">j</strong> moving left looking for something &#8804; pivot.
+        Whenever they find such a pair with i still left of j, swap them. When the
+        pointers cross, swap the pivot into its resting place at j.
+      </p>
+      <pre class="code">partition(A, low, high):
+    pivot = A[low]
+    i, j = low, high
+    while i < j:
+        do: i += 1  while A[i] < pivot and i < high
+        do: j -= 1  while A[j] > pivot
+        if i < j:
+            swap(A[i], A[j])
+    swap(A[low], A[j])
+    return j</pre>
+
+      <div class="viz" id="qp">
+        <div class="viz-title">Try it: partitioning A = [4, 5, 7, 2, 3, 6, 1, 8]</div>
+        <div class="viz-sub">Pivot is the first element (4, shown in amber). Watch i and j scan inward, swapping misplaced pairs, until the pivot drops into its final spot.</div>
+        <div class="viz-bars" id="qp-bars"></div>
+        <div class="ptr-row" id="qp-ptr"></div>
+        <div class="viz-label" id="qp-label"></div>
+        <div class="viz-controls">
+          <button class="primary" id="qp-play">Play</button>
+          <button id="qp-step">Step</button>
+          <button id="qp-reset">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="qp-speed">
+              <option value="1400">slow</option>
+              <option value="900" selected>normal</option>
+              <option value="500">fast</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p>
+        Following the lecture's own example through by hand gives exactly this result:
+        [4,5,7,2,3,6,1,8] &#8594; <strong>[2,1,3,4,7,6,5,8]</strong>, with the pivot 4 landing
+        at index 3 — try stepping through the animation above to confirm every swap.
+      </p>
+    </section>
+
+    <!-- 6.11 -->
+    <section class="chapter-section" id="sec-11">
+      <h2><span class="sec-no">6.11</span>QuickSort() Algorithm</h2>
+      <pre class="code">QuickSort(low, high):
+    if low < high:
+        k = partition(low, high)
+        QuickSort(low, k)
+        QuickSort(k + 1, high)</pre>
+    </section>
+
+    <!-- 6.12 -->
+    <section class="chapter-section" id="sec-12">
+      <h2><span class="sec-no">6.12</span>Quick Sort — Best and Worst Case</h2>
+      <div class="best-worst-toggle">
+        <button class="on" data-tree="best">Best case</button>
+        <button data-tree="worst">Worst case</button>
+      </div>
+      <div class="tree-wrap on" id="tree-best">
+        <figure class="fig fig-md">
+          <svg class="plot-svg" viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Balanced quicksort recursion tree, n=8">
+          <line x1="294.1" y1="40.1" x2="175.9" y2="85.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="325.9" y1="40.1" x2="444.1" y2="85.9" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="146.9" y1="102.8" x2="103.1" y2="139.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="173.1" y1="102.8" x2="216.9" y2="139.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="446.9" y1="102.8" x2="403.1" y2="139.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="473.1" y1="102.8" x2="516.9" y2="139.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="81.2" y1="164.6" x2="63.8" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="98.8" y1="164.6" x2="116.2" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="221.2" y1="164.6" x2="203.8" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="238.8" y1="164.6" x2="256.2" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="381.2" y1="164.6" x2="363.8" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="398.8" y1="164.6" x2="416.2" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="521.2" y1="164.6" x2="503.8" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="538.8" y1="164.6" x2="556.2" y2="193.4" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="310" cy="34" r="17" fill="#0b7285"/><text x="310" y="39" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">8</text>
+          <circle cx="160" cy="92" r="17" fill="#0b7285"/><text x="160" y="97" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">4</text>
+          <circle cx="460" cy="92" r="17" fill="#0b7285"/><text x="460" y="97" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">4</text>
+          <circle cx="90" cy="150" r="17" fill="#0b7285"/><text x="90" y="155" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2</text>
+          <circle cx="230" cy="150" r="17" fill="#0b7285"/><text x="230" y="155" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2</text>
+          <circle cx="390" cy="150" r="17" fill="#0b7285"/><text x="390" y="155" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2</text>
+          <circle cx="530" cy="150" r="17" fill="#0b7285"/><text x="530" y="155" text-anchor="middle" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2</text>
+          <circle cx="55" cy="208" r="13" fill="#0b7285"/><text x="55" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="125" cy="208" r="13" fill="#0b7285"/><text x="125" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="195" cy="208" r="13" fill="#0b7285"/><text x="195" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="265" cy="208" r="13" fill="#0b7285"/><text x="265" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="355" cy="208" r="13" fill="#0b7285"/><text x="355" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="425" cy="208" r="13" fill="#0b7285"/><text x="425" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="495" cy="208" r="13" fill="#0b7285"/><text x="495" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <circle cx="565" cy="208" r="13" fill="#0b7285"/><text x="565" y="213" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">1</text>
+          <text x="12" y="39" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n=8</text>
+          <text x="12" y="97" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/2</text>
+          <text x="12" y="155" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n/4</text>
+          <text x="12" y="213" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">1</text>
+          <text x="606" y="39" text-anchor="end" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">8</text>
+          <text x="606" y="97" text-anchor="end" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">4+4=8</text>
+          <text x="606" y="155" text-anchor="end" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">4×2=8</text>
+          <text x="606" y="213" text-anchor="end" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#0b7285" font-weight="600">8×1=8</text>
+          <line x1="0" y1="250" x2="620" y2="250" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="270" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">every pivot splits its part in half &#183; height = log&#8322;n &#183; total = n &#215; log&#8322;n = &#920;(n log n)</text>
+          </svg>
+          <figcaption><b>Fig 6.2</b> &#183; Best case: the pivot always splits the array
+          exactly in half. Recurrence: T(n) = 2T(n/2) + O(n) — the <em>same</em> recurrence
+          as merge sort — giving <strong>&#920;(n log n)</strong>.</figcaption>
+        </figure>
+      </div>
+      <div class="tree-wrap" id="tree-worst">
+        <figure class="fig fig-md">
+          <svg class="plot-svg" viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Skewed quicksort recursion tree, n=8, worst case">
+          <line x1="93.4" y1="36.7" x2="136.6" y2="58.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="163.4" y1="71.7" x2="206.6" y2="93.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="233.4" y1="106.7" x2="276.6" y2="128.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="303.4" y1="141.7" x2="346.6" y2="163.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="373.4" y1="176.7" x2="416.6" y2="198.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="443.4" y1="211.7" x2="486.6" y2="233.3" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="95.0" y1="31.2" x2="120.0" y2="33.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="165.0" y1="66.2" x2="190.0" y2="68.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="235.0" y1="101.2" x2="260.0" y2="103.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="305.0" y1="136.2" x2="330.0" y2="138.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="375.0" y1="171.2" x2="400.0" y2="173.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="445.0" y1="206.2" x2="470.0" y2="208.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <line x1="515.0" y1="241.2" x2="540.0" y2="243.2" stroke="#c7d3e6" stroke-width="1.6"/>
+          <circle cx="80" cy="30" r="15" fill="#0b7285"/><text x="80" y="35" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">8</text>
+          <circle cx="150" cy="65" r="15" fill="#0b7285"/><text x="150" y="70" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">7</text>
+          <circle cx="220" cy="100" r="15" fill="#0b7285"/><text x="220" y="105" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">6</text>
+          <circle cx="290" cy="135" r="15" fill="#0b7285"/><text x="290" y="140" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">5</text>
+          <circle cx="360" cy="170" r="15" fill="#0b7285"/><text x="360" y="175" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">4</text>
+          <circle cx="430" cy="205" r="15" fill="#0b7285"/><text x="430" y="210" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">3</text>
+          <circle cx="500" cy="240" r="15" fill="#0b7285"/><text x="500" y="245" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="#ffffff" font-weight="600">2</text>
+          <circle cx="130" cy="34" r="10" fill="#c7d3e6"/><text x="130" y="39" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="200" cy="69" r="10" fill="#c7d3e6"/><text x="200" y="74" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="270" cy="104" r="10" fill="#c7d3e6"/><text x="270" y="109" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="340" cy="139" r="10" fill="#c7d3e6"/><text x="340" y="144" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="410" cy="174" r="10" fill="#c7d3e6"/><text x="410" y="179" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="480" cy="209" r="10" fill="#c7d3e6"/><text x="480" y="214" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="550" cy="244" r="10" fill="#c7d3e6"/><text x="550" y="249" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <circle cx="560" cy="260" r="10" fill="#c7d3e6"/><text x="560" y="265" text-anchor="middle" font-size="9.5" font-family="IBM Plex Mono, monospace" fill="#46536b" font-weight="600">1</text>
+          <line x1="514.2" y1="244.7" x2="550.5" y2="256.8" stroke="#c7d3e6" stroke-width="1.6"/>
+          <text x="14" y="35" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">n=8</text>
+          <line x1="0" y1="270" x2="620" y2="270" stroke="#e3e9f2" stroke-width="1"/>
+          <text x="14" y="290" font-size="12.5" font-family="IBM Plex Mono, monospace" fill="#46536b">every pivot is the extreme element &#8212; one side is always empty &#183; height = n-1 &#183; total = 8+7+&#8230;+1 = n(n+1)/2 = &#920;(n&#178;)</text>
+          </svg>
+          <figcaption><b>Fig 6.3</b> &#183; Worst case: one partition is empty and the other
+          contains n&#8722;1 elements. T(n) = T(n&#8722;1) + O(n) = <strong>&#920;(n&#178;)</strong>.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 6.13 -->
+    <section class="chapter-section" id="sec-13">
+      <h2><span class="sec-no">6.13</span>Quick Sort — Discussion Questions</h2>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q1 — what kind of input triggers the worst case, and under what condition?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">already-sorted input</span>
+          <p class="ex-why" style="margin-top:8px;">An <strong>already sorted (or reverse-sorted)
+          array</strong>, when the pivot is chosen as the first or last element every time —
+          each partition then produces the most unbalanced split possible (empty on one side).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q2 — how can the worst case be improved?</span></div>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q3 — implement and compare merge sort, quicksort, and insertion sort for different input sizes</span></div>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q4 — what is the stack space of quicksort in the worst case?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n)</span></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 6.14 -->
+    <section class="chapter-section" id="sec-14">
+      <h2><span class="sec-no">6.14</span>Case Study: Hybrid Quicksort</h2>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">The MVP award problem</span></div>
+        <p>
+          A manager tracks cumulative tasks completed per employee (this week's count is
+          <em>added</em> to last week's running total) and finds the MVP by running
+          QuickSort — first element as pivot — on the totals, then reading off the
+          largest.
+        </p>
+        <ol>
+          <li>What is the time complexity in a typical week?</li>
+          <li>After a two-week holiday where nobody works, the office reopens and the
+              manager must announce the MVP again. What changes?</li>
+          <li>How should the manager adapt QuickSort for this situation?</li>
+        </ol>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Insertion sort for small subarrays — argue O(nk + n log(n/k))</span></div>
+        <p>
+          Modify quicksort's base case: once a subarray shrinks to fewer than k
+          elements, sort it directly with insertion sort instead of recursing further.
+        </p>
+        <p class="ex-why">Argue that the randomized version runs in
+        O(nk + n log(n/k)) expected time.</p>
+      </div>
+    </section>
+
+    <!-- 6.15 -->
+    <section class="chapter-section" id="sec-15">
+      <h2><span class="sec-no">6.15</span>Probabilistic Analysis vs Randomized Analysis</h2>
+      <p>
+        Two different ways randomness enters an algorithm's analysis — easy to
+        conflate, worth telling apart precisely:
+      </p>
+      <table class="tbl">
+        <thead><tr><th></th><th>Probabilistic analysis</th><th>Randomized analysis</th></tr></thead>
+        <tbody>
+          <tr><td>Source of randomness</td><td>the <strong class="kw">input</strong> distribution</td><td>the <strong class="kw">algorithm's own</strong> choices</td></tr>
+          <tr><td>Algorithm itself</td><td>deterministic</td><td>makes random choices, even on a fixed input</td></tr>
+          <tr><td>Quicksort example</td><td>pivot = first element always; <em>assume</em> input permutations are equally likely &#8594; average O(n log n), but worst case (sorted input) is still O(n&#178;)</td><td>pivot chosen uniformly at random each call &#8594; <strong>expected</strong> O(n log n) for <em>any</em> fixed input</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 6.16 -->
+    <section class="chapter-section" id="sec-16">
+      <h2><span class="sec-no">6.16</span>The Hiring Problem</h2>
+      <p>
+        You need to hire an office assistant:
+      </p>
+      <ul>
+        <li>An agency sends one candidate per day, numbered 1 to n, interviewed in that order.</li>
+        <li>Interviewing costs a small fee <strong class="kw">c&#7522;</strong>; hiring costs a
+            large fee <strong class="kw">c&#8462;</strong> (it involves firing the current
+            assistant and onboarding the new one).</li>
+        <li>Strategy: after each interview, hire that candidate only if they are better
+            than the current assistant — so the <em>best-so-far</em> is always on staff.</li>
+        <li>A dummy "candidate 0", worse than everyone, is the initial placeholder assistant.</li>
+      </ul>
+      <p>Total cost for m actual hires: O(c&#7522;n + c&#8462;m). The c&#7522;n term is fixed — all n
+      candidates get interviewed regardless. The interesting question is m, the number
+      of hires, which depends entirely on the order candidates arrive in.</p>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Worst case</span></div>
+        <p class="ex-why">If candidates arrive in strictly increasing quality order, every
+        single one is hired: m = n, so the hiring cost is O(c&#8462;n) — the worst possible
+        outcome. In reality we don't control (or know) the arrival order, which is
+        exactly what motivates an <strong>average-case</strong> analysis instead.</p>
+      </div>
+    </section>
+
+    <!-- 6.17 -->
+    <section class="chapter-section" id="sec-17">
+      <h2><span class="sec-no">6.17</span>Indicator Random Variables</h2>
+      <p>
+        A simple but powerful tool for turning probability questions into expectation
+        questions (and vice versa).
+      </p>
+      <div class="def-box">
+        <span class="def-label">Definition &amp; Lemma</span>
+        For a sample space S and an event A, define the <strong class="kw">indicator random
+        variable</strong> X<sub>A</sub> = I{A}, equal to 1 if A occurs and 0 otherwise. Then:
+        <br><br>
+        <strong>E[X<sub>A</sub>] = Pr{A}</strong>
+      </div>
+      <pre class="code">Proof.  E[X_A] = E[I{A}]
+              = 1 · Pr{A} + 0 · Pr{not A}
+              = Pr{A}.  ∎</pre>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Warm-up — expected number of heads in n coin flips</span></div>
+        <p class="ex-why">
+          Let X<sub>i</sub> = 1 if flip i is heads, else 0. A fair coin gives
+          E[X<sub>i</sub>] = Pr{heads} = 1/2 for every flip. Let X = X&#8321; + X&#8322; + &#8943; + X&#8345;
+          be the total number of heads. By <strong class="kw">linearity of expectation</strong>
+          (which needs <em>no</em> assumption that the flips are independent!):
+        </p>
+        <pre class="code">E[X] = E[X₁] + E[X₂] + ⋯ + E[Xₙ] = n · (1/2) = n/2</pre>
+        <p class="ex-why">A satisfying confirmation of the obvious answer — and the exact
+        technique we now aim at the much less obvious Hiring Problem.</p>
+      </div>
+    </section>
+
+    <!-- 6.18 -->
+    <section class="chapter-section" id="sec-18">
+      <h2><span class="sec-no">6.18</span>Solving the Hiring Problem with Indicator Variables</h2>
+      <p>
+        Assume candidates arrive in <strong class="kw">uniformly random order</strong>. Define
+        X<sub>i</sub> = 1 if candidate i is hired (i.e. candidate i is better than all of
+        candidates 1..i&#8722;1), else 0. We want E[X], the expected number of hires.
+      </p>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Probability that candidate i is hired</span></div>
+        <p class="ex-why">
+          Candidate i is hired exactly when they are the best among the first i
+          candidates seen so far. In a random arrival order, each of the first i
+          candidates is equally likely to be the best of that group — so
+          <strong>Pr{candidate i is hired} = 1/i</strong>, and by the Lemma above,
+          E[X<sub>i</sub>] = 1/i.
+        </p>
+      </div>
+      <p>Total hires X = X&#8321; + X&#8322; + &#8943; + X<sub>n</sub>. By linearity of expectation:</p>
+      <pre class="code">E[X] = E[X₁] + E[X₂] + ⋯ + E[Xₙ]
+     = 1/1 + 1/2 + 1/3 + ⋯ + 1/n
+     = Hₙ  (the n-th harmonic number)
+     = ln n + O(1)</pre>
+      <div class="def-box">
+        <span class="def-label">Result</span>
+        Assuming candidates arrive in random order, algorithm HIRE-ASSISTANT has an
+        <strong>average-case hiring cost of O(c&#8462; ln n)</strong> — exponentially better than
+        the O(c&#8462;n) worst case from &#167;6.16, even though we assumed nothing about the
+        candidates except that their arrival order is random.
+      </div>
+      <pre class="code">HIRE-ASSISTANT(n)
+1  best = 0                              // candidate 0 is a least-qualified dummy
+2  for i = 1 to n
+3      interview candidate i
+4      if candidate i is better than candidate best
+5          best = i
+6          hire candidate i
+
+RANDOMIZED-HIRE-ASSISTANT(n)
+1  randomly permute the list of candidates
+2  HIRE-ASSISTANT(n)</pre>
+    </section>
+
+    <!-- 6.19 -->
+    <section class="chapter-section" id="sec-19">
+      <h2><span class="sec-no">6.19</span>Randomized Quicksort via Indicator Variables</h2>
+      <p>
+        The same technique analyses randomized quicksort. Let X<sub>k</sub> = 1 if the
+        partition step produces a k : (n&#8722;k&#8722;1) split (k = 0, &#8230;, n&#8722;1), else 0. With a
+        uniformly random pivot and distinct elements, every split is equally likely:
+      </p>
+      <pre class="code">E[X_k] = Pr{X_k = 1} = 1/n     for each k = 0, …, n−1
+
+T(n) = Σ X_k · (T(k) + T(n−k−1) + Θ(n))
+       k=0..n−1</pre>
+      <p>Taking expectations and using linearity:</p>
+      <pre class="code">E[T(n)] = (1/n) · Σ (E[T(k)] + E[T(n−k−1)])  +  Θ(n)
+                  k=0..n−1</pre>
+      <div class="def-box">
+        <span class="def-label">Result</span>
+        <strong>E[T(n)] = O(n log n)</strong> — the expected running time of randomized
+        quicksort, for <em>every</em> input, with no assumption on how the input arrived.
+      </div>
+    </section>
+
+    <!-- 6.20 -->
+    <section class="chapter-section" id="sec-20">
+      <h2><span class="sec-no">6.20</span>Matrix Multiplication</h2>
+      <p>
+        For n&#215;n matrices A and B, the product C = A&#183;B is defined entrywise by
+        C[i][j] = &#931;<sub>k</sub> A[i][k]&#183;B[k][j]. The <strong class="kw">naive</strong>
+        triple-nested loop computes all n&#178; entries, each needing n multiply-adds:
+      </p>
+      <div class="def-box">
+        <span class="def-label">Naive algorithm</span>
+        <strong>&#920;(n&#179;)</strong> time — three nested loops over n, n, n.
+      </div>
+
+      <h3>Divide and Conquer</h3>
+      <p>
+        Split each n&#215;n matrix into four (n/2)&#215;(n/2) blocks. Block multiplication follows
+        ordinary matrix rules, just with blocks standing in for numbers:
+      </p>
+      <pre class="code">C11 = A11·B11 + A12·B21
+C12 = A11·B12 + A12·B22
+C21 = A21·B11 + A22·B21
+C22 = A21·B12 + A22·B22</pre>
+<pre class="code python-source">def matrix_multiply(A, B, n):
+    if n <= threshold:
+        return naive_multiply(A, B)
+
+    C11 = matrix_multiply(A11, B11, n/2) + matrix_multiply(A12, B21, n/2)
+    C12 = matrix_multiply(A11, B12, n/2) + matrix_multiply(A12, B22, n/2)
+    C21 = matrix_multiply(A21, B11, n/2) + matrix_multiply(A22, B21, n/2)
+    C22 = matrix_multiply(A21, B12, n/2) + matrix_multiply(A22, B22, n/2)
+    return combine(C11, C12, C21, C22)</pre>
+      <p>
+        This makes <strong>8</strong> recursive multiplications of (n/2)-sized blocks, plus
+        &#920;(n&#178;) work to add the block products together:
+      </p>
+      <div class="def-box">
+        <span class="def-label">Recurrence</span>
+        T(n) = 8T(n/2) + &#920;(n&#178;) &nbsp;&#8594;&nbsp; Master theorem: a=8, b=2,
+        log&#8322;8 = 3 &gt; 2 = k &#8594; Case 1 &nbsp;&#8594;&nbsp; <strong>T(n) = &#920;(n&#179;)</strong>
+        — no better than the naive method! Splitting into blocks alone buys nothing;
+        the saving has to come from doing fewer than 8 block multiplications.
+      </div>
+    </section>
+
+    <!-- 6.21 -->
+    <section class="chapter-section" id="sec-21">
+      <h2><span class="sec-no">6.21</span>Strassen's Algorithm</h2>
+      <p>
+        Strassen's insight: with seven cleverly chosen products (instead of eight), the
+        same four output blocks can be recovered using only extra additions —
+        additions are cheap (&#920;(n&#178;)), multiplications are what we want to save.
+      </p>
+      <div class="strassen-grid">
+        <div class="strassen-cell"><b>M1</b> = (A11+A22)&#183;(B11+B22)</div>
+        <div class="strassen-cell"><b>M2</b> = (A21+A22)&#183;B11</div>
+        <div class="strassen-cell"><b>M3</b> = A11&#183;(B12&#8722;B22)</div>
+        <div class="strassen-cell"><b>M4</b> = A22&#183;(B21&#8722;B11)</div>
+        <div class="strassen-cell"><b>M5</b> = (A11+A12)&#183;B22</div>
+        <div class="strassen-cell"><b>M6</b> = (A21&#8722;A11)&#183;(B11+B12)</div>
+        <div class="strassen-cell"><b>M7</b> = (A12&#8722;A22)&#183;(B21+B22)</div>
+      </div>
+      <pre class="code">C11 = M1 + M4 − M5 + M7
+C12 = M3 + M5
+C21 = M2 + M4
+C22 = M1 − M2 + M3 + M6</pre>
+      <div class="def-box">
+        <span class="def-label">Recurrence</span>
+        T(n) = 7T(n/2) + &#920;(n&#178;) &nbsp;&#8594;&nbsp; Master theorem: log&#8322;7 &#8776; 2.807 &gt; 2 &#8594;
+        Case 1 &nbsp;&#8594;&nbsp; <strong>T(n) = &#920;(n<sup>log&#8322;7</sup>) = &#920;(n<sup>2.81</sup>)</strong>
+        — asymptotically faster than the &#920;(n&#179;) of both the naive and straightforward
+        divide-and-conquer methods, purely by trading one multiplication for extra
+        (cheap) additions.
+      </div>
+    </section>
+
+    <!-- 6.22 -->
+    <section class="chapter-section" id="sec-22">
+      <h2><span class="sec-no">6.22</span>Powering a Number</h2>
+      <p>Problem: compute a<sup>n</sup> for a natural number n.</p>
+      <div class="def-box">
+        <span class="def-label">Naive</span>
+        Multiply a by itself n&#8722;1 times: <strong>&#920;(n)</strong>.
+      </div>
+      <p>Divide and conquer (exponentiation by squaring):</p>
+      <pre class="code">        ⎧ (a^(n/2))²            if n is even
+a^n  =  ⎨
+        ⎩ a · (a^((n−1)/2))²     if n is odd</pre>
+    </section>
+
+    <nav class="chapter-nav">
+      <a href="chapter5.html">← Chapter 5: Recursion and Divide &amp; Conquer</a>
+      <a href="topics.html">All topics</a>
+      <a href="chapter7.html">Chapter 7: Linked Lists, Stacks and Queues →</a>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Design and Analysis of Algorithms</span>
+    <span>© 2026
+      <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+        Dr. Alakesh Kalita
+      </a>
+      · Mathematics and Computing · IIT (ISM) Dhanbad</span>
+  </div>
+</footer>
+
+<script>
+/* TOC scroll-spy */
+(function () {
+  const links = document.querySelectorAll(".toc a");
+  const sections = document.querySelectorAll(".chapter-section");
+  if (!links.length || !sections.length) return;
+  const byId = {};
+  links.forEach((a) => (byId[a.getAttribute("href").slice(1)] = a));
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          links.forEach((a) => a.classList.remove("current"));
+          const a = byId[e.target.id];
+          if (a) a.classList.add("current");
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -70% 0px" }
+  );
+  sections.forEach((s) => obs.observe(s));
+})();
+
+/* Best/worst recursion-tree toggle */
+(function () {
+  var btns = document.querySelectorAll(".best-worst-toggle button");
+  if (!btns.length) return;
+  btns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      btns.forEach(function (b) { b.classList.remove("on"); });
+      btn.classList.add("on");
+      document.getElementById("tree-best").classList.toggle("on", btn.dataset.tree === "best");
+      document.getElementById("tree-worst").classList.toggle("on", btn.dataset.tree === "worst");
+    });
+  });
+})();
+</script>
+<script>
+
+/* ---------- Two-list merge visualizer (section 6.2) ---------- */
+(function () {
+  var root = document.getElementById("tlm");
+  if (!root) return;
+  var A = [1, 3, 5, 6], B = [2, 4, 8, 9];
+  var frames = [], out = [];
+
+  (function build() {
+    var i = 0, j = 0;
+    frames.push({ i: -1, j: -1, out: [], label: "Two sorted lists, ready to merge. i and j both start at index 0." });
+    while (i < A.length && j < B.length) {
+      if (A[i] <= B[j]) {
+        frames.push({ i: i, j: j, decide: "A", out: out.slice(), label: "A[i]=" + A[i] + " ≤ B[j]=" + B[j] + " → take A[i]" });
+        out.push(A[i]); i++;
+      } else {
+        frames.push({ i: i, j: j, decide: "B", out: out.slice(), label: "B[j]=" + B[j] + " < A[i]=" + A[i] + " → take B[j]" });
+        out.push(B[j]); j++;
+      }
+      frames.push({ i: i, j: j, out: out.slice(), label: "C = [" + out.join(",") + "]" });
+    }
+    while (i < A.length) { out.push(A[i]); frames.push({ i: i, j: j, out: out.slice(), label: "B exhausted — copy remaining A[i]=" + A[i] }); i++; }
+    while (j < B.length) { out.push(B[j]); frames.push({ i: i, j: j, out: out.slice(), label: "A exhausted — copy remaining B[j]=" + B[j] }); j++; }
+    frames.push({ i: i, j: j, out: out.slice(), label: "Merged: C = [" + out.join(",") + "] — done in O(n+m)" });
+  })();
+
+  var pos = 0, timer = null;
+  var playBtn = document.getElementById("tlm-play"), stepBtn = document.getElementById("tlm-step"),
+      resetBtn = document.getElementById("tlm-reset"), speedEl = document.getElementById("tlm-speed"),
+      labelEl = document.getElementById("tlm-label");
+  var rowA = document.getElementById("tlm-a"), rowB = document.getElementById("tlm-b"), rowC = document.getElementById("tlm-c");
+
+  function cellRow(container, values, opts) {
+    container.innerHTML = "";
+    values.forEach(function (v, idx) {
+      var c = document.createElement("div");
+      c.className = "tl-cell";
+      if (opts.doneUpTo !== undefined && idx < opts.doneUpTo) c.classList.add("done");
+      if (opts.ptrIndex === idx) { c.classList.add(opts.ptrClass); var tag = document.createElement("span"); tag.className = "ptr-tag"; tag.textContent = opts.ptrLabel; c.appendChild(tag); }
+      var s = document.createElement("span"); s.textContent = v; c.appendChild(s);
+      container.appendChild(c);
+    });
+  }
+
+  function render() {
+    var f = frames[pos];
+    cellRow(rowA, A, { doneUpTo: f.i, ptrIndex: f.i < A.length ? f.i : -1, ptrClass: "ptr-i", ptrLabel: "i" });
+    cellRow(rowB, B, { doneUpTo: f.j, ptrIndex: f.j < B.length ? f.j : -1, ptrClass: "ptr-j", ptrLabel: "j" });
+    rowC.innerHTML = "";
+    for (var k = 0; k < A.length + B.length; k++) {
+      var c = document.createElement("div");
+      c.className = "tl-cell";
+      if (k < f.out.length) { c.classList.add("placed"); var s = document.createElement("span"); s.textContent = f.out[k]; c.appendChild(s); }
+      rowC.appendChild(c);
+    }
+    labelEl.textContent = f.label;
+    var end = pos >= frames.length - 1;
+    stepBtn.disabled = end; playBtn.disabled = end;
+    if (end && timer) { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  }
+  function step() { if (pos < frames.length - 1) { pos++; render(); } }
+  function play() { timer = setInterval(step, parseInt(speedEl.value, 10)); playBtn.textContent = "Pause"; }
+  function pause() { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  function reset() { pos = 0; if (timer) pause(); playBtn.disabled = false; render(); }
+  playBtn.addEventListener("click", function () { timer ? pause() : play(); });
+  stepBtn.addEventListener("click", step);
+  resetBtn.addEventListener("click", reset);
+  speedEl.addEventListener("change", function () { if (timer) { pause(); play(); } });
+  reset();
+})();
+
+</script>
+<script>
+
+/* ---------- In-place tail/head merge animation (section 6.4) ---------- */
+(function () {
+  var root = document.getElementById("ipm");
+  if (!root) return;
+
+  var frames = [
+    { a: [1,3,5,7], b: [0,2,8,9,10], label: "Start with two sorted arrays." },
+    { a: [1,3,5,7], b: [0,2,8,9,10], ai: 3, bi: 0, label: "Compare A[3] = 7 with B[0] = 0. Since 7 > 0, swap them." },
+    { a: [1,3,5,0], b: [7,2,8,9,10], ai: 3, bi: 0, swapped: true, label: "After swap: A = [1, 3, 5, 0], B = [7, 2, 8, 9, 10]." },
+    { a: [1,3,5,0], b: [7,2,8,9,10], ai: 2, bi: 1, label: "Move inward. Compare A[2] = 5 with B[1] = 2. Since 5 > 2, swap them." },
+    { a: [1,3,2,0], b: [7,5,8,9,10], ai: 2, bi: 1, swapped: true, label: "After swap: A = [1, 3, 2, 0], B = [7, 5, 8, 9, 10]." },
+    { a: [1,3,2,0], b: [7,5,8,9,10], ai: 1, bi: 2, label: "Compare A[1] = 3 with B[2] = 8. Since 3 ≤ 8, stop the swap scan." },
+    { a: [0,1,2,3], b: [5,7,8,9,10], sorted: true, label: "Sort A and B. Final arrays: A = [0, 1, 2, 3], B = [5, 7, 8, 9, 10]." }
+  ];
+
+  var pos = 0, timer = null;
+  var rowA = document.getElementById("ipm-a");
+  var rowB = document.getElementById("ipm-b");
+  var label = document.getElementById("ipm-label");
+  var play = document.getElementById("ipm-play");
+  var step = document.getElementById("ipm-step");
+  var reset = document.getElementById("ipm-reset");
+  var speed = document.getElementById("ipm-speed");
+
+  function drawRow(container, values, activeIndex, pointer, frame) {
+    container.innerHTML = "";
+    values.forEach(function (value, index) {
+      var cell = document.createElement("div");
+      cell.className = "merge-cell";
+      if (frame.sorted) cell.classList.add("sorted-cell");
+      if (index === activeIndex) {
+        cell.classList.add(frame.swapped ? "just-swapped" : "active-pair");
+        var tag = document.createElement("span");
+        tag.className = "merge-pointer";
+        tag.textContent = pointer;
+        cell.appendChild(tag);
+      }
+      var text = document.createElement("span");
+      text.textContent = value;
+      cell.appendChild(text);
+      container.appendChild(cell);
+    });
+  }
+
+  function render() {
+    var frame = frames[pos];
+    drawRow(rowA, frame.a, frame.ai, "left / i", frame);
+    drawRow(rowB, frame.b, frame.bi, "right / j", frame);
+    label.textContent = frame.label;
+    step.disabled = pos >= frames.length - 1;
+    play.textContent = timer ? "Pause" : (pos >= frames.length - 1 ? "Replay" : "Play");
+  }
+
+  function stop() {
+    if (timer) window.clearTimeout(timer);
+    timer = null;
+    render();
+  }
+
+  function run() {
+    if (pos >= frames.length - 1) pos = 0;
+    timer = window.setTimeout(function () {
+      pos += 1;
+      render();
+      if (pos < frames.length - 1) run();
+      else stop();
+    }, parseInt(speed.value, 10));
+    render();
+  }
+
+  play.addEventListener("click", function () { timer ? stop() : run(); });
+  step.addEventListener("click", function () { stop(); if (pos < frames.length - 1) pos += 1; render(); });
+  reset.addEventListener("click", function () { stop(); pos = 0; render(); });
+  speed.addEventListener("change", function () { if (timer) { stop(); run(); } });
+  render();
+})();
+
+</script>
+<script>
+
+/* ---------- Gap-merge animation (section 6.5) ---------- */
+(function () {
+  var root = document.getElementById("gapm");
+  if (!root) return;
+
+  var split = 4;
+  var values = [2,6,5,1,3,7,10,8,9];
+  var frames = [];
+  var gaps = [5,3,2,1];
+
+  gaps.forEach(function (gap) {
+    frames.push({
+      values: values.slice(),
+      gap: gap,
+      label: "Begin the gap = " + gap + " pass."
+    });
+
+    for (var i = 0; i + gap < values.length; i++) {
+      var j = i + gap;
+      if (values[i] > values[j]) {
+        var leftValue = values[i], rightValue = values[j];
+        values[i] = rightValue;
+        values[j] = leftValue;
+        frames.push({
+          values: values.slice(),
+          gap: gap,
+          pair: [i, j],
+          swapped: true,
+          label: "Compare positions " + i + " and " + j + ": " + leftValue + " > " + rightValue + ", so swap."
+        });
+      }
+    }
+
+    frames.push({
+      values: values.slice(),
+      gap: gap,
+      label: gap === 1
+        ? "Gap 1 pass complete. The two arrays are now merged in sorted order."
+        : "Gap " + gap + " pass complete. Next gap = " + Math.ceil(gap / 2) + ".",
+      sorted: gap === 1
+    });
+  });
+
+  var pos = 0, timer = null;
+  var rowA = document.getElementById("gapm-a");
+  var rowB = document.getElementById("gapm-b");
+  var label = document.getElementById("gapm-label");
+  var readout = document.getElementById("gapm-readout");
+  var play = document.getElementById("gapm-play");
+  var step = document.getElementById("gapm-step");
+  var reset = document.getElementById("gapm-reset");
+  var speed = document.getElementById("gapm-speed");
+
+  function drawRow(container, rowValues, offset, frame) {
+    container.innerHTML = "";
+    rowValues.forEach(function (value, localIndex) {
+      var globalIndex = offset + localIndex;
+      var cell = document.createElement("div");
+      cell.className = "merge-cell";
+      if (frame.sorted) cell.classList.add("sorted-cell");
+      if (frame.pair && frame.pair.indexOf(globalIndex) !== -1) {
+        cell.classList.add(frame.swapped ? "just-swapped" : "active-pair");
+        var tag = document.createElement("span");
+        tag.className = "merge-pointer";
+        tag.textContent = globalIndex === frame.pair[0] ? "i" : "j";
+        cell.appendChild(tag);
+      }
+      var text = document.createElement("span");
+      text.textContent = value;
+      cell.appendChild(text);
+      container.appendChild(cell);
+    });
+  }
+
+  function render() {
+    var frame = frames[pos];
+    drawRow(rowA, frame.values.slice(0, split), 0, frame);
+    drawRow(rowB, frame.values.slice(split), split, frame);
+    readout.textContent = "gap = " + frame.gap;
+    label.textContent = frame.label;
+    step.disabled = pos >= frames.length - 1;
+    play.textContent = timer ? "Pause" : (pos >= frames.length - 1 ? "Replay" : "Play");
+  }
+
+  function stop() {
+    if (timer) window.clearTimeout(timer);
+    timer = null;
+    render();
+  }
+
+  function run() {
+    if (pos >= frames.length - 1) pos = 0;
+    timer = window.setTimeout(function () {
+      pos += 1;
+      render();
+      if (pos < frames.length - 1) run();
+      else stop();
+    }, parseInt(speed.value, 10));
+    render();
+  }
+
+  play.addEventListener("click", function () { timer ? stop() : run(); });
+  step.addEventListener("click", function () { stop(); if (pos < frames.length - 1) pos += 1; render(); });
+  reset.addEventListener("click", function () { stop(); pos = 0; render(); });
+  speed.addEventListener("change", function () { if (timer) { stop(); run(); } });
+  render();
+})();
+
+</script>
+<script>
+
+/* ---------- Merge sort: full divide + merge animation (section 6.6) ---------- */
+(function () {
+  var barsEl = document.getElementById("ms-bars");
+  if (!barsEl) return;
+  var INPUT = [4, 7, 2, 6, 1, 4, 7, 3]; // the lecture's own example
+  var N = INPUT.length;
+  var frames = [], settled = []; // settled: list of [lo,hi] fully-sorted ranges at this point
+
+  (function build() {
+    var a = INPUT.slice();
+
+    function snap(label, extra) {
+      var f = { a: a.slice(), settled: settled.map(function (r) { return r.slice(); }), label: label };
+      for (var k in extra) f[k] = extra[k];
+      frames.push(f);
+    }
+
+    function markSettled(lo, hi) {
+      // remove any ranges fully covered by [lo,hi], then add it
+      settled = settled.filter(function (r) { return !(r[0] >= lo && r[1] <= hi); });
+      settled.push([lo, hi]);
+    }
+
+    function merge(lo, mid, hi) {
+      var L = a.slice(lo, mid + 1), R = a.slice(mid + 1, hi + 1);
+      var i = 0, j = 0, k = lo;
+      snap("Merge [" + lo + ".." + hi + "]: comparing left part [" + L.join(",") + "] with right part [" + R.join(",") + "]", { lo: lo, hi: hi });
+      while (i < L.length && j < R.length) {
+        var ii = lo + i, jj = mid + 1 + j;
+        snap("Compare A[" + ii + "]=" + L[i] + " vs A[" + jj + "]=" + R[j], { lo: lo, hi: hi, cmpA: ii, cmpB: jj });
+        if (L[i] <= R[j]) { a[k] = L[i]; snap("Place " + L[i] + " at index " + k + " (left was smaller or equal)", { lo: lo, hi: hi, placed: k }); i++; }
+        else { a[k] = R[j]; snap("Place " + R[j] + " at index " + k + " (right was smaller)", { lo: lo, hi: hi, placed: k }); j++; }
+        k++;
+      }
+      while (i < L.length) { a[k] = L[i]; snap("Copy remaining left element " + L[i] + " to index " + k, { lo: lo, hi: hi, placed: k }); i++; k++; }
+      while (j < R.length) { a[k] = R[j]; snap("Copy remaining right element " + R[j] + " to index " + k, { lo: lo, hi: hi, placed: k }); j++; k++; }
+      markSettled(lo, hi);
+      snap("Merged [" + lo + ".." + hi + "] = [" + a.slice(lo, hi + 1).join(",") + "]", { lo: lo, hi: hi });
+    }
+
+    function ms(lo, hi) {
+      if (lo >= hi) { markSettled(lo, hi); snap("Base case: single element A[" + lo + "] = " + a[lo] + " (trivially sorted)", { lo: lo, hi: hi }); return; }
+      var mid = Math.floor((lo + hi) / 2);
+      snap("Divide [" + lo + ".." + hi + "] into [" + lo + ".." + mid + "] and [" + (mid + 1) + ".." + hi + "]", { lo: lo, hi: hi, dividing: true });
+      ms(lo, mid);
+      ms(mid + 1, hi);
+      merge(lo, mid, hi);
+    }
+
+    snap("Starting array: [" + a.join(",") + "]", { lo: 0, hi: N - 1 });
+    ms(0, N - 1);
+    snap("Fully sorted: [" + a.join(",") + "]  —  Θ(n log n) with n = " + N, { lo: 0, hi: N - 1 });
+  })();
+
+  var pos = 0, timer = null;
+  var playBtn = document.getElementById("ms-play"), stepBtn = document.getElementById("ms-step"),
+      resetBtn = document.getElementById("ms-reset"), speedEl = document.getElementById("ms-speed"),
+      labelEl = document.getElementById("ms-label"), statusEl = document.getElementById("ms-status"),
+      bracketEl = document.getElementById("ms-bracket");
+  var MAX = Math.max.apply(null, INPUT);
+  var barWidth = 100 / N;
+
+  function render() {
+    var f = frames[pos];
+    barsEl.querySelectorAll(".viz-bar").forEach(function (el) { el.remove(); });
+    f.a.forEach(function (v, idx) {
+      var bar = document.createElement("div");
+      bar.className = "viz-bar";
+      bar.style.height = Math.max(18, (v / MAX) * 100) + "%";
+      var isSettled = f.settled.some(function (r) { return idx >= r[0] && idx <= r[1]; });
+      if (isSettled) bar.classList.add("settled");
+      if (f.cmpA === idx) bar.classList.add("cmp-a");
+      if (f.cmpB === idx) bar.classList.add("cmp-b");
+      if (f.placed === idx) bar.classList.add("placed");
+      var s = document.createElement("span");
+      s.textContent = v;
+      bar.appendChild(s);
+      barsEl.appendChild(bar);
+    });
+    if (bracketEl) {
+      bracketEl.style.left = (f.lo * barWidth) + "%";
+      bracketEl.style.width = ((f.hi - f.lo + 1) * barWidth) + "%";
+      bracketEl.classList.toggle("settled", !!f.dividing);
+    }
+    labelEl.textContent = f.label;
+    statusEl.textContent = "step " + (pos + 1) + " / " + frames.length;
+    var end = pos >= frames.length - 1;
+    stepBtn.disabled = end; playBtn.disabled = end;
+    if (end && timer) { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  }
+  function step() { if (pos < frames.length - 1) { pos++; render(); } }
+  function play() { timer = setInterval(step, parseInt(speedEl.value, 10)); playBtn.textContent = "Pause"; }
+  function pause() { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  function reset() { pos = 0; if (timer) pause(); playBtn.disabled = false; render(); }
+  playBtn.addEventListener("click", function () { timer ? pause() : play(); });
+  stepBtn.addEventListener("click", step);
+  resetBtn.addEventListener("click", reset);
+  speedEl.addEventListener("change", function () { if (timer) { pause(); play(); } });
+  reset();
+})();
+
+</script>
+<script>
+
+/* ---------- Quicksort partition visualizer (section 6.11) ---------- */
+(function () {
+  var barsEl = document.getElementById("qp-bars");
+  if (!barsEl) return;
+  var INPUT = [4, 5, 7, 2, 3, 6, 1, 8]; // the lecture's own example
+  var N = INPUT.length;
+  var frames = [];
+
+  (function build() {
+    var a = INPUT.slice();
+    var pivot = a[0];
+    function snap(label, extra) {
+      var f = { a: a.slice(), label: label, pivotVal: pivot };
+      for (var k in extra) f[k] = extra[k];
+      frames.push(f);
+    }
+    var i = 0, j = N - 1;
+    snap("pivot = A[0] = " + pivot + ". i starts at low (0), j starts at high (" + (N - 1) + ").", { i: i, j: j });
+    while (i < j) {
+      var startI = i;
+      do { i++; } while (a[i] < pivot && i < N - 1);
+      snap("i scans right while A[i] < pivot → stops at i=" + i + " (A[i]=" + a[i] + ")", { i: i, j: j, scan: "i" });
+      var startJ = j;
+      do { j--; } while (a[j] > pivot);
+      snap("j scans left while A[j] > pivot → stops at j=" + j + " (A[j]=" + a[j] + ")", { i: i, j: j, scan: "j" });
+      if (i < j) {
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+        snap("i < j → swap A[" + i + "] and A[" + j + "]", { i: i, j: j, swapped: true });
+      } else {
+        snap("i ≥ j → the while loop ends", { i: i, j: j });
+      }
+    }
+    var t2 = a[0]; a[0] = a[j]; a[j] = t2;
+    snap("Final step: swap pivot into place — swap A[0] and A[" + j + "]", { i: i, j: j, finalSwap: true });
+    snap("Partitioned: [" + a.join(",") + "] — pivot " + pivot + " is now at index " + j + ", everything left ≤ " + pivot + ", everything right ≥ " + pivot, { i: i, j: j, pivotIndex: j, done: true });
+  })();
+
+  var pos = 0, timer = null;
+  var playBtn = document.getElementById("qp-play"), stepBtn = document.getElementById("qp-step"),
+      resetBtn = document.getElementById("qp-reset"), speedEl = document.getElementById("qp-speed"),
+      labelEl = document.getElementById("qp-label"), ptrRow = document.getElementById("qp-ptr");
+  var MAX = Math.max.apply(null, INPUT);
+
+  function render() {
+    var f = frames[pos];
+    barsEl.innerHTML = "";
+    ptrRow.innerHTML = "";
+    f.a.forEach(function (v, idx) {
+      var bar = document.createElement("div");
+      bar.className = "viz-bar";
+      bar.style.height = Math.max(18, (v / MAX) * 100) + "%";
+      if (v === f.pivotVal && !f.done) bar.classList.add("cmp-b");
+      if (f.i === idx || f.j === idx) bar.classList.add("cmp-a");
+      if (f.swapped && (f.i === idx || f.j === idx)) bar.classList.add("placed");
+      if (f.done && idx === f.pivotIndex) bar.classList.add("placed");
+      if (f.done && idx < f.pivotIndex) bar.classList.add("settled");
+      var s = document.createElement("span"); s.textContent = v; bar.appendChild(s);
+      barsEl.appendChild(bar);
+
+      var tag = document.createElement("b");
+      var marks = [];
+      if (f.i === idx) marks.push("i");
+      if (f.j === idx) marks.push("j");
+      if (f.done && idx === f.pivotIndex) marks.push("pivot");
+      tag.textContent = marks.join("/");
+      ptrRow.appendChild(tag);
+    });
+    labelEl.textContent = f.label;
+    var end = pos >= frames.length - 1;
+    stepBtn.disabled = end; playBtn.disabled = end;
+    if (end && timer) { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  }
+  function step() { if (pos < frames.length - 1) { pos++; render(); } }
+  function play() { timer = setInterval(step, parseInt(speedEl.value, 10)); playBtn.textContent = "Pause"; }
+  function pause() { clearInterval(timer); timer = null; playBtn.textContent = "Play"; }
+  function reset() { pos = 0; if (timer) pause(); playBtn.disabled = false; render(); }
+  playBtn.addEventListener("click", function () { timer ? pause() : play(); });
+  stepBtn.addEventListener("click", step);
+  resetBtn.addEventListener("click", reset);
+  speedEl.addEventListener("change", function () { if (timer) { pause(); play(); } });
+  reset();
+})();
+
+</script>
+<script>
+/* Python syntax coloring */
+(function () {
+  "use strict";
+
+  function escapeCode(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function highlightPython(source) {
+    var keywords = {
+      "and": 1, "as": 1, "assert": 1, "async": 1, "await": 1,
+      "break": 1, "case": 1, "class": 1, "continue": 1, "def": 1,
+      "del": 1, "elif": 1, "else": 1, "except": 1, "False": 1,
+      "finally": 1, "for": 1, "from": 1, "global": 1, "if": 1,
+      "import": 1, "in": 1, "is": 1, "lambda": 1, "match": 1,
+      "None": 1, "nonlocal": 1, "not": 1, "or": 1, "pass": 1,
+      "raise": 1, "return": 1, "True": 1, "try": 1, "while": 1,
+      "with": 1, "yield": 1
+    };
+    var builtins = {
+      "bool": 1, "dict": 1, "enumerate": 1, "float": 1, "int": 1,
+      "len": 1, "list": 1, "max": 1, "min": 1, "print": 1,
+      "range": 1, "reversed": 1, "set": 1, "sorted": 1, "str": 1,
+      "sum": 1, "tuple": 1, "zip": 1
+    };
+    var output = "";
+    var index = 0;
+    var expectName = false;
+
+    while (index < source.length) {
+      var char = source[index];
+
+      if (char === "#") {
+        var commentEnd = source.indexOf("\n", index);
+        if (commentEnd === -1) commentEnd = source.length;
+        output += '<span class="py-comment">' +
+          escapeCode(source.slice(index, commentEnd)) + '</span>';
+        index = commentEnd;
+        continue;
+      }
+
+      if (char === '"' || char === "'") {
+        var quote = char;
+        var stringEnd = index + 1;
+        while (stringEnd < source.length) {
+          if (source[stringEnd] === "\\") {
+            stringEnd += 2;
+            continue;
+          }
+          if (source[stringEnd] === quote) {
+            stringEnd += 1;
+            break;
+          }
+          stringEnd += 1;
+        }
+        output += '<span class="py-string">' +
+          escapeCode(source.slice(index, stringEnd)) + '</span>';
+        index = stringEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[A-Za-z_]/.test(char)) {
+        var wordEnd = index + 1;
+        while (wordEnd < source.length && /[A-Za-z0-9_]/.test(source[wordEnd])) {
+          wordEnd += 1;
+        }
+        var word = source.slice(index, wordEnd);
+        var tokenClass = "";
+        if (expectName) {
+          tokenClass = "py-function";
+          expectName = false;
+        } else if (keywords[word]) {
+          tokenClass = "py-keyword";
+          if (word === "def" || word === "class") expectName = true;
+        } else if (word === "self") {
+          tokenClass = "py-self";
+        } else if (builtins[word]) {
+          tokenClass = "py-builtin";
+        } else if (/^__.*__$/.test(word)) {
+          tokenClass = "py-builtin";
+        }
+        output += tokenClass
+          ? '<span class="' + tokenClass + '">' + word + '</span>'
+          : word;
+        index = wordEnd;
+        continue;
+      }
+
+      if (/[0-9]/.test(char)) {
+        var numberEnd = index + 1;
+        while (numberEnd < source.length && /[0-9._]/.test(source[numberEnd])) {
+          numberEnd += 1;
+        }
+        output += '<span class="py-number">' +
+          escapeCode(source.slice(index, numberEnd)) + '</span>';
+        index = numberEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[=+\-*\/%<>!:]/.test(char)) {
+        var operatorEnd = index + 1;
+        while (operatorEnd < source.length && /[=+\-*\/%<>!:]/.test(source[operatorEnd])) {
+          operatorEnd += 1;
+        }
+        output += '<span class="py-operator">' +
+          escapeCode(source.slice(index, operatorEnd)) + '</span>';
+        index = operatorEnd;
+        continue;
+      }
+
+      output += escapeCode(char);
+      if (!/\s/.test(char)) expectName = false;
+      index += 1;
+    }
+    return output;
+  }
+
+  Array.prototype.forEach.call(
+    document.querySelectorAll("pre.python-source"),
+    function (block) {
+      block.innerHTML = highlightPython(block.textContent);
+      block.classList.add("python");
+    }
+  );
+})();
+</script>
+<script>
+/* Scroll-reveal */
+(function () {
+  var els = document.querySelectorAll(".chapter-section, .fig, .viz");
+  if (!("IntersectionObserver" in window)) return;
+  els.forEach(function (el) { el.classList.add("reveal"); });
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  els.forEach(function (el) { obs.observe(el); });
+})();
+</script>
+</body>
+</html>
