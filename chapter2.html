@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chapter 2 · Basics of Algorithms · Design and Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Patrick+Hand&display=swap" rel="stylesheet">
   <style>
 /* ============================================================
    NMCC509 — Advanced Data Structures & Algorithms
@@ -197,6 +197,17 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
 .chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
 .chapter-section li { margin-bottom: 7px; max-width: 72ch; }
 .sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
+.calculator-handwritten,
+.calculator-handwritten code.inline {
+  font-family: "Patrick Hand", cursive;
+  text-align: center;
+}
+ol.calculator-handwritten {
+  list-style-position: inside;
+  margin-left: 0;
+  padding-left: 0;
+}
+ol.calculator-handwritten li { max-width: none; }
 
 /* ---------- Content blocks ---------- */
 .def-box {
@@ -221,6 +232,14 @@ pre.code {
   border-radius: var(--radius); padding: 18px 20px;
   overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
 }
+pre.code.syntax-colored { color: #dbe7ff; }
+.syn-keyword { color: #ff79c6; font-weight: 600; }
+.syn-string { color: #f1fa8c; }
+.syn-comment { color: #8394b1; font-style: italic; }
+.syn-number { color: #bd93f9; }
+.syn-builtin { color: #8be9fd; }
+.syn-function { color: #50fa7b; font-weight: 600; }
+.syn-operator { color: #ffb86c; }
 code.inline {
   background: #eaeff7; color: #24344f;
   padding: 2px 7px; border-radius: 5px; font-size: .88em;
@@ -272,15 +291,36 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
   background: #c6d4e8; position: relative;
   display: flex; align-items: flex-end; justify-content: center;
-  transition: height .25s ease, background .18s ease;
+  transition: height .32s cubic-bezier(.22, 1, .36, 1), background .2s ease,
+              transform .24s ease, box-shadow .24s ease;
+  transform-origin: bottom center;
+  will-change: height, transform;
 }
 .viz-bar span {
   color: #fff; font-family: var(--font-mono); font-size: 13px;
   font-weight: 600; padding-bottom: 6px;
 }
-.viz-bar.compare { background: var(--amber); }
-.viz-bar.swap { background: #c2410c; }
-.viz-bar.sorted { background: var(--accent); }
+.viz-bar.compare {
+  background: var(--amber);
+  animation: comparePulse .46s ease both;
+}
+.viz-bar.swap {
+  background: #c2410c;
+  animation: swapPulse .5s cubic-bezier(.22, 1, .36, 1) both;
+}
+.viz-bar.sorted {
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(11, 114, 133, .12);
+}
+@keyframes comparePulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes swapPulse {
+  0% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-12px) scale(1.04); }
+  100% { transform: translateY(0) scale(1); }
+}
 .viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
 .viz-controls button {
   font-family: var(--font-display); font-weight: 600; font-size: 14px;
@@ -320,6 +360,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
+  .viz-bar { animation: none !important; }
 }
 
 </style>
@@ -444,8 +485,8 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         the "algorithm" is the sequence of key presses; in Python, the same idea
         becomes a program.
       </p>
-      <h3>As a calculator algorithm</h3>
-      <ol>
+      <h3 class="calculator-handwritten">As a calculator algorithm</h3>
+      <ol class="calculator-handwritten">
         <li>Type <code class="inline">10</code></li>
         <li>Type the multiply key</li>
         <li>Type <code class="inline">10</code></li>
@@ -456,7 +497,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <li>Display the output</li>
       </ol>
       <h3>As Python code</h3>
-      <pre class="code">import math
+      <pre class="code python-source">import math
 
 # Define the radius of the circle
 radius = 10
@@ -550,7 +591,7 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
       </ol>
 
       <h3>Pseudocode</h3>
-      <pre class="code">Outer loop: k = 1 to n−1        # n−1 iterations
+      <pre class="code pseudo-source">Outer loop: k = 1 to n−1        # n−1 iterations
     Inner loop: j = 1 to n−1    # n−1 comparisons per pass
         i = j − 1
         if A[i] > A[j]:
@@ -613,7 +654,7 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
         inner loop does not need to revisit them. Setting <code class="inline">n = n − 1</code>
         after each pass reduces the work.
       </p>
-      <pre class="code">Outer loop: k = 1 to N−1
+      <pre class="code pseudo-source">Outer loop: k = 1 to N−1
     Inner loop: j = 1 to n−1
         i = j − 1
         if A[i] > A[j]:
@@ -630,7 +671,7 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
         If a full pass completes without a single swap, the array is already sorted
         and we can stop. A boolean <code class="inline">swap</code> flag captures this.
       </p>
-      <pre class="code">swap = true
+      <pre class="code pseudo-source">swap = true
 while (swap):
     swap = false
     Inner loop: j = 1 to n−1
@@ -650,7 +691,7 @@ while (swap):
         next pass only needs to run up to that point. Store it in
         <code class="inline">m</code> and bound the inner loop by it.
       </p>
-      <pre class="code">swap = true
+      <pre class="code pseudo-source">swap = true
 while (swap):
     swap = false
     Inner loop: j = 1 to m
@@ -754,7 +795,7 @@ while (swap):
       <h3>Constant-time operations at the machine level</h3>
       <p>Consider the statement <code class="inline">a = a + b</code>. At a high level it is a
          single assignment and addition; at the machine level it breaks down as:</p>
-      <pre class="code">MOV R1, a     ; load 'a' into register R1   (fetch, decode, execute, write-back)
+      <pre class="code asm-source">MOV R1, a     ; load 'a' into register R1   (fetch, decode, execute, write-back)
 MOV R2, b     ; load 'b' into register R2
 ADD R1, R2    ; perform the addition
 MOV a, R1     ; store the result back to 'a'</pre>
@@ -764,7 +805,7 @@ MOV a, R1     ; store the result back to 'a'</pre>
         a <strong>constant</strong>, independent of the input's size and type.
       </p>
       <h3>Examples of constant-time statements</h3>
-      <pre class="code">int x = 10;
+      <pre class="code c-source">int x = 10;
 int y = x + 5;
 int z = arr[5];
 void printMessage() { printf("Hello, World!\n"); }
@@ -776,7 +817,7 @@ return x;</pre>
     <section class="chapter-section" id="sec-9">
       <h2><span class="sec-no">2.9</span>Analysing Loops</h2>
       <p>Take a simple for loop:</p>
-      <pre class="code">for (int i = 0; i < n; i++) {
+      <pre class="code c-source">for (int i = 0; i < n; i++) {
     sum += i;
 }</pre>
       <p>Break its cost down statement by statement:</p>
@@ -797,7 +838,7 @@ return x;</pre>
       </p>
 
       <h3>Nested loops</h3>
-      <pre class="code">for (int i = 0; i < n; i++) {        // outer loop: n times
+      <pre class="code c-source">for (int i = 0; i < n; i++) {        // outer loop: n times
     for (int j = 0; j < n; j++) {    // inner loop: n times per outer iteration
         sum += i + j;                // executed n × n times
     }
@@ -812,7 +853,7 @@ return x;</pre>
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 1 — sequential + nested</span></div>
-        <pre class="code">for (int i = 0; i < n; i++) {
+        <pre class="code c-source">for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) { sum += i + j; }
     sum += i + j;
     for (int k = 0; k < n; k++) { sum += i + j + k; }
@@ -825,7 +866,7 @@ return x;</pre>
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 2 — triple nesting</span></div>
-        <pre class="code">for (int i = 0; i < n; i++)
+        <pre class="code c-source">for (int i = 0; i < n; i++)
     for (int j = 0; j < n; j++)
         for (int k = 0; k < n; k++)
             sum += i + j + k;</pre>
@@ -837,7 +878,7 @@ return x;</pre>
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 3 — accumulating counter</span></div>
-        <pre class="code">p = 0;
+        <pre class="code c-source">p = 0;
 for (int i = 1; p < n; i++) {
     p = p + i;
 }</pre>
@@ -849,7 +890,7 @@ for (int i = 1; p < n; i++) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 4 — doubling counter</span></div>
-        <pre class="code">for (int i = 1; i < n; i = i * 2) {
+        <pre class="code c-source">for (int i = 1; i < n; i = i * 2) {
     p = p + i;
 }</pre>
         <details class="ans"><summary>show answer</summary>
@@ -860,7 +901,7 @@ for (int i = 1; p < n; i++) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 5 — halving counter</span></div>
-        <pre class="code">for (int i = n; 1 < i; i = i / 2) {
+        <pre class="code c-source">for (int i = n; 1 < i; i = i / 2) {
     p = p + i;
 }</pre>
         <details class="ans"><summary>show answer</summary>
@@ -871,7 +912,7 @@ for (int i = 1; p < n; i++) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 6 — squared condition</span></div>
-        <pre class="code">for (int i = 1; i * i < n; i = i + 1) {
+        <pre class="code c-source">for (int i = 1; i * i < n; i = i + 1) {
     p = p + i;
 }</pre>
         <details class="ans"><summary>show answer</summary>
@@ -882,7 +923,7 @@ for (int i = 1; p < n; i++) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 7 — linear × logarithmic</span></div>
-        <pre class="code">for (int i = 0; i < n; i++) {
+        <pre class="code c-source">for (int i = 0; i < n; i++) {
     for (int j = 1; j < n; j = j * 2) {
         sum += i + j;
     }
@@ -895,7 +936,7 @@ for (int i = 1; p < n; i++) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 8 — loop bounded by a logarithm</span></div>
-        <pre class="code">for (int i = 1; i < n; i = i * 2) {
+        <pre class="code c-source">for (int i = 1; i < n; i = i * 2) {
     p = p + 1;                     // p becomes ≈ log n
 }
 for (int j = 1; j < p; j = j * 2) {
@@ -909,7 +950,7 @@ for (int j = 1; j < p; j = j * 2) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 9 — inner loop bounded by i (exercise)</span></div>
-        <pre class="code">for (int i = 1; i < n; i *= 2) {
+        <pre class="code c-source">for (int i = 1; i < n; i *= 2) {
     for (int j = 0; j < i; j++) {
         sum += i + j;
     }
@@ -923,7 +964,7 @@ for (int j = 1; j < p; j = j * 2) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 10 — inner loop depends on i</span></div>
-        <pre class="code">for (int i = 0; i < n; i++) {
+        <pre class="code c-source">for (int i = 0; i < n; i++) {
     for (int j = 0; j <= i; j++) {
         sum += i + j;
     }
@@ -936,7 +977,7 @@ for (int j = 1; j < p; j = j * 2) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 11 — tripling counter</span></div>
-        <pre class="code">for (int i = 1; i < n; i = i * 3) {
+        <pre class="code c-source">for (int i = 1; i < n; i = i * 3) {
     p = p + i;
 }</pre>
         <details class="ans"><summary>show answer</summary>
@@ -947,7 +988,7 @@ for (int j = 1; j < p; j = j * 2) {
 
       <div class="example-card">
         <div class="ex-head"><span class="ex-title">Example 12 — cubed condition</span></div>
-        <pre class="code">for (int i = 1; i * i * i < n; i = i + 1) {
+        <pre class="code c-source">for (int i = 1; i * i * i < n; i = i + 1) {
     p = p + i;
 }</pre>
         <details class="ans"><summary>show answer</summary>
@@ -1093,6 +1134,170 @@ for (int j = 1; j < p; j = j * 2) {
 
 <script>
 /* Shared JS for chapter pages: TOC scroll-spy + bubble sort visualizer */
+
+/* ---------- Syntax coloring ---------- */
+(function () {
+  "use strict";
+
+  var languageRules = {
+    python: {
+      comment: "#",
+      keywords: "and as assert async await break case class continue def del elif else except False finally for from global if import in is lambda match None nonlocal not or pass raise return True try while with yield",
+      builtins: "bool dict enumerate float int len list max min print range reversed set sorted str sum tuple zip"
+    },
+    c: {
+      comment: "//",
+      keywords: "auto break case char const continue default do double else enum extern float for goto if int long register return short signed sizeof static struct switch typedef union unsigned void volatile while true false",
+      builtins: "printf scanf malloc free"
+    },
+    pseudo: {
+      comment: "#",
+      keywords: "and break continue else false for if in not or repeat return swap then to true until while",
+      builtins: ""
+    },
+    asm: {
+      comment: ";",
+      keywords: "ADD AND CALL CMP DEC DIV INC JMP JNZ JZ LOAD MOV MUL POP PUSH RET STORE SUB",
+      builtins: ""
+    }
+  };
+
+  Object.keys(languageRules).forEach(function (language) {
+    var rules = languageRules[language];
+    rules.keywordMap = {};
+    rules.builtinMap = {};
+    rules.keywords.split(/\s+/).forEach(function (word) {
+      if (word) rules.keywordMap[word] = 1;
+    });
+    rules.builtins.split(/\s+/).forEach(function (word) {
+      if (word) rules.builtinMap[word] = 1;
+    });
+  });
+
+  function escapeCode(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function highlightSource(source, language) {
+    var rules = languageRules[language];
+    var output = "";
+    var index = 0;
+    var expectName = false;
+
+    while (index < source.length) {
+      var char = source[index];
+      var pair = source.slice(index, index + 2);
+      var isComment = rules.comment.length === 2
+        ? pair === rules.comment
+        : char === rules.comment;
+
+      if (language === "c" && pair === "/*") {
+        var blockEnd = source.indexOf("*/", index + 2);
+        blockEnd = blockEnd === -1 ? source.length : blockEnd + 2;
+        output += '<span class="syn-comment">' +
+          escapeCode(source.slice(index, blockEnd)) + '</span>';
+        index = blockEnd;
+        continue;
+      }
+
+      if (isComment) {
+        var commentEnd = source.indexOf("\n", index);
+        if (commentEnd === -1) commentEnd = source.length;
+        output += '<span class="syn-comment">' +
+          escapeCode(source.slice(index, commentEnd)) + '</span>';
+        index = commentEnd;
+        continue;
+      }
+
+      if (char === '"' || char === "'") {
+        var quote = char;
+        var stringEnd = index + 1;
+        while (stringEnd < source.length) {
+          if (source[stringEnd] === "\\") {
+            stringEnd += 2;
+            continue;
+          }
+          if (source[stringEnd] === quote) {
+            stringEnd += 1;
+            break;
+          }
+          stringEnd += 1;
+        }
+        output += '<span class="syn-string">' +
+          escapeCode(source.slice(index, stringEnd)) + '</span>';
+        index = stringEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[A-Za-z_]/.test(char)) {
+        var wordEnd = index + 1;
+        while (wordEnd < source.length && /[A-Za-z0-9_]/.test(source[wordEnd])) {
+          wordEnd += 1;
+        }
+        var word = source.slice(index, wordEnd);
+        var next = source.slice(wordEnd).match(/^\s*(.)/);
+        var tokenClass = "";
+        if (expectName) {
+          tokenClass = "syn-function";
+          expectName = false;
+        } else if (rules.keywordMap[word] || rules.keywordMap[word.toLowerCase()]) {
+          tokenClass = "syn-keyword";
+          if (language === "python" && (word === "def" || word === "class")) {
+            expectName = true;
+          }
+        } else if (rules.builtinMap[word]) {
+          tokenClass = "syn-builtin";
+        } else if (next && next[1] === "(") {
+          tokenClass = "syn-function";
+        }
+        output += tokenClass
+          ? '<span class="' + tokenClass + '">' + word + '</span>'
+          : word;
+        index = wordEnd;
+        continue;
+      }
+
+      if (/[0-9]/.test(char)) {
+        var numberEnd = index + 1;
+        while (numberEnd < source.length && /[0-9._]/.test(source[numberEnd])) {
+          numberEnd += 1;
+        }
+        output += '<span class="syn-number">' +
+          escapeCode(source.slice(index, numberEnd)) + '</span>';
+        index = numberEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[=+\-*\/%<>!:&|]/.test(char)) {
+        var operatorEnd = index + 1;
+        while (operatorEnd < source.length && /[=+\-*\/%<>!:&|]/.test(source[operatorEnd])) {
+          operatorEnd += 1;
+        }
+        output += '<span class="syn-operator">' +
+          escapeCode(source.slice(index, operatorEnd)) + '</span>';
+        index = operatorEnd;
+        continue;
+      }
+
+      output += escapeCode(char);
+      index += 1;
+    }
+    return output;
+  }
+
+  ["python", "c", "pseudo", "asm"].forEach(function (language) {
+    document.querySelectorAll("pre." + language + "-source").forEach(function (block) {
+      block.innerHTML = highlightSource(block.textContent, language);
+      block.classList.add("syntax-colored");
+    });
+  });
+})();
 
 /* ---------- TOC scroll-spy ---------- */
 (function () {

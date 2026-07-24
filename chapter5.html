@@ -200,6 +200,14 @@
       line-height: 1.6;
       margin: 14px 0 18px;
     }
+    pre.code.syntax-colored { color: #dbe7ff; }
+    .syn-keyword { color: #ff79c6; font-weight: 600; }
+    .syn-string { color: #f1fa8c; }
+    .syn-comment { color: #8394b1; font-style: italic; }
+    .syn-number { color: #bd93f9; }
+    .syn-builtin { color: #8be9fd; }
+    .syn-function { color: #50fa7b; font-weight: 600; }
+    .syn-operator { color: #ffb86c; }
     code.inline {
       background: #eaeff7;
       color: #24344f;
@@ -507,6 +515,29 @@
     .expression-tree.animation-ready ul.line-visible::before {
       border-color: #8491a7;
     }
+    .rec-tree.progressive-tree .tree-node {
+      opacity: .12;
+      transform: translateY(-7px) scale(.96);
+      transition: opacity .34s ease, transform .34s ease, box-shadow .28s ease;
+    }
+    .rec-tree.progressive-tree .tree-node.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+    .rec-tree.progressive-tree .tree-node.is-current {
+      box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
+    }
+    .rec-tree.progressive-tree li::before,
+    .rec-tree.progressive-tree li::after,
+    .rec-tree.progressive-tree ul ul::before {
+      border-color: #dfe6ef;
+      transition: border-color .3s ease;
+    }
+    .rec-tree.progressive-tree li.branch-visible::before,
+    .rec-tree.progressive-tree li.branch-visible::after,
+    .rec-tree.progressive-tree ul.line-visible::before {
+      border-color: #8491a7;
+    }
     .tree-animation-status {
       min-height: 1.4em;
       margin: 10px 0 0 !important;
@@ -586,7 +617,14 @@
       justify-content: space-between;
       gap: 12px;
     }
-    .stack-frame.active { background: var(--accent-soft); }
+    .stack-frame.active {
+      background: var(--accent-soft);
+      animation: stackFrameIn .38s cubic-bezier(.22, 1, .36, 1) both;
+    }
+    @keyframes stackFrameIn {
+      from { opacity: .2; transform: translateY(-14px) scale(.98); }
+      to { opacity: 1; transform: none; }
+    }
     .viz-status {
       margin-top: 12px;
       font-family: var(--font-mono);
@@ -674,6 +712,11 @@
         opacity: 1;
         transform: none;
       }
+      .rec-tree.progressive-tree .tree-node {
+        opacity: 1;
+        transform: none;
+      }
+      .stack-frame.active { animation: none !important; }
     }
   </style>
 </head>
@@ -756,7 +799,7 @@
           <p>Factorial, Fibonacci numbers, binary search, tree traversal, sorting, and backtracking.</p>
         </article>
       </div>
-      <pre class="code">def recursive_function(parameters):
+      <pre class="code python-source">def recursive_function(parameters):
     if base_case_condition:
         return result
     return recursive_function(smaller_problem)</pre>
@@ -775,7 +818,7 @@
         definition follows directly from
         <code class="inline">n! = n × (n − 1)!</code>.
       </p>
-      <pre class="code">def fact(n):
+      <pre class="code python-source">def fact(n):
     if n &lt;= 1:
         return 1
     return n * fact(n - 1)</pre>
@@ -1461,7 +1504,7 @@
         running time is <span class="theta">Θ(log n)</span>.
       </p>
       <h3>Iterative version</h3>
-      <pre class="code">def binary_search(array, key):
+      <pre class="code python-source">def binary_search(array, key):
     low, high = 0, len(array) - 1
 
     while low &lt;= high:
@@ -1475,7 +1518,7 @@
 
     return -1</pre>
       <h3>Recursive version</h3>
-      <pre class="code">def binary_search_recursive(arr, low, high, target):
+      <pre class="code python-source">def binary_search_recursive(arr, low, high, target):
     if low &gt; high:
         return -1
 
@@ -1504,7 +1547,7 @@
         <details class="ans">
           <summary>show one solution</summary>
           <div class="ans-body">
-            <pre class="code">def sum_n(n):
+            <pre class="code python-source">def sum_n(n):
     if n &lt;= 0:
         return 0
     return n + sum_n(n - 1)</pre>
@@ -1572,7 +1615,7 @@
 
     <section class="chapter-section" id="sec-14">
       <h2><span class="sec-no">5.14</span>General Algorithmic Template</h2>
-      <pre class="code">def divide_and_conquer(problem):
+      <pre class="code python-source">def divide_and_conquer(problem):
     if base_case(problem):
         return base_solution(problem)
 
@@ -1642,6 +1685,134 @@
 </footer>
 
 <script>
+/* ---------- Syntax coloring ---------- */
+(function () {
+  "use strict";
+
+  var languageRules = {
+    python: {
+      comment: "#",
+      keywords: "and as assert async await break case class continue def del elif else except False finally for from global if import in is lambda match None nonlocal not or pass raise return True try while with yield",
+      builtins: "bool dict enumerate float int len list max min print range reversed set sorted str sum tuple zip"
+    }
+  };
+  var rules = languageRules.python;
+  rules.keywordMap = {};
+  rules.builtinMap = {};
+  rules.keywords.split(/\s+/).forEach(function (word) {
+    if (word) rules.keywordMap[word] = 1;
+  });
+  rules.builtins.split(/\s+/).forEach(function (word) {
+    if (word) rules.builtinMap[word] = 1;
+  });
+
+  function escapeCode(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function highlightPython(source) {
+    var output = "";
+    var index = 0;
+    var expectName = false;
+
+    while (index < source.length) {
+      var char = source[index];
+
+      if (char === "#") {
+        var commentEnd = source.indexOf("\n", index);
+        if (commentEnd === -1) commentEnd = source.length;
+        output += '<span class="syn-comment">' +
+          escapeCode(source.slice(index, commentEnd)) + '</span>';
+        index = commentEnd;
+        continue;
+      }
+
+      if (char === '"' || char === "'") {
+        var quote = char;
+        var stringEnd = index + 1;
+        while (stringEnd < source.length) {
+          if (source[stringEnd] === "\\") {
+            stringEnd += 2;
+            continue;
+          }
+          if (source[stringEnd] === quote) {
+            stringEnd += 1;
+            break;
+          }
+          stringEnd += 1;
+        }
+        output += '<span class="syn-string">' +
+          escapeCode(source.slice(index, stringEnd)) + '</span>';
+        index = stringEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[A-Za-z_]/.test(char)) {
+        var wordEnd = index + 1;
+        while (wordEnd < source.length && /[A-Za-z0-9_]/.test(source[wordEnd])) {
+          wordEnd += 1;
+        }
+        var word = source.slice(index, wordEnd);
+        var next = source.slice(wordEnd).match(/^\s*(.)/);
+        var tokenClass = "";
+        if (expectName) {
+          tokenClass = "syn-function";
+          expectName = false;
+        } else if (rules.keywordMap[word]) {
+          tokenClass = "syn-keyword";
+          if (word === "def" || word === "class") expectName = true;
+        } else if (rules.builtinMap[word] || /^__.*__$/.test(word)) {
+          tokenClass = "syn-builtin";
+        } else if (next && next[1] === "(") {
+          tokenClass = "syn-function";
+        }
+        output += tokenClass
+          ? '<span class="' + tokenClass + '">' + word + '</span>'
+          : word;
+        index = wordEnd;
+        continue;
+      }
+
+      if (/[0-9]/.test(char)) {
+        var numberEnd = index + 1;
+        while (numberEnd < source.length && /[0-9._]/.test(source[numberEnd])) {
+          numberEnd += 1;
+        }
+        output += '<span class="syn-number">' +
+          escapeCode(source.slice(index, numberEnd)) + '</span>';
+        index = numberEnd;
+        expectName = false;
+        continue;
+      }
+
+      if (/[=+\-*\/%<>!:&|]/.test(char)) {
+        var operatorEnd = index + 1;
+        while (operatorEnd < source.length && /[=+\-*\/%<>!:&|]/.test(source[operatorEnd])) {
+          operatorEnd += 1;
+        }
+        output += '<span class="syn-operator">' +
+          escapeCode(source.slice(index, operatorEnd)) + '</span>';
+        index = operatorEnd;
+        continue;
+      }
+
+      output += escapeCode(char);
+      index += 1;
+    }
+    return output;
+  }
+
+  document.querySelectorAll("pre.python-source").forEach(function (block) {
+    block.innerHTML = highlightPython(block.textContent);
+    block.classList.add("syntax-colored");
+  });
+})();
+
 /* ---------- TOC scroll-spy ---------- */
 (function () {
   var links = document.querySelectorAll(".toc a");
@@ -1777,6 +1948,145 @@
     }, { threshold: .35 });
     treeObserver.observe(tree);
   }
+})();
+
+/* ---------- Progressive animation for every exact recursion tree ---------- */
+(function () {
+  var trees = document.querySelectorAll(".rec-tree:not(.expression-tree)");
+  if (!trees.length) return;
+
+  var reducedMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  trees.forEach(function (tree) {
+    var figure = tree.closest(".rec-tree-figure");
+    var heading = figure ? figure.querySelector(".rec-tree-heading") : null;
+    if (!figure || !heading) return;
+
+    var nodes = Array.prototype.slice.call(tree.querySelectorAll(".tree-node"));
+    var timers = [];
+    var hasPlayed = false;
+    var maxDepth = 0;
+
+    function depthOf(node) {
+      var depth = -1;
+      var parent = node.parentElement;
+      while (parent && parent !== tree) {
+        if (parent.tagName === "UL") depth += 1;
+        parent = parent.parentElement;
+      }
+      return Math.max(0, depth);
+    }
+
+    nodes.forEach(function (node) {
+      var depth = depthOf(node);
+      node.setAttribute("data-tree-depth", depth);
+      maxDepth = Math.max(maxDepth, depth);
+    });
+
+    var replayButton = document.createElement("button");
+    replayButton.className = "tree-replay";
+    replayButton.type = "button";
+    replayButton.textContent = "Animate tree";
+    heading.appendChild(replayButton);
+
+    var status = document.createElement("p");
+    status.className = "tree-animation-status";
+    status.setAttribute("aria-live", "polite");
+    status.textContent = "Ready to reveal the tree level by level.";
+    tree.insertAdjacentElement("afterend", status);
+
+    function clearTimers() {
+      timers.forEach(function (timer) { window.clearTimeout(timer); });
+      timers = [];
+    }
+
+    function resetTree() {
+      clearTimers();
+      tree.classList.add("progressive-tree");
+      nodes.forEach(function (node) {
+        node.classList.remove("is-visible", "is-current");
+      });
+      tree.querySelectorAll("li").forEach(function (branch) {
+        branch.classList.remove("branch-visible");
+      });
+      tree.querySelectorAll("ul").forEach(function (list) {
+        list.classList.remove("line-visible");
+      });
+    }
+
+    function revealDepth(depth) {
+      nodes.forEach(function (node) {
+        node.classList.remove("is-current");
+        if (parseInt(node.getAttribute("data-tree-depth"), 10) !== depth) return;
+        node.classList.add("is-visible", "is-current");
+        var branch = node.closest("li");
+        if (branch) {
+          branch.classList.add("branch-visible");
+          if (branch.parentElement) branch.parentElement.classList.add("line-visible");
+        }
+      });
+      status.textContent = "Level " + depth + " of " + maxDepth + " revealed.";
+    }
+
+    function showCompleteTree() {
+      nodes.forEach(function (node) {
+        node.classList.add("is-visible");
+        node.classList.remove("is-current");
+      });
+      tree.querySelectorAll("li").forEach(function (branch) {
+        branch.classList.add("branch-visible");
+      });
+      tree.querySelectorAll("ul").forEach(function (list) {
+        list.classList.add("line-visible");
+      });
+      status.textContent = "Tree complete.";
+      replayButton.disabled = false;
+      replayButton.textContent = "Replay animation";
+    }
+
+    function playTree() {
+      hasPlayed = true;
+      resetTree();
+
+      if (reducedMotion) {
+        showCompleteTree();
+        return;
+      }
+
+      replayButton.disabled = true;
+      replayButton.textContent = "Animating…";
+
+      for (var depth = 0; depth <= maxDepth; depth++) {
+        (function (currentDepth) {
+          timers.push(window.setTimeout(function () {
+            revealDepth(currentDepth);
+          }, currentDepth * 560));
+        })(depth);
+      }
+      timers.push(window.setTimeout(
+        showCompleteTree,
+        (maxDepth + 1) * 560 + 260
+      ));
+    }
+
+    replayButton.addEventListener("click", playTree);
+    resetTree();
+
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      showCompleteTree();
+    } else {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !hasPlayed) {
+            playTree();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: .25 });
+      observer.observe(tree);
+    }
+  });
 })();
 
 /* ---------- Factorial call-stack visualizer ---------- */
