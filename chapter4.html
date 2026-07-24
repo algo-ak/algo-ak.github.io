@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chapter 4 · Asymptotic Notations · Design and Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
   <style>
 
 /* ============================================================
@@ -322,119 +322,168 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+/* ---------- Chapter 4: native graphs and programs ---------- */
+.fig {
+  width: 100%; max-width: none; overflow: hidden;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px; margin: 18px 0;
+  box-shadow: 0 8px 24px rgba(16,28,51,.06);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.fig-md { max-width: 760px; margin-left: auto; margin-right: auto; }
+.fig:hover { box-shadow: 0 13px 32px rgba(16,28,51,.10); transform: translateY(-2px); }
+.fig figcaption {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line);
+}
+.fig figcaption b { color: var(--accent-dark); }
+.plot-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 12px;
+}
+.plot-head strong { font-family: var(--font-display); font-size: 15px; }
+.plot-head span {
+  color: var(--accent-dark); background: var(--accent-soft); border-radius: 999px;
+  padding: 4px 9px; font: 600 11px var(--font-mono); white-space: nowrap;
+}
+.plot-shell {
+  position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 10px;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px), #fbfcfe;
+  background-size: 28px 28px;
+}
+.bound-canvas, .pg-canvas {
+  display: block; width: 100%; height: auto; background: transparent;
+}
+.plot-replay {
+  position: absolute; right: 10px; bottom: 10px;
+  padding: 7px 11px; border: 1px solid var(--line); border-radius: 7px;
+  background: rgba(255,255,255,.92); color: var(--ink);
+  font: 600 12px var(--font-display); cursor: pointer;
+}
+.plot-replay:hover { color: var(--accent-dark); border-color: #9cced7; }
 
+/* Dominant-term program */
+.dominance-demo {
+  margin: 16px 0 20px; padding: 18px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+}
+.dominance-top {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 14px; flex-wrap: wrap; margin-bottom: 15px;
+}
+.dominance-top strong { font-family: var(--font-display); font-size: 15px; }
+.dominance-top label {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink-soft); font-size: 13px;
+}
+.dominance-top input { width: 170px; accent-color: var(--accent); }
+.dominance-bar {
+  display: flex; width: 100%; height: 42px; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 8px; background: #eef2f7;
+}
+.dominance-linear, .dominance-constant {
+  display: grid; place-items: center; min-width: 0;
+  color: #fff; font: 600 12px var(--font-mono);
+  transition: flex-basis .32s ease;
+}
+.dominance-linear { background: var(--accent); }
+.dominance-constant { background: var(--amber); }
+.dominance-readout {
+  margin-top: 10px; color: var(--ink-soft);
+  font: 13px/1.5 var(--font-mono);
+}
 
+/* Big-O playground */
+.viz { box-shadow: 0 10px 28px rgba(16,28,51,.06); }
+.pg-legend {
+  display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0;
+  font-size: 13px; color: var(--ink-soft);
+}
+.pg-legend i {
+  width: 18px; height: 3px; border-radius: 2px;
+  display: inline-block; vertical-align: middle; margin-right: 6px;
+}
+.pg-controls {
+  display: grid; grid-template-columns: minmax(220px, 1.35fr) 1fr 1fr;
+  gap: 12px; align-items: end; margin-top: 14px;
+}
+.pg-controls label {
+  display: grid; gap: 6px; color: var(--ink-soft); font-size: 13px;
+}
+.pg-controls input[type="range"] { width: 100%; accent-color: var(--accent); }
+.pg-controls select {
+  width: 100%; min-width: 0; padding: 9px 10px;
+  border: 1.5px solid var(--line); border-radius: 8px;
+  background: var(--card); color: var(--ink);
+  font: 600 13px var(--font-display); cursor: pointer;
+}
+.range-line { display: flex; align-items: center; gap: 8px; }
+.pg-val {
+  min-width: 46px; color: var(--accent-dark);
+  font: 600 12.5px var(--font-mono);
+}
+.viz-label {
+  min-height: 48px; margin-top: 14px; padding: 10px 12px;
+  color: var(--ink); background: var(--amber-soft);
+  border: 1px solid #f0d9ac; border-radius: 8px;
+  font: 13px/1.55 var(--font-mono);
+}
 
+/* Pseudocode and formula colour */
+pre.code.syntax-colored { color: #dbe7ff; }
+.syn-keyword { color: #ff79c6; font-weight: 600; }
+.syn-number { color: #bd93f9; }
+.syn-comment { color: #8fa2c3; font-style: italic; }
+.syn-operator { color: #ffb86c; }
+.syn-name { color: #8be9fd; }
+.syn-title { color: #50fa7b; font-weight: 600; }
 
-    /* Slide figures */
-    .fig {
-      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 12px; margin: 16px 0; max-width: 700px;
-      transition: box-shadow .2s ease, transform .2s ease;
-    }
-    .fig-md { max-width: 560px; margin-left: auto; margin-right: auto; }
-    .fig-sm { max-width: 400px; margin-left: auto; margin-right: auto; }
-    .fig:hover { box-shadow: 0 10px 26px rgba(16,28,51,.12); transform: translateY(-2px); }
-    .fig img { width: 100%; height: auto; display: block; border-radius: 6px; }
-    .fig figcaption {
-      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
-      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
-    }
-    .fig figcaption b { color: var(--accent-dark); }
+/* Properties and answer cards */
+.kw { color: #c2179b; }
+.prop-list { list-style: none; margin: 10px 0 16px !important; }
+.prop-list li {
+  max-width: 760px; padding: 10px 14px; margin-bottom: 8px !important;
+  color: var(--ink); background: #fbfcfe;
+  border: 1px solid var(--line); border-left: 4px solid #9cced7; border-radius: 8px;
+  font: 13.5px/1.55 var(--font-mono);
+}
+.prop-list li b { color: var(--accent-dark); font-weight: 600; }
+details.ans { margin-top: 10px; }
+details.ans summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; color: var(--accent-dark); background: var(--accent-soft);
+  border: 1px solid #bfdee5; border-radius: 8px; user-select: none;
+  font: 600 13.5px var(--font-display);
+}
+details.ans summary::-webkit-details-marker { display: none; }
+details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
+details.ans[open] summary::before { content: "\2212"; }
+details.ans .ans-body { margin-top: 10px; }
 
-    /* Scroll-reveal animation */
-    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
-    .reveal.in { opacity: 1; transform: none; }
+/* Motion */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .62s ease, transform .62s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+.chapter-body > h1 { animation-delay: .08s; }
+.chapter-intro { animation-delay: .16s; }
 
-    /* Chapter title entrance */
-    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-    .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
-    .chapter-body > h1 { animation-delay: .08s; }
-    .chapter-intro { animation-delay: .16s; }
-
-    /* Insertion sort visualizer extras */
-    .viz-bar.key { background: var(--amber); box-shadow: 0 6px 14px rgba(240,163,63,.45); }
-    .viz-bar.shift { background: #c2410c; }
-    .viz-bar.prefix { background: #79c6d4; }
-    .viz-bar.lifted { transform: translateY(-16px); }
-    .viz-bar { transition: height .3s ease, background .2s ease, transform .3s ease; }
-    .viz-legend {
-      display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px;
-      font-size: 13px; color: var(--ink-soft);
-    }
-    .viz-legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .viz-legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
-    .viz-idx { display: flex; gap: 10px; }
-    .viz-idx b {
-      flex: 1; max-width: 76px; text-align: center;
-      font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; color: var(--ink-soft);
-    }
-    .viz-controls select {
-      font-family: var(--font-display); font-weight: 600; font-size: 14px;
-      padding: 8px 10px; border-radius: 8px; cursor: pointer;
-      border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
-    }
-    .viz-label {
-      font-family: var(--font-mono); font-size: 13px; color: var(--ink);
-      background: var(--amber-soft); border: 1px solid #f0d9ac; border-radius: 8px;
-      padding: 8px 12px; margin-top: 14px; min-height: 20px;
-    }
-    /* Keyword highlight */
-    .kw { color: #c2179b; }
-    /* Collapsible answers */
-    details.ans { margin-top: 10px; }
-    details.ans summary {
-      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
-      color: var(--accent-dark); background: var(--accent-soft);
-      padding: 7px 14px; border-radius: 8px; user-select: none;
-      border: 1px solid #bfdee5;
-    }
-    details.ans summary::-webkit-details-marker { display: none; }
-    details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
-    details.ans[open] summary::before { content: "\2212"; }
-    details.ans .ans-body { margin-top: 10px; }
-    @media (prefers-reduced-motion: reduce) {
-      .reveal { opacity: 1; transform: none; }
-      .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
-    }
-
-    /* Binary search demo (chapter 3 only) */
-    .bs-cells { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
-    .bs-cell {
-      width: 52px; padding: 8px 0 4px; text-align: center;
-      background: #eaeff7; border: 2px solid transparent; border-radius: 8px;
-      font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: #24344f;
-      transition: background .18s ease, opacity .18s ease;
-    }
-    .bs-cell small { display: block; font-weight: 400; font-size: 10.5px; color: var(--ink-soft); }
-    .bs-cell.dead { opacity: .28; }
-    .bs-cell.mid { background: var(--amber-soft); border-color: var(--amber); }
-    .bs-cell.found { background: var(--accent); color: #fff; }
-    .bs-cell.found small { color: #d9f2f6; }
-    .bs-pointers { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
-  
-  </style>
-  <style>
-    .plot-svg { width: 100%; height: auto; display: block; }
-    .prop-list { list-style: none; margin: 10px 0 16px !important; }
-    .prop-list li {
-      font-family: var(--font-mono); font-size: 14px; color: var(--ink);
-      background: #fbfcfe; border: 1px solid var(--line); border-radius: 8px;
-      padding: 9px 14px; margin-bottom: 8px !important; max-width: 640px;
-    }
-    .prop-list li b { color: var(--accent-dark); font-weight: 600; }
-    /* Big-O playground */
-    .pg-svg { width: 100%; max-width: 660px; background: #fbfcfe; border: 1px solid var(--line); border-radius: 10px; display: block; }
-    .pg-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
-    .pg-controls label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
-    .pg-controls input[type="range"] { accent-color: var(--accent); width: 140px; }
-    .pg-controls select { font-family: var(--font-display); font-weight: 600; font-size: 14px;
-      padding: 8px 10px; border-radius: 8px; cursor: pointer;
-      border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
-    .pg-val { font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark); min-width: 44px; }
-    .pg-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
-    .pg-legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+@media (max-width: 700px) {
+  .fig, .viz { padding: 14px; }
+  .pg-controls { grid-template-columns: 1fr; }
+  .dominance-top label, .dominance-top input { width: 100%; }
+  .plot-head { align-items: center; }
+  table.tbl { display: block; overflow-x: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+  .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
+}
   </style>
 </head>
 <body>
@@ -445,7 +494,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -477,7 +526,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   </aside>
 
   <main class="chapter-body">
-    <span class="chapter-kicker">Chapter 04</span>
+    <span class="chapter-kicker">Chapter 04 · NMCC509</span>
     <h1>Asymptotic Notations</h1>
     <p class="chapter-intro">
       Chapter 3 gave us running times like "a quadratic function of n". This chapter
@@ -500,6 +549,20 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
       <p>Take a simple running time:</p>
       <pre class="code">f(n) = 2n + 3</pre>
+      <div class="dominance-demo" id="dominance-demo">
+        <div class="dominance-top">
+          <strong>Watch the dominant term take over</strong>
+          <label>n
+            <input type="range" id="dom-n" min="1" max="100" value="1">
+            <span class="pg-val" id="dom-nv">1</span>
+          </label>
+        </div>
+        <div class="dominance-bar" aria-label="Contribution of 2n and 3 to f of n">
+          <div class="dominance-linear" id="dom-linear">2n</div>
+          <div class="dominance-constant" id="dom-constant">+3</div>
+        </div>
+        <div class="dominance-readout" id="dom-readout">f(1) = 2 + 3 = 5</div>
+      </div>
       <p>
         How does f(n) grow with n? The term <strong class="kw">2n dominates</strong> the growth — the
         constant 3 becomes negligible when n is very large. Asymptotic notation lets us
@@ -528,19 +591,15 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
             usually take g(n) = n&#7580; with c &#8805; 2, even though technically 2n + 1 = O(n&#178;) too.</li>
       </ul>
       <figure class="fig fig-md">
-          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
-          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
-          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
-          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
-          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
-          <path d="M40 250 Q 240 210 440 70" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
-          <path d="M40 190 C 90 195 140 205 170 213 S 300 235 440 150" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
-          <text x="360" y="66" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#183;g(n)</text>
-          <text x="368" y="168" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
-          
-          </svg>
+        <div class="plot-head">
+          <strong>Upper bound</strong>
+          <span>f(n) ≤ C·g(n)</span>
+        </div>
+        <div class="plot-shell">
+          <canvas class="bound-canvas" data-bound="O" width="720" height="390"
+                  aria-label="Animated Big-O upper-bound graph"></canvas>
+          <button class="plot-replay" type="button">Replay</button>
+        </div>
         <figcaption><b>Fig 4.1</b> &#183; Big-O visually: past n&#8320; (shaded region), the curve f(n) stays at or below C&#183;g(n) forever. Before n&#8320;, anything may happen &#8212; asymptotics only cares about large n.</figcaption>
       </figure>
     </section>
@@ -590,7 +649,10 @@ Divide both sides by n²:
           <span><i style="background:#0b7285"></i>C &#183; g(n)</span>
           <span><i style="background:#e0f1f4; height:12px;"></i>region where f &#8804; C&#183;g holds onward</span>
         </div>
-        <svg class="pg-svg" id="pg-svg" viewBox="0 0 660 300" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="plot-shell">
+          <canvas class="pg-canvas" id="pg-canvas" width="720" height="360"
+                  aria-label="Interactive graph comparing f of n with C times g of n"></canvas>
+        </div>
         <div class="pg-controls">
           <label>pair
             <select id="pg-preset">
@@ -600,8 +662,18 @@ Divide both sides by n²:
               <option value="p4">4&#41; f = 10 n log&#8322;n &nbsp;vs&nbsp; g = n&#178;</option>
             </select>
           </label>
-          <label>C <input type="range" id="pg-c" min="0.5" max="20" step="0.5" value="1"><span class="pg-val" id="pg-cv">1</span></label>
-          <label>plot up to n = <input type="range" id="pg-n" min="50" max="1000" step="50" value="100"><span class="pg-val" id="pg-nv">100</span></label>
+          <label>C
+            <span class="range-line">
+              <input type="range" id="pg-c" min="0.5" max="20" step="0.5" value="1">
+              <span class="pg-val" id="pg-cv">1</span>
+            </span>
+          </label>
+          <label>plot up to n
+            <span class="range-line">
+              <input type="range" id="pg-n" min="50" max="1000" step="50" value="100">
+              <span class="pg-val" id="pg-nv">100</span>
+            </span>
+          </label>
         </div>
         <div class="viz-label" id="pg-verdict"></div>
       </div>
@@ -622,19 +694,15 @@ Divide both sides by n²:
         <li>g(n) should again be the <strong class="kw">closest</strong> to f(n).</li>
       </ul>
       <figure class="fig fig-md">
-          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
-          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
-          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
-          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
-          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
-          <path d="M40 200 Q 240 160 440 90" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
-          <path d="M40 250 C 90 235 140 200 170 171 S 300 90 440 35" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
-          <text x="368" y="108" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#183;g(n)</text>
-          <text x="372" y="34" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
-          
-          </svg>
+        <div class="plot-head">
+          <strong>Lower bound</strong>
+          <span>f(n) ≥ C·g(n)</span>
+        </div>
+        <div class="plot-shell">
+          <canvas class="bound-canvas" data-bound="Omega" width="720" height="390"
+                  aria-label="Animated Omega lower-bound graph"></canvas>
+          <button class="plot-replay" type="button">Replay</button>
+        </div>
         <figcaption><b>Fig 4.2</b> &#183; Omega visually: past n&#8320;, f(n) stays at or above C&#183;g(n) &#8212; g(n) props f(n) up from below.</figcaption>
       </figure>
 
@@ -664,21 +732,15 @@ Divide both sides by n²:
         function: g(n) sandwiches f(n) from both sides at once.
       </p>
       <figure class="fig fig-md">
-          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
-          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
-          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
-          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
-          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
-          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
-          <path d="M40 240 Q 240 180 440 55" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
-          <path d="M40 265 Q 240 220 440 130" fill="none" stroke="#e8a317" stroke-width="3" stroke-linecap="round"/>
-          <path d="M40 230 C 100 260 140 250 170 225 C 260 195 330 170 440 90" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
-          <text x="348" y="52" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#8322;&#183;g(n)</text>
-          <text x="348" y="148" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#b45309">C&#8321;&#183;g(n)</text>
-          <text x="372" y="92" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
-          
-          </svg>
+        <div class="plot-head">
+          <strong>Tight bound</strong>
+          <span>C₁·g(n) ≤ f(n) ≤ C₂·g(n)</span>
+        </div>
+        <div class="plot-shell">
+          <canvas class="bound-canvas" data-bound="Theta" width="720" height="390"
+                  aria-label="Animated Theta tight-bound graph"></canvas>
+          <button class="plot-replay" type="button">Replay</button>
+        </div>
         <figcaption><b>Fig 4.3</b> &#183; Theta visually: beyond n&#8320;, f(n) lives between C&#8321;&#183;g(n) and C&#8322;&#183;g(n) &#8212; same growth rate, different constants.</figcaption>
       </figure>
     </section>
@@ -934,7 +996,7 @@ Divide both sides by n²:
     <nav class="chapter-nav">
       <a href="chapter3.html">← Chapter 3: Analyzing Algorithms</a>
       <a href="topics.html">All topics</a>
-      <a href="chapter5.html">← Chapter 5: Recursion and, Divide and Conquer →</a>
+      <a href="chapter5.html">Chapter 5: Recursion and Divide and Conquer →</a>
     </nav>
   </main>
 </div>
@@ -951,121 +1013,354 @@ Divide both sides by n²:
 </footer>
 
 <script>
-/* TOC scroll-spy */
+/* ---------- Formula and pseudocode colouring ---------- */
 (function () {
-  const links = document.querySelectorAll(".toc a");
-  const sections = document.querySelectorAll(".chapter-section");
-  if (!links.length || !sections.length) return;
-  const byId = {};
-  links.forEach((a) => (byId[a.getAttribute("href").slice(1)] = a));
-  const obs = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          links.forEach((a) => a.classList.remove("current"));
-          const a = byId[e.target.id];
-          if (a) a.classList.add("current");
-        }
+  function escapeHtml(value) {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  var tokenPattern = /(\/\/.*$)|\b(SUM-ARRAY)\b|\b(for|return|Suppose|Divide|where|if|and|or)\b|\b(f|g|n|C|sum|A|i|T|O)\b|(\d+)|(&lt;=|&gt;=|==|!=|⇒|→|≤|≥|≠|−|=|\+|-|\*|\/|&lt;|&gt;|·)/g;
+  document.querySelectorAll("pre.code").forEach(function (block) {
+    var lines = block.textContent.split("\n").map(function (line) {
+      return escapeHtml(line).replace(tokenPattern, function (token, comment, title, keyword, name, number) {
+        if (comment) return '<span class="syn-comment">' + token + "</span>";
+        if (title) return '<span class="syn-title">' + token + "</span>";
+        if (keyword) return '<span class="syn-keyword">' + token + "</span>";
+        if (name) return '<span class="syn-name">' + token + "</span>";
+        if (number) return '<span class="syn-number">' + token + "</span>";
+        return '<span class="syn-operator">' + token + "</span>";
       });
-    },
-    { rootMargin: "-20% 0px -70% 0px" }
-  );
-  sections.forEach((s) => obs.observe(s));
+    });
+    block.innerHTML = lines.join("\n");
+    block.classList.add("syntax-colored");
+  });
 })();
 
-/* Big-O playground */
+/* ---------- TOC scroll-spy ---------- */
 (function () {
-  var svg = document.getElementById("pg-svg");
-  if (!svg) return;
-  var PRESETS = {
+  var links = document.querySelectorAll(".toc a");
+  var sections = document.querySelectorAll(".chapter-section");
+  if (!links.length || !sections.length || !("IntersectionObserver" in window)) return;
+  var byId = {};
+  links.forEach(function (link) { byId[link.getAttribute("href").slice(1)] = link; });
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      links.forEach(function (link) { link.classList.remove("current"); });
+      if (byId[entry.target.id]) byId[entry.target.id].classList.add("current");
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  sections.forEach(function (section) { observer.observe(section); });
+})();
+
+/* ---------- Scroll reveal ---------- */
+(function () {
+  var elements = document.querySelectorAll(".chapter-section, .fig, .viz, .dominance-demo");
+  if (!("IntersectionObserver" in window)) {
+    elements.forEach(function (element) { element.classList.add("in"); });
+    return;
+  }
+  elements.forEach(function (element) { element.classList.add("reveal"); });
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("in");
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  elements.forEach(function (element) { observer.observe(element); });
+})();
+
+/* ---------- Dominant-term animation: f(n) = 2n + 3 ---------- */
+(function () {
+  var slider = document.getElementById("dom-n");
+  if (!slider) return;
+  var valueEl = document.getElementById("dom-nv");
+  var linearEl = document.getElementById("dom-linear");
+  var constantEl = document.getElementById("dom-constant");
+  var readoutEl = document.getElementById("dom-readout");
+  var demo = document.getElementById("dominance-demo");
+  var animation = null;
+  var userChanged = false;
+
+  function render() {
+    var n = Number(slider.value);
+    var linear = 2 * n;
+    var total = linear + 3;
+    linearEl.style.flexBasis = (linear / total * 100) + "%";
+    constantEl.style.flexBasis = (3 / total * 100) + "%";
+    linearEl.textContent = linear / total > .16 ? "2n = " + linear : "2n";
+    constantEl.textContent = 3 / total > .12 ? "+3" : "";
+    valueEl.textContent = n;
+    readoutEl.textContent = "f(" + n + ") = " + linear + " + 3 = " + total +
+      " · the constant contributes " + (3 / total * 100).toFixed(1) + "%";
+  }
+
+  function play() {
+    window.cancelAnimationFrame(animation);
+    var start = null;
+    function frame(now) {
+      if (userChanged) return;
+      if (start === null) start = now;
+      var progress = Math.min(1, (now - start) / 3600);
+      slider.value = Math.round(1 + progress * 99);
+      render();
+      if (progress < 1) animation = window.requestAnimationFrame(frame);
+    }
+    animation = window.requestAnimationFrame(frame);
+  }
+
+  slider.addEventListener("input", function () {
+    userChanged = true;
+    window.cancelAnimationFrame(animation);
+    render();
+  });
+  render();
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    slider.value = 100;
+    render();
+  } else if ("IntersectionObserver" in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      if (entries.some(function (entry) { return entry.isIntersecting; })) {
+        play();
+        observer.disconnect();
+      }
+    }, { threshold: .45 });
+    observer.observe(demo);
+  } else {
+    play();
+  }
+})();
+
+/* ---------- Animated O, Omega, and Theta diagrams ---------- */
+(function () {
+  var canvases = document.querySelectorAll(".bound-canvas");
+  if (!canvases.length) return;
+  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function draw(canvas, progress) {
+    var context = canvas.getContext("2d");
+    var width = canvas.width;
+    var height = canvas.height;
+    var pad = { left: 58, right: 28, top: 28, bottom: 48 };
+    var plotWidth = width - pad.left - pad.right;
+    var plotHeight = height - pad.top - pad.bottom;
+    var type = canvas.dataset.bound;
+    var n0 = .4;
+    context.clearRect(0, 0, width, height);
+
+    context.fillStyle = "rgba(224,241,244,.72)";
+    context.fillRect(pad.left + n0 * plotWidth, pad.top, (1 - n0) * plotWidth, plotHeight);
+    context.strokeStyle = "#9aa7bd";
+    context.lineWidth = 1.5;
+    context.setLineDash([6, 5]);
+    context.beginPath();
+    context.moveTo(pad.left + n0 * plotWidth, pad.top);
+    context.lineTo(pad.left + n0 * plotWidth, pad.top + plotHeight);
+    context.stroke();
+    context.setLineDash([]);
+
+    context.strokeStyle = "#aebbd0";
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(pad.left, pad.top);
+    context.lineTo(pad.left, pad.top + plotHeight);
+    context.lineTo(pad.left + plotWidth, pad.top + plotHeight);
+    context.stroke();
+
+    context.fillStyle = "#46536b";
+    context.font = "14px IBM Plex Mono, monospace";
+    context.fillText("growth", 8, pad.top + 8);
+    context.fillText("n", width - 24, height - 18);
+    context.fillStyle = "#085a68";
+    context.fillText("n₀", pad.left + n0 * plotWidth - 9, height - 18);
+
+    function mapY(value) {
+      return pad.top + plotHeight - Math.max(0, Math.min(1, value)) * plotHeight;
+    }
+    function curve(fn, color, lineWidth) {
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth || 4;
+      context.lineCap = "round";
+      context.beginPath();
+      var steps = 150;
+      var limit = Math.max(1, Math.floor(steps * progress));
+      for (var i = 0; i <= limit; i += 1) {
+        var x = i / steps;
+        var px = pad.left + x * plotWidth;
+        var py = mapY(fn(x));
+        if (i === 0) context.moveTo(px, py);
+        else context.lineTo(px, py);
+      }
+      context.stroke();
+    }
+
+    if (type === "O") {
+      curve(function (x) { return .14 + .78 * Math.pow(x, 1.45); }, "#0b7285");
+      curve(function (x) { return .25 + .08 * Math.sin(10 * x) * (1 - x) + .38 * x * x; }, "#101c33");
+    } else if (type === "Omega") {
+      curve(function (x) { return .12 + .43 * x; }, "#0b7285");
+      curve(function (x) { return .13 + .82 * Math.pow(x, 1.55); }, "#101c33");
+    } else {
+      curve(function (x) { return .24 + .72 * Math.pow(x, 1.5); }, "#0b7285");
+      curve(function (x) { return .10 + .40 * Math.pow(x, 1.5); }, "#b45309");
+      curve(function (x) { return .18 + .55 * Math.pow(x, 1.5) + .06 * Math.sin(9 * x) * (1 - x); }, "#101c33");
+    }
+
+    if (progress > .92) {
+      context.font = "600 15px IBM Plex Mono, monospace";
+      if (type === "O") {
+        context.fillStyle = "#0b7285"; context.fillText("C·g(n)", width - 125, 55);
+        context.fillStyle = "#101c33"; context.fillText("f(n)", width - 92, 166);
+      } else if (type === "Omega") {
+        context.fillStyle = "#101c33"; context.fillText("f(n)", width - 90, 55);
+        context.fillStyle = "#0b7285"; context.fillText("C·g(n)", width - 135, 186);
+      } else {
+        context.fillStyle = "#0b7285"; context.fillText("C₂·g(n)", width - 145, 48);
+        context.fillStyle = "#101c33"; context.fillText("f(n)", width - 90, 112);
+        context.fillStyle = "#b45309"; context.fillText("C₁·g(n)", width - 145, 205);
+      }
+    }
+  }
+
+  function animate(canvas) {
+    if (reducedMotion) {
+      draw(canvas, 1);
+      return;
+    }
+    var start = null;
+    function frame(now) {
+      if (start === null) start = now;
+      var progress = Math.min(1, (now - start) / 1100);
+      draw(canvas, 1 - Math.pow(1 - progress, 3));
+      if (progress < 1) window.requestAnimationFrame(frame);
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  canvases.forEach(function (canvas) {
+    draw(canvas, 0);
+    var replay = canvas.parentElement.querySelector(".plot-replay");
+    replay.addEventListener("click", function () { animate(canvas); });
+    if ("IntersectionObserver" in window && !reducedMotion) {
+      var observer = new IntersectionObserver(function (entries) {
+        if (entries.some(function (entry) { return entry.isIntersecting; })) {
+          animate(canvas);
+          observer.disconnect();
+        }
+      }, { threshold: .35 });
+      observer.observe(canvas);
+    } else {
+      animate(canvas);
+    }
+  });
+})();
+
+/* ---------- Big-O playground ---------- */
+(function () {
+  var canvas = document.getElementById("pg-canvas");
+  if (!canvas) return;
+  var context = canvas.getContext("2d");
+  var presets = {
     p1: { f: function (n) { return 2 * n + 3; }, g: function (n) { return n; },
-          fname: "2n + 3", gname: "n", isO: true,
-          truth: "In fact f = O(g): any C ≥ 3 works forever (e.g. C = 3, n₀ = 3)." },
+      fname: "2n + 3", gname: "n",
+      truth: "In fact f = O(g): any C ≥ 3 works forever; for example, C = 3 and n₀ = 3." },
     p2: { f: function (n) { return 2 * n * n + 3; }, g: function (n) { return 500 * n; },
-          fname: "2n² + 3", gname: "500n", isO: false,
-          truth: "No C ever works for all n: 2n² outgrows C·500n as soon as n > 250·C. f ≠ O(g)." },
+      fname: "2n² + 3", gname: "500n",
+      truth: "No fixed C works forever: 2n² outgrows C·500n once n > 250·C. Therefore f ≠ O(g)." },
     p3: { f: function (n) { return n * n * n - 100 * n * n; }, g: function (n) { return n * n; },
-          fname: "n³ − 100n²", gname: "n²", isO: false,
-          truth: "The §4.3 proof live: the inequality fails for every n > C + 100. Raise C, then extend the plot — it always breaks. f ≠ O(g)." },
+      fname: "n³ − 100n²", gname: "n²",
+      truth: "The inequality fails for every n > C + 100. Raising C only moves the failure point; f ≠ O(g)." },
     p4: { f: function (n) { return 10 * n * Math.log2(n); }, g: function (n) { return n * n; },
-          fname: "10 n log₂n", gname: "n²", isO: true,
-          truth: "In fact f = o(g): n log n grows strictly slower than n², so even C = 1 works from n₀ = 60 on (and every C > 0 eventually works)." }
+      fname: "10n log₂n", gname: "n²",
+      truth: "Here f = o(g): n log n grows strictly slower than n², so every C > 0 eventually works." }
   };
   var presetEl = document.getElementById("pg-preset");
   var cEl = document.getElementById("pg-c");
   var nEl = document.getElementById("pg-n");
-  var cvEl = document.getElementById("pg-cv");
-  var nvEl = document.getElementById("pg-nv");
+  var cValueEl = document.getElementById("pg-cv");
+  var nValueEl = document.getElementById("pg-nv");
   var verdictEl = document.getElementById("pg-verdict");
-  var W = 660, H = 300, PAD = 34;
+  var width = canvas.width;
+  var height = canvas.height;
+  var pad = { left: 52, right: 24, top: 22, bottom: 42 };
 
   function render() {
-    var p = PRESETS[presetEl.value];
-    var C = parseFloat(cEl.value);
-    var NMAX = parseInt(nEl.value, 10);
-    cvEl.textContent = C;
-    nvEl.textContent = NMAX;
-
-    // sample curves
-    var fs = [], gs = [], maxY = 1;
-    for (var n = 1; n <= NMAX; n++) {
-      var fv = Math.max(0, p.f(n)), gv = Math.max(0, C * p.g(n));
-      fs.push(fv); gs.push(gv);
-      if (fv > maxY) maxY = fv;
-      if (gv > maxY) maxY = gv;
+    var preset = presets[presetEl.value];
+    var constant = Number(cEl.value);
+    var maxN = Number(nEl.value);
+    cValueEl.textContent = constant;
+    nValueEl.textContent = maxN;
+    var fValues = [];
+    var gValues = [];
+    var maxY = 1;
+    for (var n = 1; n <= maxN; n += 1) {
+      var fValue = Math.max(0, preset.f(n));
+      var gValue = Math.max(0, constant * preset.g(n));
+      fValues.push(fValue);
+      gValues.push(gValue);
+      maxY = Math.max(maxY, fValue, gValue);
     }
-    // smallest n0 such that f<=C*g for ALL n in [n0..NMAX]
     var n0 = -1;
-    for (var i = fs.length - 1; i >= 0; i--) {
-      if (fs[i] > gs[i]) { n0 = (i + 2 <= NMAX) ? i + 2 : -1; break; }
+    for (var i = fValues.length - 1; i >= 0; i -= 1) {
+      if (fValues[i] > gValues[i]) {
+        n0 = i + 2 <= maxN ? i + 2 : -1;
+        break;
+      }
       if (i === 0) n0 = 1;
     }
-    function X(n) { return PAD + (n - 1) / (NMAX - 1) * (W - PAD - 12); }
-    function Y(v) { return H - PAD - (v / maxY) * (H - PAD - 14); }
-    function poly(arr) {
-      var pts = [];
-      for (var k = 0; k < arr.length; k++) pts.push(X(k + 1).toFixed(1) + "," + Y(arr[k]).toFixed(1));
-      return pts.join(" ");
-    }
-    var shade = "";
+    var plotWidth = width - pad.left - pad.right;
+    var plotHeight = height - pad.top - pad.bottom;
+    function xFor(index) { return pad.left + index / (maxN - 1) * plotWidth; }
+    function yFor(value) { return pad.top + plotHeight - value / maxY * plotHeight; }
+    context.clearRect(0, 0, width, height);
     if (n0 > 0) {
-      shade = '<rect x="' + X(n0).toFixed(1) + '" y="10" width="' + (W - 12 - X(n0)).toFixed(1) +
-              '" height="' + (H - PAD - 10) + '" fill="#e0f1f4" opacity="0.7"/>' +
-              '<text x="' + (X(n0) + 5).toFixed(1) + '" y="26" font-size="12" font-family="IBM Plex Mono, monospace" fill="#085a68">n\u2080 = ' + n0 + '</text>';
+      context.fillStyle = "rgba(224,241,244,.78)";
+      context.fillRect(xFor(n0 - 1), pad.top, width - pad.right - xFor(n0 - 1), plotHeight);
+      context.fillStyle = "#085a68";
+      context.font = "13px IBM Plex Mono, monospace";
+      context.fillText("n₀ = " + n0, xFor(n0 - 1) + 6, pad.top + 18);
     }
-    svg.innerHTML =
-      shade +
-      '<line x1="' + PAD + '" y1="' + (H - PAD) + '" x2="' + (W - 8) + '" y2="' + (H - PAD) + '" stroke="#dbe4f0" stroke-width="1.5"/>' +
-      '<line x1="' + PAD + '" y1="' + (H - PAD) + '" x2="' + PAD + '" y2="8" stroke="#dbe4f0" stroke-width="1.5"/>' +
-      '<text x="' + (W - 30) + '" y="' + (H - 12) + '" font-size="12" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>' +
-      '<polyline points="' + poly(gs) + '" fill="none" stroke="#0b7285" stroke-width="2.5"/>' +
-      '<polyline points="' + poly(fs) + '" fill="none" stroke="#101c33" stroke-width="2.5"/>';
+    context.strokeStyle = "#aebbd0";
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(pad.left, pad.top);
+    context.lineTo(pad.left, pad.top + plotHeight);
+    context.lineTo(width - pad.right, pad.top + plotHeight);
+    context.stroke();
+    context.fillStyle = "#46536b";
+    context.font = "13px IBM Plex Mono, monospace";
+    context.fillText("n", width - 20, height - 13);
 
-    var head = "f(n) = " + p.fname + " · C·g(n) = " + C + "·(" + p.gname + ")  →  ";
+    function drawLine(values, color) {
+      context.strokeStyle = color;
+      context.lineWidth = 3;
+      context.lineJoin = "round";
+      context.beginPath();
+      values.forEach(function (value, index) {
+        var x = xFor(index);
+        var y = yFor(value);
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.stroke();
+    }
+    drawLine(gValues, "#0b7285");
+    drawLine(fValues, "#101c33");
+
+    var prefix = "f(n) = " + preset.fname + " · C·g(n) = " + constant + "·(" + preset.gname + ") → ";
     if (n0 > 0) {
-      verdictEl.textContent = head + "f(n) ≤ C·g(n) for all n ≥ " + n0 + " in this range. " + p.truth;
+      verdictEl.textContent = prefix + "the inequality holds for every n ≥ " + n0 +
+        " inside the displayed range. " + preset.truth;
     } else {
-      verdictEl.textContent = head + "f(n) exceeds C·g(n) even at n = " + NMAX + " — this C fails here. " + p.truth;
+      verdictEl.textContent = prefix + "the inequality fails at n = " + maxN +
+        " in the displayed range. " + preset.truth;
     }
   }
+
   presetEl.addEventListener("change", render);
   cEl.addEventListener("input", render);
   nEl.addEventListener("input", render);
   render();
-})();
-</script>
-<script>
-/* Scroll-reveal */
-(function () {
-  var els = document.querySelectorAll(".chapter-section, .fig, .viz");
-  if (!("IntersectionObserver" in window)) return;
-  els.forEach(function (el) { el.classList.add("reveal"); });
-  var obs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); }
-    });
-  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
-  els.forEach(function (el) { obs.observe(el); });
 })();
 </script>
 </body>
