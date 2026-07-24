@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 4 · Asymptotic Notations · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
+
+:root {
+  --paper: #f7f9fc;
+  --card: #ffffff;
+  --ink: #101c33;
+  --ink-soft: #46536b;
+  --line: #dbe4f0;
+  --grid: #e7edf6;
+  --accent: #0b7285;
+  --accent-dark: #085a68;
+  --accent-soft: #e0f1f4;
+  --amber: #b45309;
+  --amber-soft: #fdf1df;
+  --code-bg: #0f1a2e;
+  --code-text: #dbe7ff;
+  --radius: 10px;
+  --maxw: 1180px;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.65;
+  font-size: 16.5px;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-dark); }
+
+code, pre { font-family: var(--font-mono); }
+
+/* ---------- Top navigation ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav {
+  max-width: var(--maxw); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: var(--ink); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-text strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .01em; }
+.brand-text span { font-size: 12px; color: var(--ink-soft); }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  display: block; padding: 8px 14px; border-radius: 8px;
+  color: var(--ink-soft); font-weight: 500; font-size: 15px;
+}
+.nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.nav-links a.active { background: var(--ink); color: #fff; }
+
+/* ---------- Hero (graph-paper motif) ---------- */
+.hero {
+  background:
+    linear-gradient(180deg, rgba(247,249,252,0) 0%, var(--paper) 96%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.hero-inner {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: 72px 24px 64px;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--accent-dark);
+  background: var(--accent-soft);
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: clamp(2rem, 4.4vw, 3.3rem);
+  letter-spacing: -0.02em; max-width: 780px;
+}
+.hero p.lede { margin-top: 16px; max-width: 640px; color: var(--ink-soft); font-size: 1.08rem; }
+.hero-meta { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.meta-chip {
+  font-size: 13.5px; color: var(--ink-soft);
+  background: var(--card); border: 1px solid var(--line);
+  padding: 7px 14px; border-radius: 999px;
+}
+.hero-actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 11px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 15px; font-family: var(--font-display);
+}
+.btn-primary { background: var(--ink); color: #fff; }
+.btn-primary:hover { background: #1c2c4d; color: #fff; }
+.btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+
+/* ---------- Generic page section ---------- */
+.page { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 80px; }
+.section-title { font-size: 1.6rem; margin-bottom: 6px; }
+.section-sub { color: var(--ink-soft); margin-bottom: 28px; }
+
+/* ---------- Chapter cards (Topics page) ---------- */
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.chapter-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px; display: flex; flex-direction: column; gap: 10px;
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: translateY(-2px); }
+.chapter-num {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-card h3 { font-size: 1.15rem; color: var(--ink); }
+.chapter-card p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-family: var(--font-mono); font-size: 11.5px;
+  background: var(--accent-soft); color: var(--accent-dark);
+  padding: 3px 9px; border-radius: 6px;
+}
+.chapter-card.locked { opacity: .62; background: #fbfcfe; }
+.chapter-card.locked h3 { color: var(--ink-soft); }
+.badge-soon {
+  align-self: flex-start; font-size: 11.5px; font-family: var(--font-mono);
+  color: var(--ink-soft); border: 1px dashed var(--line);
+  padding: 3px 9px; border-radius: 6px;
+}
+
+/* ---------- Chapter page layout ---------- */
+.chapter-layout {
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; grid-template-columns: 250px minmax(0, 1fr);
+  gap: 44px; padding: 40px 24px 90px;
+}
+.toc {
+  position: sticky; top: 86px; align-self: start;
+  max-height: calc(100vh - 110px); overflow-y: auto;
+  padding-right: 6px;
+}
+.toc h4 {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
+}
+.toc ol { list-style: none; border-left: 2px solid var(--line); }
+.toc li a {
+  display: block; padding: 6px 14px; font-size: 13.8px; color: var(--ink-soft);
+  border-left: 2px solid transparent; margin-left: -2px; line-height: 1.4;
+}
+.toc li a:hover { color: var(--accent-dark); }
+.toc li a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+.chapter-body { min-width: 0; }
+.chapter-kicker {
+  font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark);
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.chapter-body > h1 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); letter-spacing: -0.02em; margin: 8px 0 10px; }
+.chapter-intro { color: var(--ink-soft); max-width: 720px; margin-bottom: 8px; }
+
+.chapter-section { margin-top: 54px; }
+.chapter-section > h2 {
+  font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chapter-section h3 { font-size: 1.13rem; margin: 26px 0 10px; }
+.chapter-section p { margin-bottom: 14px; max-width: 76ch; }
+.chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+.chapter-section li { margin-bottom: 7px; max-width: 72ch; }
+.sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
+
+/* ---------- Content blocks ---------- */
+.def-box {
+  background: var(--accent-soft); border: 1px solid #bfdee5;
+  border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
+}
+.def-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 6px;
+}
+.note-box {
+  background: var(--amber-soft); border: 1px solid #f3ddb4;
+  border-radius: var(--radius); padding: 16px 20px; margin: 18px 0;
+}
+.note-box .def-label {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
+}
+
+pre.code {
+  background: var(--code-bg); color: var(--code-text);
+  border-radius: var(--radius); padding: 18px 20px;
+  overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
+}
+code.inline {
+  background: #eaeff7; color: #24344f;
+  padding: 2px 7px; border-radius: 5px; font-size: .88em;
+}
+.o-chip {
+  display: inline-block; font-family: var(--font-mono); font-size: .82em;
+  background: var(--amber-soft); color: var(--amber);
+  border: 1px solid #f0d9ac; padding: 2px 9px; border-radius: 999px;
+  font-weight: 600; white-space: nowrap;
+}
+
+table.tbl {
+  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; font-size: 15px;
+}
+table.tbl th, table.tbl td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+table.tbl th {
+  background: var(--ink); color: #fff; font-family: var(--font-display);
+  font-weight: 600; font-size: 14px;
+}
+table.tbl tr:last-child td { border-bottom: none; }
+table.tbl tr:nth-child(even) td { background: #fbfcfe; }
+
+.example-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px; margin: 14px 0;
+}
+.example-card .ex-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.example-card .ex-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.example-card pre.code { margin-bottom: 8px; }
+.example-card .ex-why { font-size: 14.3px; color: var(--ink-soft); margin: 0; }
+
+/* ---------- Bubble sort visualizer ---------- */
+.viz {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin: 20px 0;
+}
+.viz-title { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
+.viz-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+.viz-bars {
+  display: flex; align-items: flex-end; gap: 10px;
+  height: 170px; padding: 6px 2px 0;
+}
+.viz-bar {
+  flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
+  background: #c6d4e8; position: relative;
+  display: flex; align-items: flex-end; justify-content: center;
+  transition: height .25s ease, background .18s ease;
+}
+.viz-bar span {
+  color: #fff; font-family: var(--font-mono); font-size: 13px;
+  font-weight: 600; padding-bottom: 6px;
+}
+.viz-bar.compare { background: var(--amber); }
+.viz-bar.swap { background: #c2410c; }
+.viz-bar.sorted { background: var(--accent); }
+.viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.viz-controls button {
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+}
+.viz-controls button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+.viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
+.viz-status { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- Chapter prev/next footer ---------- */
+.chapter-nav {
+  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.chapter-nav a, .chapter-nav span.disabled {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+}
+.chapter-nav span.disabled { color: #9aa7bd; }
+
+/* ---------- Footer ---------- */
+.site-footer { border-top: 1px solid var(--line); background: var(--card); }
+.footer-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 26px 24px;
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  font-size: 14px; color: var(--ink-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
+  .toc { position: static; max-height: none; border: 1px solid var(--line);
+         border-radius: var(--radius); padding: 16px; background: var(--card); margin-bottom: 22px; }
+  .nav { flex-direction: column; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+
+
+
+    /* Slide figures */
+    .fig {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 12px; margin: 16px 0; max-width: 700px;
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+    .fig-md { max-width: 560px; margin-left: auto; margin-right: auto; }
+    .fig-sm { max-width: 400px; margin-left: auto; margin-right: auto; }
+    .fig:hover { box-shadow: 0 10px 26px rgba(16,28,51,.12); transform: translateY(-2px); }
+    .fig img { width: 100%; height: auto; display: block; border-radius: 6px; }
+    .fig figcaption {
+      font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft);
+      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line);
+    }
+    .fig figcaption b { color: var(--accent-dark); }
+
+    /* Scroll-reveal animation */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Chapter title entrance */
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: rise .6s ease both; }
+    .chapter-body > h1 { animation-delay: .08s; }
+    .chapter-intro { animation-delay: .16s; }
+
+    /* Insertion sort visualizer extras */
+    .viz-bar.key { background: var(--amber); box-shadow: 0 6px 14px rgba(240,163,63,.45); }
+    .viz-bar.shift { background: #c2410c; }
+    .viz-bar.prefix { background: #79c6d4; }
+    .viz-bar.lifted { transform: translateY(-16px); }
+    .viz-bar { transition: height .3s ease, background .2s ease, transform .3s ease; }
+    .viz-legend {
+      display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px;
+      font-size: 13px; color: var(--ink-soft);
+    }
+    .viz-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .viz-legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+    .viz-idx { display: flex; gap: 10px; }
+    .viz-idx b {
+      flex: 1; max-width: 76px; text-align: center;
+      font-family: var(--font-mono); font-weight: 400; font-size: 11.5px; color: var(--ink-soft);
+    }
+    .viz-controls select {
+      font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    }
+    .viz-label {
+      font-family: var(--font-mono); font-size: 13px; color: var(--ink);
+      background: var(--amber-soft); border: 1px solid #f0d9ac; border-radius: 8px;
+      padding: 8px 12px; margin-top: 14px; min-height: 20px;
+    }
+    /* Keyword highlight */
+    .kw { color: #c2179b; }
+    /* Collapsible answers */
+    details.ans { margin-top: 10px; }
+    details.ans summary {
+      cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 600; font-size: 13.5px;
+      color: var(--accent-dark); background: var(--accent-soft);
+      padding: 7px 14px; border-radius: 8px; user-select: none;
+      border: 1px solid #bfdee5;
+    }
+    details.ans summary::-webkit-details-marker { display: none; }
+    details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
+    details.ans[open] summary::before { content: "\2212"; }
+    details.ans .ans-body { margin-top: 10px; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; }
+      .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
+    }
+
+    /* Binary search demo (chapter 3 only) */
+    .bs-cells { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+    .bs-cell {
+      width: 52px; padding: 8px 0 4px; text-align: center;
+      background: #eaeff7; border: 2px solid transparent; border-radius: 8px;
+      font-family: var(--font-mono); font-weight: 600; font-size: 14px; color: #24344f;
+      transition: background .18s ease, opacity .18s ease;
+    }
+    .bs-cell small { display: block; font-weight: 400; font-size: 10.5px; color: var(--ink-soft); }
+    .bs-cell.dead { opacity: .28; }
+    .bs-cell.mid { background: var(--amber-soft); border-color: var(--amber); }
+    .bs-cell.found { background: var(--accent); color: #fff; }
+    .bs-cell.found small { color: #d9f2f6; }
+    .bs-pointers { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+  
+  </style>
+  <style>
+    .plot-svg { width: 100%; height: auto; display: block; }
+    .prop-list { list-style: none; margin: 10px 0 16px !important; }
+    .prop-list li {
+      font-family: var(--font-mono); font-size: 14px; color: var(--ink);
+      background: #fbfcfe; border: 1px solid var(--line); border-radius: 8px;
+      padding: 9px 14px; margin-bottom: 8px !important; max-width: 640px;
+    }
+    .prop-list li b { color: var(--accent-dark); font-weight: 600; }
+    /* Big-O playground */
+    .pg-svg { width: 100%; max-width: 660px; background: #fbfcfe; border: 1px solid var(--line); border-radius: 10px; display: block; }
+    .pg-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
+    .pg-controls label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-soft); }
+    .pg-controls input[type="range"] { accent-color: var(--accent); width: 140px; }
+    .pg-controls select { font-family: var(--font-display); font-weight: 600; font-size: 14px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+    .pg-val { font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark); min-width: 44px; }
+    .pg-legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
+    .pg-legend i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">O(n)</div>
+      <div class="brand-text">
+        <strong>Design &amp; Analysis of Algorithms</strong>
+        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="topics.html" class="active">Topics</a></li>
+      <li><a href="practical.html">Practical</a></li>
+      <li><a href="tutorials.html">Tutorials</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="chapter-layout">
+
+  <aside class="toc">
+    <h4>In this chapter</h4>
+    <ol>
+      <li><a href="#sec-1">4.1 What is Asymptotic Notation?</a></li>
+      <li><a href="#sec-2">4.2 Big-O Notation</a></li>
+      <li><a href="#sec-3">4.3 Big-O: Worked Checks</a></li>
+      <li><a href="#sec-4">4.4 The Big-O Playground</a></li>
+      <li><a href="#sec-5">4.5 Omega (&#937;) Notation</a></li>
+      <li><a href="#sec-6">4.6 Theta (&#920;) Notation</a></li>
+      <li><a href="#sec-7">4.7 Using the Notations Precisely</a></li>
+      <li><a href="#sec-8">4.8 Practical Conventions</a></li>
+      <li><a href="#sec-9">4.9 Small-o and Small-&#969;</a></li>
+      <li><a href="#sec-10">4.10 Properties</a></li>
+      <li><a href="#sec-11">4.11 Exercises</a></li>
+    </ol>
+  </aside>
+
+  <main class="chapter-body">
+    <span class="chapter-kicker">Chapter 04</span>
+    <h1>Asymptotic Notations</h1>
+    <p class="chapter-intro">
+      Chapter 3 gave us running times like "a quadratic function of n". This chapter
+      introduces the precise language for such statements — Big-O, Omega, and Theta —
+      which describe how a function grows as the input size approaches infinity. We
+      define each notation, learn to verify or refute claims like f(n) = O(g(n)),
+      see how to use the notations precisely, and finish with the stricter small-o
+      and small-&#969; and the algebraic properties that make the notations easy to work with.
+    </p>
+
+    <!-- 4.1 -->
+    <section class="chapter-section" id="sec-1">
+      <h2><span class="sec-no">4.1</span>What is Asymptotic Notation?</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Asymptotic notation</span>
+        In mathematics, asymptotic notation describes the <strong class="kw">growth rate</strong> of a
+        function. In computer science, it is used to describe the running time or space
+        requirements of an algorithm in terms of the input size n, <strong class="kw">as n approaches
+        infinity</strong>.
+      </div>
+      <p>Take a simple running time:</p>
+      <pre class="code">f(n) = 2n + 3</pre>
+      <p>
+        How does f(n) grow with n? The term <strong class="kw">2n dominates</strong> the growth — the
+        constant 3 becomes negligible when n is very large. Asymptotic notation lets us
+        say exactly that, and nothing more: it keeps the dominant term and discards the
+        constants and lower-order noise (recall T(n) = n&#178;/100 + 100n + 7 from Chapter 3,
+        where the n&#178; term won for large n).
+      </p>
+    </section>
+
+    <!-- 4.2 -->
+    <section class="chapter-section" id="sec-2">
+      <h2><span class="sec-no">4.2</span>Big-O Notation — the Upper Bound</h2>
+      <p>Suppose there are two functions:</p>
+      <pre class="code">f(n) = 2n + 1        g(n) = 3n</pre>
+      <div class="def-box">
+        <span class="def-label">Definition · Big-O</span>
+        f(n) = O(g(n)) (pronounced "f of n is Big-O of g of n") iff for some positive
+        constants C and n&#8320;:
+        <br><br>
+        <strong>f(n) &#8804; C &#183; g(n) &nbsp; &#8704; n &#8805; n&#8320;</strong>
+      </div>
+      <ul>
+        <li>f(n) will not grow faster than g(n);</li>
+        <li>g(n) is the <strong class="kw">upper bound</strong> of f(n);</li>
+        <li>g(n) should be the <strong class="kw">closest</strong> to f(n) — e.g. for f(n) = 2n + 1 we do not
+            usually take g(n) = n&#7580; with c &#8805; 2, even though technically 2n + 1 = O(n&#178;) too.</li>
+      </ul>
+      <figure class="fig fig-md">
+          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
+          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
+          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
+          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <path d="M40 250 Q 240 210 440 70" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 190 C 90 195 140 205 170 213 S 300 235 440 150" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
+          <text x="360" y="66" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#183;g(n)</text>
+          <text x="368" y="168" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
+          
+          </svg>
+        <figcaption><b>Fig 4.1</b> &#183; Big-O visually: past n&#8320; (shaded region), the curve f(n) stays at or below C&#183;g(n) forever. Before n&#8320;, anything may happen &#8212; asymptotics only cares about large n.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 4.3 -->
+    <section class="chapter-section" id="sec-3">
+      <h2><span class="sec-no">4.3</span>Big-O: Worked Checks</h2>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Check 1 — is f(n) = 2n&#178; + 3 in O(500n)?</span></div>
+        <pre class="code">f(n) = 2n² + 3        g(n) = 500n</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">No</span>
+          <p class="ex-why" style="margin-top:8px;">Try n = 1000: f(n) = 2,000,003 but C&#183;g(n) with C = 1 gives 500,000 — f(n) &gt; g(n). No fixed constant C rescues this: 2n&#178;
+          eventually outgrows any C&#183;500n, because n&#178;/n = n grows without bound. So f(n) &#8800; O(g(n)).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Check 2 — show that n&#179; &#8722; 100n&#178; &#8713; O(n&#178;)</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">proof by contradiction</span>
+          <pre class="code" style="margin-top:8px;">Suppose:  n³ − 100n² = O(n²)
+⇒  n³ − 100n² ≤ C·n²      for some constant C, large n
+Divide both sides by n²:
+⇒  n − 100 ≤ C
+⇒  fails for every  n > C + 100</pre>
+          <p class="ex-why">Whatever constant C we pick, the inequality breaks as soon as n exceeds C + 100.
+          Since the definition demands it hold for <em>all</em> n &#8805; n&#8320;, no C works: n&#179; &#8722; 100n&#178; &#8713; O(n&#178;).
+          Watch this exact failure happen live in the playground below — pick preset 3 and drag C as high as you like.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 4.4 -->
+    <section class="chapter-section" id="sec-4">
+      <h2><span class="sec-no">4.4</span>Try it: The Big-O Playground</h2>
+      <p>
+        The definition says: <em>find one C and one n&#8320; that make f(n) &#8804; C&#183;g(n) forever after</em>.
+        Here you can hunt for them by hand.
+      </p>
+      <div class="viz" id="pg">
+        <div class="viz-title">Is f(n) = O(g(n))? Find a C that works</div>
+        <div class="viz-sub">Pick a function pair, then drag C until the teal curve C&#183;g(n) stays above f(n). The shaded region starts at the smallest n&#8320; that works in the plotted range.</div>
+        <div class="pg-legend">
+          <span><i style="background:#101c33"></i>f(n)</span>
+          <span><i style="background:#0b7285"></i>C &#183; g(n)</span>
+          <span><i style="background:#e0f1f4; height:12px;"></i>region where f &#8804; C&#183;g holds onward</span>
+        </div>
+        <svg class="pg-svg" id="pg-svg" viewBox="0 0 660 300" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="pg-controls">
+          <label>pair
+            <select id="pg-preset">
+              <option value="p1" selected>1&#41; f = 2n + 3 &nbsp;vs&nbsp; g = n</option>
+              <option value="p2">2&#41; f = 2n&#178; + 3 &nbsp;vs&nbsp; g = 500n</option>
+              <option value="p3">3&#41; f = n&#179; &#8722; 100n&#178; &nbsp;vs&nbsp; g = n&#178;</option>
+              <option value="p4">4&#41; f = 10 n log&#8322;n &nbsp;vs&nbsp; g = n&#178;</option>
+            </select>
+          </label>
+          <label>C <input type="range" id="pg-c" min="0.5" max="20" step="0.5" value="1"><span class="pg-val" id="pg-cv">1</span></label>
+          <label>plot up to n = <input type="range" id="pg-n" min="50" max="1000" step="50" value="100"><span class="pg-val" id="pg-nv">100</span></label>
+        </div>
+        <div class="viz-label" id="pg-verdict"></div>
+      </div>
+    </section>
+
+    <!-- 4.5 -->
+    <section class="chapter-section" id="sec-5">
+      <h2><span class="sec-no">4.5</span>Omega (&#937;) Notation — the Lower Bound</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Omega</span>
+        f(n) = &#937;(g(n)) iff for some positive constants C and n&#8320;:
+        <br><br>
+        <strong>f(n) &#8805; C &#183; g(n) &nbsp; &#8704; n &#8805; n&#8320;</strong>
+      </div>
+      <ul>
+        <li>&#937;-notation characterizes a <strong class="kw">lower bound</strong> on the asymptotic behavior of a function;</li>
+        <li>g(n) is the lower bound of f(n);</li>
+        <li>g(n) should again be the <strong class="kw">closest</strong> to f(n).</li>
+      </ul>
+      <figure class="fig fig-md">
+          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
+          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
+          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
+          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <path d="M40 200 Q 240 160 440 90" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 250 C 90 235 140 200 170 171 S 300 90 440 35" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
+          <text x="368" y="108" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#183;g(n)</text>
+          <text x="372" y="34" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
+          
+          </svg>
+        <figcaption><b>Fig 4.2</b> &#183; Omega visually: past n&#8320;, f(n) stays at or above C&#183;g(n) &#8212; g(n) props f(n) up from below.</figcaption>
+      </figure>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Check — is f(n) = log n in &#937;(n)?</span></div>
+        <pre class="code">f(n) = log n        g(n) = n</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">No</span>
+          <p class="ex-why" style="margin-top:8px;">We would need log n &#8805; C&#183;n forever after some n&#8320; — but log n grows far
+          <em>slower</em> than n, so the ratio (log n)/n shrinks to 0 and no positive C survives.
+          f(n) &#8800; &#937;(n). (The other way works: n = &#937;(log n).)</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 4.6 -->
+    <section class="chapter-section" id="sec-6">
+      <h2><span class="sec-no">4.6</span>Theta (&#920;) Notation — the Tight Bound</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Theta</span>
+        f(n) = &#920;(g(n)) iff for some positive constants C&#8321;, C&#8322;, and n&#8320;:
+        <br><br>
+        <strong>C&#8321; &#183; g(n) &#8804; f(n) &#8804; C&#8322; &#183; g(n) &nbsp; &#8704; n &#8805; n&#8320;</strong>
+      </div>
+      <p>
+        &#920;-notation characterizes a <strong class="kw">tight bound</strong> on the asymptotic behavior of a
+        function: g(n) sandwiches f(n) from both sides at once.
+      </p>
+      <figure class="fig fig-md">
+          <svg class="plot-svg" viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" role="img">
+          <rect x="170" y="12" width="278" height="248" fill="#e0f1f4" opacity="0.5"/>
+          <line x1="36" y1="260" x2="450" y2="260" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="36" y1="260" x2="36" y2="10" stroke="#dbe4f0" stroke-width="1.5"/>
+          <line x1="170" y1="260" x2="170" y2="12" stroke="#9aa7bd" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="170" y="281" text-anchor="middle" font-size="14" font-family="IBM Plex Mono, monospace" fill="#085a68">n&#8320;</text>
+          <text x="440" y="281" font-size="13" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>
+          <path d="M40 240 Q 240 180 440 55" fill="none" stroke="#0b7285" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 265 Q 240 220 440 130" fill="none" stroke="#e8a317" stroke-width="3" stroke-linecap="round"/>
+          <path d="M40 230 C 100 260 140 250 170 225 C 260 195 330 170 440 90" fill="none" stroke="#101c33" stroke-width="3" stroke-linecap="round"/>
+          <text x="348" y="52" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#0b7285">C&#8322;&#183;g(n)</text>
+          <text x="348" y="148" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#b45309">C&#8321;&#183;g(n)</text>
+          <text x="372" y="92" font-size="13.5" font-weight="600" font-family="IBM Plex Mono, monospace" fill="#101c33">f(n)</text>
+          
+          </svg>
+        <figcaption><b>Fig 4.3</b> &#183; Theta visually: beyond n&#8320;, f(n) lives between C&#8321;&#183;g(n) and C&#8322;&#183;g(n) &#8212; same growth rate, different constants.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 4.7 -->
+    <section class="chapter-section" id="sec-7">
+      <h2><span class="sec-no">4.7</span>Using the Notations Precisely</h2>
+      <div class="def-box">
+        <span class="def-label">Theorem</span>
+        If a function f(n) is both O(g(n)) and &#937;(g(n)) for some function g(n),
+        then f(n) is also <strong>&#920;(g(n))</strong>.
+      </div>
+      <ul>
+        <li>E.g. 7n&#179; + 100n&#178; &#8722; 20n + 6 is both O(n&#179;) and &#937;(n&#179;), so it is also &#920;(n&#179;).</li>
+        <li>Linear search to find the largest/smallest element in an array: upper bound O(n)
+            and lower bound &#937;(n) (Chapter 3, exercise 3.11 — every element must be checked),
+            so its running time is <strong>&#920;(n)</strong>.</li>
+      </ul>
+
+      <h3>True or false? Insertion sort edition</h3>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Statement 1 — "Insertion sort running time: &#920;(n&#178;)"</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">False</span>
+          <p class="ex-why" style="margin-top:8px;">&#920;(n&#178;) claims a tight bound covering <em>all</em> cases — but the
+          best-case running time is linear (&#920;(n) on a sorted input). One statement cannot cover all
+          cases with &#920;(n&#178;), so the claim is incorrect.</p></div>
+        </details>
+      </div>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Statement 2 — "Insertion sort worst-case running time: &#920;(n&#178;)"</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">True</span>
+          <p class="ex-why" style="margin-top:8px;">Restricted to the <strong class="kw">worst case</strong> (reverse-sorted input), the
+          running time is both O(n&#178;) and &#937;(n&#178;), hence &#920;(n&#178;). Scoping the statement to one case makes
+          the tight bound legitimate.</p></div>
+        </details>
+      </div>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Statement 3 — "Insertion sort running time: &#937;(n)"</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">True</span>
+          <p class="ex-why" style="margin-top:8px;">Every case — best, worst, or average — takes at least linear time,
+          because the algorithm must at minimum look at each of the n elements once. A lower bound that
+          holds for all cases is a correct (if weak) statement.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 4.8 -->
+    <section class="chapter-section" id="sec-8">
+      <h2><span class="sec-no">4.8</span>Practical Conventions</h2>
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Suppose an algorithm runs in 3n&#178; + 20n steps in all cases. Its running time is?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n&#178;)</span>
+          <p class="ex-why" style="margin-top:8px;">Technically we could also say O(n&#179;) — true but <strong>less precise</strong> —
+          or &#920;(3n&#178; + 20n) — true but <strong>unnecessarily complex</strong>. The convention: the simplest,
+          tightest form wins.</p></div>
+        </details>
+      </div>
+      <div class="note-box">
+        <span class="def-label">Anonymous functions</span>
+        Sometimes we write 2n&#178; + 3n + 1 as <strong>2n&#178; + O(n)</strong>, where O(n) denotes an
+        <strong class="kw">anonymous function</strong> — some function we do not care to name, known only
+        to be at most linear. Useful for keeping the leading term explicit while sweeping the
+        rest under the rug.
+      </div>
+    </section>
+
+    <!-- 4.9 -->
+    <section class="chapter-section" id="sec-9">
+      <h2><span class="sec-no">4.9</span>Small-o and Small-&#969; — Strict Bounds</h2>
+      <div class="def-box">
+        <span class="def-label">Definition · Small-o</span>
+        f(n) = o(g(n)) (pronounced "f of n is small-o of g of n") iff for <em>every</em>
+        positive constant C &gt; 0 there is an n&#8320; such that
+        <br><br>
+        <strong>f(n) &#60; C &#183; g(n) &nbsp; &#8704; n &#8805; n&#8320;</strong>
+      </div>
+      <ul>
+        <li>o(g(n)) is asymptotically <strong class="kw">strictly tighter</strong> than O(g(n)) — strict inequality, and it must work for every C, not just one.</li>
+        <li>For example, 2n = o(n&#178;), but 2n&#178; &#8800; o(n&#178;) — a function is never small-o of its own growth rate.</li>
+        <li>The same relationship holds between <strong class="kw">&#969;(g(n))</strong> and &#937;(g(n)): &#969; is the strict version of &#937;.</li>
+      </ul>
+      <table class="tbl">
+        <thead><tr><th>Notation</th><th>Meaning (intuition)</th><th>Analogy</th></tr></thead>
+        <tbody>
+          <tr><td><span class="o-chip">O</span></td><td>grows no faster than</td><td>&#8804;</td></tr>
+          <tr><td><span class="o-chip">&#937;</span></td><td>grows no slower than</td><td>&#8805;</td></tr>
+          <tr><td><span class="o-chip">&#920;</span></td><td>grows at the same rate as</td><td>=</td></tr>
+          <tr><td><span class="o-chip">o</span></td><td>grows strictly slower than</td><td>&#60;</td></tr>
+          <tr><td><span class="o-chip">&#969;</span></td><td>grows strictly faster than</td><td>&#62;</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4.10 -->
+    <section class="chapter-section" id="sec-10">
+      <h2><span class="sec-no">4.10</span>Properties of Asymptotic Notations</h2>
+      <h3>Transitivity</h3>
+      <p>Bounds chain: if f is bounded by g and g by h, then f is bounded by h &#8212; for all five notations.</p>
+      <ul class="prop-list">
+        <li>f(n) = <b>&#920;</b>(g(n)) and g(n) = <b>&#920;</b>(h(n)) &nbsp;&#10233;&nbsp; f(n) = <b>&#920;</b>(h(n))</li>
+        <li>f(n) = <b>O</b>(g(n)) and g(n) = <b>O</b>(h(n)) &nbsp;&#10233;&nbsp; f(n) = <b>O</b>(h(n))</li>
+        <li>f(n) = <b>&#937;</b>(g(n)) and g(n) = <b>&#937;</b>(h(n)) &nbsp;&#10233;&nbsp; f(n) = <b>&#937;</b>(h(n))</li>
+        <li>f(n) = <b>o</b>(g(n)) and g(n) = <b>o</b>(h(n)) &nbsp;&#10233;&nbsp; f(n) = <b>o</b>(h(n))</li>
+        <li>f(n) = <b>&#969;</b>(g(n)) and g(n) = <b>&#969;</b>(h(n)) &nbsp;&#10233;&nbsp; f(n) = <b>&#969;</b>(h(n))</li>
+      </ul>
+      <h3>Transpose symmetry</h3>
+      <p>An upper bound read backwards is a lower bound:</p>
+      <ul class="prop-list">
+        <li>f(n) = <b>O</b>(g(n)) &nbsp;&#10231;&nbsp; g(n) = <b>&#937;</b>(f(n))</li>
+        <li>f(n) = <b>o</b>(g(n)) &nbsp;&#10231;&nbsp; g(n) = <b>&#969;</b>(f(n))</li>
+      </ul>
+      <h3>Two more useful properties</h3>
+      <ul>
+        <li><strong class="kw">Reflexivity</strong> — every function bounds itself: f(n) = O(f(n)), f(n) = &#937;(f(n)), f(n) = &#920;(f(n)).</li>
+        <li><strong class="kw">Symmetry</strong> (&#920; only) — f(n) = &#920;(g(n)) if and only if g(n) = &#920;(f(n)). "Same growth rate" is a two-way street; O and &#937; are one-way.</li>
+      </ul>
+      <div class="note-box">
+        <span class="def-label">Handy analogy</span>
+        These properties mirror the comparison of real numbers: transitivity is a &#8804; b &#8804; c &#8658; a &#8804; c,
+        transpose symmetry is a &#8804; b &#8660; b &#8805; a, and &#920;-symmetry is a = b &#8660; b = a. Thinking of
+        O, &#937;, &#920;, o, &#969; as &#8804;, &#8805;, =, &#60;, &#62; for growth rates makes them much less intimidating.
+      </div>
+    </section>
+
+    <!-- 4.11 -->
+    <section class="chapter-section" id="sec-11">
+      <h2><span class="sec-no">4.11</span>Exercises</h2>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q1 — "The running time of algorithm A is at least O(n&#178;)." Asymptotically correct?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">Meaningless</span>
+          <p class="ex-why" style="margin-top:8px;">"At least" asks for a <em>lower</em> bound, but O gives an <em>upper</em>
+          bound — "at least at most n&#178;" says nothing. Every algorithm trivially satisfies it (even O(1) ones,
+          since "at least O(n&#178;)" excludes nothing). The correct phrasing for the intended meaning is
+          &#937;(n&#178;).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q2 — Is 2&#8319;&#8314;&#185; = O(2&#8319;)? Is 2&#178;&#8319; = O(2&#8319;)?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">Yes / No</span>
+          <p class="ex-why" style="margin-top:8px;"><strong>2&#8319;&#8314;&#185; = 2 &#183; 2&#8319;</strong>, so with C = 2 the definition holds:
+          yes, 2&#8319;&#8314;&#185; = O(2&#8319;). But <strong>2&#178;&#8319; = (2&#8319;)&#178; = 4&#8319;</strong>, and 4&#8319;/2&#8319; = 2&#8319; grows without bound —
+          no constant C can hold it down, so 2&#178;&#8319; &#8800; O(2&#8319;). Constant factors in the exponent matter!</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q3 — (n + k)&#7504; = O(?), for constants k and m, when n &#62; k</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">O(n&#7504;)</span>
+          <p class="ex-why" style="margin-top:8px;">Since n &#62; k, we have n + k &#60; 2n, so (n + k)&#7504; &#60; (2n)&#7504; = 2&#7504; &#183; n&#7504; —
+          and 2&#7504; is a constant. Hence (n + k)&#7504; = O(n&#7504;) (in fact &#920;(n&#7504;), since (n + k)&#7504; &#8805; n&#7504;).
+          Shifting a polynomial's argument by a constant never changes its growth rate.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q4 — What is the &#920; running time of this procedure?</span></div>
+        <pre class="code">SUM-ARRAY(A, n)
+1  sum = 0
+2  for i = 1 to n
+3      sum = sum + A[i]
+4  return sum</pre>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">&#920;(n)</span>
+          <p class="ex-why" style="margin-top:8px;">One loop over n elements doing constant work per element: at most c&#8321;n + c&#8322;
+          steps (O(n)) and at least n additions (&#937;(n)) — both bounds meet, so SUM-ARRAY runs in &#920;(n) in
+          every case.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q5 — Find the asymptotic relation: f(n) = n&#178;&#8304; log n vs g(n) = n log n&#185;&#8304;</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">f = &#969;(g)</span>
+          <p class="ex-why" style="margin-top:8px;">First simplify g: log n&#185;&#8304; = 10 log n, so g(n) = 10 n log n. Then
+          f/g = n&#178;&#8304; log n / (10 n log n) = n&#185;&#8313;/10 &#8594; &#8734;. f grows strictly faster:
+          f = &#969;(g), equivalently g = o(f). (Rule: powers of n dominate powers of log.)</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q6 — Find the asymptotic relation: f(n) = 3n&#8730;n vs g(n) = 2^&#8730;n &#183; log n</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">f = o(g)</span>
+          <p class="ex-why" style="margin-top:8px;">f(n) = 3n^(3/2) is a polynomial. g(n) contains 2^&#8730;n, which is
+          super-polynomial: for any fixed power n&#7580;, taking logs gives c log n vs &#8730;n, and &#8730;n wins.
+          So every polynomial is eventually dwarfed: f = o(g).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q7 — Find the asymptotic relation: f(n) = n^(log n) vs g(n) = 2^&#8730;n</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">f = o(g)</span>
+          <p class="ex-why" style="margin-top:8px;">Compare the logarithms: log f = log&#178;n and log g = &#8730;n.
+          Since log&#178;n = o(&#8730;n) (any power of log loses to any power of n, even &#8730;n), we get
+          f = o(g). Quasi-polynomial &#60; exponential-in-&#8730;n.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q8 — Can we write the worst-case / general running time of binary search as &#920;(log n)?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">worst: yes &#183; general: no</span>
+          <p class="ex-why" style="margin-top:8px;">The <strong class="kw">worst case</strong> is both O(log n) and &#937;(log n), so
+          &#920;(log n) is correct there. But as a statement about <em>all</em> cases it fails — the best case
+          finds the key at the first mid in &#920;(1). For the general case we can only say O(log n) and &#937;(1)
+          (exactly the insertion-sort lesson from &#167;4.7).</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q9 — Insertion sort runs in 8n&#178; steps, merge sort in 64 n lg n steps. For which n does insertion sort beat merge sort?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">2 &#8804; n &#8804; 43</span>
+          <p class="ex-why" style="margin-top:8px;">Insertion wins while 8n&#178; &#60; 64 n lg n, i.e. n &#60; 8 lg n.
+          Checking integers: at n = 43, 8 lg 43 &#8776; 43.4 &#62; 43 (still wins); at n = 44, 8 lg 44 &#8776; 43.7 &#60; 44
+          (loses). So insertion sort beats merge sort for 2 &#8804; n &#8804; 43 — the reason real libraries switch to
+          insertion sort on small subarrays despite its worse asymptotics.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q10 — Smallest n such that an algorithm running in 100n&#178; beats one running in 2&#8319;?</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">n = 15</span>
+          <p class="ex-why" style="margin-top:8px;">We need 100n&#178; &#60; 2&#8319;. At n = 14: 100 &#183; 196 = 19,600 vs 2&#185;&#8308; = 16,384 —
+          exponential still slower&#63; No, 19,600 &#62; 16,384, so the quadratic algorithm is still worse. At n = 15:
+          100 &#183; 225 = 22,500 vs 2&#185;&#8309; = 32,768 — now 22,500 &#60; 32,768. Answer: <strong>n = 15</strong>.
+          Exponentials start slow but always win in the end.</p></div>
+        </details>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-head"><span class="ex-title">Q11 — Express insertion sort's worst-case running time in small-o notation</span></div>
+        <details class="ans"><summary>show answer</summary>
+          <div class="ans-body"><span class="o-chip">o(n&#7584;), k &#62; 2</span>
+          <p class="ex-why" style="margin-top:8px;">The worst case is &#920;(n&#178;), and n&#178; grows strictly slower than n&#7584; for any
+          k &#62; 2 — so the worst-case time is o(n&#7584;) for every k &#62; 2, e.g. o(n&#179;). Note it is <em>not</em> o(n&#178;):
+          a function is never small-o of its own tight bound.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <nav class="chapter-nav">
+      <a href="chapter3.html">← Chapter 3: Analyzing Algorithms</a>
+      <a href="topics.html">All topics</a>
+      <span class="disabled">Chapter 5 (coming soon) →</span>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>Design and Analysis of Algorithms</span>
+    <span>© 2026
+      <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+        Dr. Alakesh Kalita
+      </a>
+      · Mathematics and Computing · IIT (ISM) Dhanbad</span>
+  </div>
+</footer>
+
+<script>
+/* TOC scroll-spy */
+(function () {
+  const links = document.querySelectorAll(".toc a");
+  const sections = document.querySelectorAll(".chapter-section");
+  if (!links.length || !sections.length) return;
+  const byId = {};
+  links.forEach((a) => (byId[a.getAttribute("href").slice(1)] = a));
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          links.forEach((a) => a.classList.remove("current"));
+          const a = byId[e.target.id];
+          if (a) a.classList.add("current");
+        }
+      });
+    },
+    { rootMargin: "-20% 0px -70% 0px" }
+  );
+  sections.forEach((s) => obs.observe(s));
+})();
+
+/* Big-O playground */
+(function () {
+  var svg = document.getElementById("pg-svg");
+  if (!svg) return;
+  var PRESETS = {
+    p1: { f: function (n) { return 2 * n + 3; }, g: function (n) { return n; },
+          fname: "2n + 3", gname: "n", isO: true,
+          truth: "In fact f = O(g): any C ≥ 3 works forever (e.g. C = 3, n₀ = 3)." },
+    p2: { f: function (n) { return 2 * n * n + 3; }, g: function (n) { return 500 * n; },
+          fname: "2n² + 3", gname: "500n", isO: false,
+          truth: "No C ever works for all n: 2n² outgrows C·500n as soon as n > 250·C. f ≠ O(g)." },
+    p3: { f: function (n) { return n * n * n - 100 * n * n; }, g: function (n) { return n * n; },
+          fname: "n³ − 100n²", gname: "n²", isO: false,
+          truth: "The §4.3 proof live: the inequality fails for every n > C + 100. Raise C, then extend the plot — it always breaks. f ≠ O(g)." },
+    p4: { f: function (n) { return 10 * n * Math.log2(n); }, g: function (n) { return n * n; },
+          fname: "10 n log₂n", gname: "n²", isO: true,
+          truth: "In fact f = o(g): n log n grows strictly slower than n², so even C = 1 works from n₀ = 60 on (and every C > 0 eventually works)." }
+  };
+  var presetEl = document.getElementById("pg-preset");
+  var cEl = document.getElementById("pg-c");
+  var nEl = document.getElementById("pg-n");
+  var cvEl = document.getElementById("pg-cv");
+  var nvEl = document.getElementById("pg-nv");
+  var verdictEl = document.getElementById("pg-verdict");
+  var W = 660, H = 300, PAD = 34;
+
+  function render() {
+    var p = PRESETS[presetEl.value];
+    var C = parseFloat(cEl.value);
+    var NMAX = parseInt(nEl.value, 10);
+    cvEl.textContent = C;
+    nvEl.textContent = NMAX;
+
+    // sample curves
+    var fs = [], gs = [], maxY = 1;
+    for (var n = 1; n <= NMAX; n++) {
+      var fv = Math.max(0, p.f(n)), gv = Math.max(0, C * p.g(n));
+      fs.push(fv); gs.push(gv);
+      if (fv > maxY) maxY = fv;
+      if (gv > maxY) maxY = gv;
+    }
+    // smallest n0 such that f<=C*g for ALL n in [n0..NMAX]
+    var n0 = -1;
+    for (var i = fs.length - 1; i >= 0; i--) {
+      if (fs[i] > gs[i]) { n0 = (i + 2 <= NMAX) ? i + 2 : -1; break; }
+      if (i === 0) n0 = 1;
+    }
+    function X(n) { return PAD + (n - 1) / (NMAX - 1) * (W - PAD - 12); }
+    function Y(v) { return H - PAD - (v / maxY) * (H - PAD - 14); }
+    function poly(arr) {
+      var pts = [];
+      for (var k = 0; k < arr.length; k++) pts.push(X(k + 1).toFixed(1) + "," + Y(arr[k]).toFixed(1));
+      return pts.join(" ");
+    }
+    var shade = "";
+    if (n0 > 0) {
+      shade = '<rect x="' + X(n0).toFixed(1) + '" y="10" width="' + (W - 12 - X(n0)).toFixed(1) +
+              '" height="' + (H - PAD - 10) + '" fill="#e0f1f4" opacity="0.7"/>' +
+              '<text x="' + (X(n0) + 5).toFixed(1) + '" y="26" font-size="12" font-family="IBM Plex Mono, monospace" fill="#085a68">n\u2080 = ' + n0 + '</text>';
+    }
+    svg.innerHTML =
+      shade +
+      '<line x1="' + PAD + '" y1="' + (H - PAD) + '" x2="' + (W - 8) + '" y2="' + (H - PAD) + '" stroke="#dbe4f0" stroke-width="1.5"/>' +
+      '<line x1="' + PAD + '" y1="' + (H - PAD) + '" x2="' + PAD + '" y2="8" stroke="#dbe4f0" stroke-width="1.5"/>' +
+      '<text x="' + (W - 30) + '" y="' + (H - 12) + '" font-size="12" font-family="IBM Plex Mono, monospace" fill="#46536b">n</text>' +
+      '<polyline points="' + poly(gs) + '" fill="none" stroke="#0b7285" stroke-width="2.5"/>' +
+      '<polyline points="' + poly(fs) + '" fill="none" stroke="#101c33" stroke-width="2.5"/>';
+
+    var head = "f(n) = " + p.fname + " · C·g(n) = " + C + "·(" + p.gname + ")  →  ";
+    if (n0 > 0) {
+      verdictEl.textContent = head + "f(n) ≤ C·g(n) for all n ≥ " + n0 + " in this range. " + p.truth;
+    } else {
+      verdictEl.textContent = head + "f(n) exceeds C·g(n) even at n = " + NMAX + " — this C fails here. " + p.truth;
+    }
+  }
+  presetEl.addEventListener("change", render);
+  cEl.addEventListener("input", render);
+  nEl.addEventListener("input", render);
+  render();
+})();
+</script>
+<script>
+/* Scroll-reveal */
+(function () {
+  var els = document.querySelectorAll(".chapter-section, .fig, .viz");
+  if (!("IntersectionObserver" in window)) return;
+  els.forEach(function (el) { el.classList.add("reveal"); });
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+  els.forEach(function (el) { obs.observe(el); });
+})();
+</script>
+</body>
+</html>
