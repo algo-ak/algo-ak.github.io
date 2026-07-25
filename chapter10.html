@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10 · Greedy Algorithms · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --ink: #101c33;
+      --ink-soft: #46536b;
+      --line: #dbe4f0;
+      --grid: #e7edf6;
+      --accent: #0b7285;
+      --accent-dark: #085a68;
+      --accent-soft: #e0f1f4;
+      --amber: #b45309;
+      --amber-soft: #fdf1df;
+      --red: #c2410c;
+      --red-soft: #fff0eb;
+      --green: #0f766e;
+      --green-soft: #d7f4eb;
+      --purple: #6d4cc3;
+      --purple-soft: #eee8ff;
+      --code-bg: #0f1a2e;
+      --code-text: #dbe7ff;
+      --radius: 10px;
+      --maxw: 1180px;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "IBM Plex Sans", sans-serif;
+      --font-mono: "IBM Plex Mono", monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font: 18px/1.68 var(--font-body);
+    }
+    h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-dark); }
+    code, pre { font-family: var(--font-mono); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(8px);
+    }
+    .nav {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--ink);
+      color: #fff;
+      font: 600 13px var(--font-mono);
+    }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text strong { font: 600 16px var(--font-display); letter-spacing: .01em; }
+    .brand-text span { color: var(--ink-soft); font-size: 13px; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a {
+      display: block;
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: var(--ink-soft);
+      font-weight: 500;
+      font-size: 16px;
+    }
+    .nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+    .nav-links a.active { background: var(--ink); color: #fff; }
+
+    .chapter-layout {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 40px 24px 90px;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 44px;
+    }
+    .toc {
+      position: sticky;
+      top: 86px;
+      align-self: start;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .toc h4 {
+      margin-bottom: 12px;
+      color: var(--ink-soft);
+      font: 600 12px var(--font-mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .toc ol { list-style: none; border-left: 2px solid var(--line); }
+    .toc li a {
+      display: block;
+      margin-left: -2px;
+      padding: 7px 14px;
+      border-left: 2px solid transparent;
+      color: var(--ink-soft);
+      font-size: 14.7px;
+      line-height: 1.4;
+    }
+    .toc li a.current {
+      border-left-color: var(--accent);
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    .chapter-body { min-width: 0; }
+    .chapter-kicker {
+      color: var(--accent-dark);
+      font: 13px var(--font-mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .chapter-body > h1 {
+      max-width: 820px;
+      margin: 8px 0 10px;
+      font-size: clamp(1.9rem, 3.5vw, 2.7rem);
+      letter-spacing: -.025em;
+    }
+    .chapter-intro {
+      max-width: 780px;
+      color: var(--ink-soft);
+      font-size: 1.08rem;
+    }
+    .course-line {
+      margin-top: 14px;
+      color: var(--accent-dark);
+      font: 600 14.5px var(--font-mono);
+    }
+    .chapter-section { margin-top: 56px; }
+    .chapter-section > h2 {
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 1.65rem;
+    }
+    .chapter-section h3 { margin: 28px 0 10px; font-size: 1.25rem; }
+    .chapter-section p { max-width: 78ch; margin-bottom: 14px; }
+    .chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
+    .chapter-section li { max-width: 76ch; margin-bottom: 7px; }
+    .sec-no { margin-right: 10px; color: var(--accent); font: 1.05rem var(--font-mono); }
+
+    .def-box, .note-box, .accuracy-box {
+      margin: 18px 0;
+      padding: 17px 20px;
+      border-radius: var(--radius);
+    }
+    .def-box { border: 1px solid #bfdee5; background: var(--accent-soft); }
+    .note-box { border: 1px solid #f3ddb4; background: var(--amber-soft); }
+    .accuracy-box { border: 1px solid #d6c9f6; background: var(--purple-soft); }
+    .box-label {
+      display: block;
+      margin-bottom: 6px;
+      font: 600 12px var(--font-mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .def-box .box-label { color: var(--accent-dark); }
+    .note-box .box-label { color: var(--amber); }
+    .accuracy-box .box-label { color: var(--purple); }
+    code.inline {
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: #eaeff7;
+      color: #24344f;
+      font-size: .88em;
+    }
+
+    .two-col, .three-col, .step-grid, .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+    .three-col, .step-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card, .step-card, .metric {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+    .card strong, .step-card strong, .metric strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+      font-family: var(--font-display);
+    }
+    .card p, .step-card p, .metric p { margin: 0; color: var(--ink-soft); font-size: 16px; }
+    .step-card { border-top: 4px solid var(--accent); }
+    .step-card:nth-child(2) { border-top-color: var(--amber); }
+    .step-card:nth-child(3) { border-top-color: var(--purple); }
+    .step-number {
+      display: inline-grid;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 9px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font: 600 12px var(--font-mono);
+    }
+    .metric { text-align: center; }
+    .metric b { display: block; color: var(--ink); font: 700 1.25rem var(--font-mono); }
+
+    table.tbl {
+      width: 100%;
+      margin: 16px 0 20px;
+      border: 1px solid var(--line);
+      border-collapse: collapse;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--card);
+      font-size: 15.5px;
+    }
+    table.tbl th, table.tbl td {
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      text-align: center;
+      vertical-align: middle;
+    }
+    table.tbl th {
+      background: var(--ink);
+      color: #fff;
+      font: 600 14.5px var(--font-display);
+    }
+    table.tbl th:first-child, table.tbl td:first-child { text-align: left; }
+    table.tbl tbody tr:nth-child(even) td { background: #fbfcfe; }
+
+    pre.code {
+      max-width: 100%;
+      margin: 14px 0 18px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-size: 15px;
+      line-height: 1.62;
+    }
+    .syn-keyword { color: #ff79c6; font-weight: 600; }
+    .syn-number { color: #bd93f9; }
+    .syn-comment { color: #8fa2c3; font-style: italic; }
+    .syn-operator { color: #ffb86c; }
+    .syn-name { color: #8be9fd; }
+    .syn-title { color: #50fa7b; font-weight: 600; }
+
+    .viz {
+      min-width: 0;
+      margin: 20px 0;
+      padding: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      box-shadow: 0 10px 28px rgba(16,28,51,.06);
+    }
+    .viz-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .viz-title { margin-bottom: 4px; font: 600 1.12rem var(--font-display); }
+    .viz-sub { margin-bottom: 16px; color: var(--ink-soft); font-size: 16px; }
+    .viz-head .viz-sub { margin-bottom: 0; }
+    .control-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink-soft);
+      font-size: 14.5px;
+    }
+    .control-label select, .viz-controls select {
+      padding: 8px 10px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--ink);
+      font: 600 14px var(--font-display);
+    }
+    .canvas-stage {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #fbfcfe;
+      background-size: 28px 28px;
+    }
+    .diagram-canvas {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      image-rendering: auto;
+    }
+    .stage-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 9px;
+      border: 1px solid #bfdee5;
+      border-radius: 999px;
+      background: rgba(255,255,255,.94);
+      color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+    }
+    .viz-label {
+      min-height: 48px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid #f0d9ac;
+      border-radius: 8px;
+      background: var(--amber-soft);
+      font: 14.5px/1.55 var(--font-mono);
+    }
+    .viz-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .viz-controls button {
+      padding: 9px 18px;
+      cursor: pointer;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--ink);
+      font: 600 15px var(--font-display);
+    }
+    .viz-controls button.primary { border-color: var(--ink); background: var(--ink); color: #fff; }
+    .viz-controls button:disabled { cursor: not-allowed; opacity: .45; }
+    .viz-status { margin-left: auto; color: var(--ink-soft); font: 13.5px var(--font-mono); }
+
+    .queue {
+      display: flex;
+      min-height: 64px;
+      margin-top: 16px;
+      padding: 18px 2px 2px;
+      gap: 7px;
+      overflow-x: auto;
+    }
+    .queue-item {
+      position: relative;
+      min-width: 70px;
+      padding: 11px 12px;
+      border: 1.5px solid #93a4bc;
+      border-radius: 8px;
+      background: #fff;
+      text-align: center;
+      font: 600 14px var(--font-mono);
+    }
+    .queue-item::before {
+      content: attr(data-index);
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--ink-soft);
+      font: 11px var(--font-mono);
+    }
+    .queue-item.active { border-color: var(--amber); background: var(--amber-soft); }
+    .queue-item.merged { border-color: var(--accent); background: var(--accent-soft); }
+
+    .slot-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin: 12px 0 4px;
+    }
+    .slot {
+      min-height: 58px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid #93a4bc;
+      border-radius: 8px;
+      background: #fff;
+      font: 600 15px var(--font-mono);
+    }
+    .slot small { display: block; color: var(--ink-soft); font-size: 11.5px; font-weight: 400; }
+    .slot.filled { border-color: var(--accent); background: var(--accent-soft); }
+    .slot.trying { border-color: var(--amber); background: var(--amber-soft); }
+    .answer-banner {
+      margin-top: 12px;
+      padding: 11px 14px;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font: 600 15px var(--font-mono);
+    }
+    .code-output {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #bfdee5;
+      border-radius: 9px;
+      background: var(--accent-soft);
+    }
+    .code-output::before {
+      content: attr(data-label);
+      flex-basis: 100%;
+      color: var(--accent-dark);
+      font: 600 14px var(--font-display);
+    }
+    .code-token {
+      min-width: 96px;
+      padding: 8px 11px;
+      border: 1px solid #9ecbd4;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      text-align: center;
+      font: 600 16px var(--font-mono);
+    }
+    .code-token b { color: var(--accent-dark); font-size: 18px; }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .cost-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fbfcfe;
+    }
+    .cost-card.best { border-color: #8fd6c6; background: var(--green-soft); }
+    .cost-card strong { display: block; font-family: var(--font-display); }
+    .cost-card code { color: var(--ink-soft); font-size: 14px; }
+    details.answer { margin: 14px 0; }
+    details.answer summary {
+      display: inline-flex;
+      padding: 8px 14px;
+      cursor: pointer;
+      border: 1px solid #bfdee5;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font: 600 15px var(--font-display);
+    }
+    details.answer p { margin-top: 10px; }
+
+    .chapter-nav {
+      margin-top: 64px;
+      padding-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+    }
+    .chapter-nav a, .chapter-nav span { font: 600 16px var(--font-display); }
+    .chapter-nav span { color: #9aa7bd; }
+    .site-footer { border-top: 1px solid var(--line); background: var(--card); }
+    .footer-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 26px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
+      .toc {
+        position: static;
+        max-height: none;
+        margin-bottom: 22px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+      }
+      .nav { flex-direction: column; gap: 10px; }
+    }
+    @media (max-width: 760px) {
+      html { scroll-padding-top: 140px; }
+      .chapter-layout { padding: 20px 16px 64px; }
+      .toc {
+        padding: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+      }
+      .toc h4 { display: none; }
+      .toc ol { width: max-content; display: flex; gap: 6px; border: 0; }
+      .toc li a {
+        margin: 0;
+        padding: 7px 10px;
+        white-space: nowrap;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #fbfcfe;
+        font-size: 12.5px;
+      }
+      .toc li a.current { border-color: var(--accent); background: var(--accent-soft); }
+      .two-col, .three-col, .step-grid, .metric-grid, .compare-grid { grid-template-columns: 1fr; }
+      .viz { padding: 14px; }
+      .viz-head { align-items: flex-start; }
+      .viz-status { flex-basis: 100%; margin-left: 0; }
+      table.tbl { display: block; overflow-x: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">DAA</div>
+        <div class="brand-text">
+          <strong>Design &amp; Analysis of Algorithms</strong>
+          <span>NMCC509 · IIT (ISM) Dhanbad</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a class="active" href="topics.html">Topics</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="chapter-layout">
+    <aside class="toc">
+      <h4>In this chapter</h4>
+      <ol>
+        <li><a href="#sec-1">10.1 Greedy Foundations</a></li>
+        <li><a href="#sec-2">10.2 Designing a Greedy Algorithm</a></li>
+        <li><a href="#sec-3">10.3 Fractional Knapsack</a></li>
+        <li><a href="#sec-4">10.4 Huffman Coding</a></li>
+        <li><a href="#sec-5">10.5 Building Huffman Trees</a></li>
+        <li><a href="#sec-6">10.6 Job Sequencing</a></li>
+        <li><a href="#sec-7">10.7 Optimal Merge Pattern</a></li>
+      </ol>
+    </aside>
+
+    <main class="chapter-body">
+      <span class="chapter-kicker">Chapter 10</span>
+      <h1>Greedy Algorithms</h1>
+      <p class="chapter-intro">
+        A greedy algorithm always makes the choice that looks best at the moment.
+        This chapter develops that idea through fractional knapsack, Huffman coding,
+        job sequencing with deadlines, and the optimal merge pattern.
+      </p>
+      <p class="course-line">Advanced Data Structures and Algorithms · NMCC509 · Dr. Alakesh Kalita · Mathematics and Computing · IIT (ISM) Dhanbad</p>
+
+      <section class="chapter-section" id="sec-1">
+        <h2><span class="sec-no">10.1</span>Introduction to Greedy Algorithms</h2>
+        <div class="def-box">
+          <span class="box-label">Core idea</span>
+          A greedy algorithm builds a solution step by step, always choosing the
+          <strong>locally optimal choice</strong> and hoping it leads to the
+          <strong>global optimum</strong>.
+        </div>
+        <div class="viz">
+          <div class="viz-title">From many solutions to an optimal solution</div>
+          <div class="viz-sub">Optimization problems impose constraints; feasible solutions are filtered before the best one is chosen.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="greedy-flow-canvas" width="820" height="390"
+                    aria-label="Animated flow from optimization problems to an optimal solution"></canvas>
+          </div>
+          <div class="viz-label" id="greedy-flow-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="greedy-flow-play">Play</button>
+            <button id="greedy-flow-step">Step</button>
+            <button id="greedy-flow-reset">Reset</button>
+            <span class="viz-status" id="greedy-flow-status"></span>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <strong>Maximize</strong>
+            <p>Profit, reliability, trust, and efficiency.</p>
+          </div>
+          <div class="card">
+            <strong>Minimize</strong>
+            <p>Cost, risk, and latency.</p>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:14px;">
+          <div class="card">
+            <strong>Greedy-choice property</strong>
+            <p>A locally optimal choice can be committed to without preventing a globally optimal solution.</p>
+          </div>
+          <div class="card">
+            <strong>Optimal substructure</strong>
+            <p>An optimal solution contains optimal solutions to its subproblems.</p>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Why use it?</span>
+          When both properties hold, the greedy method often produces an efficient solution.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-2">
+        <h2><span class="sec-no">10.2</span>Steps to Design a Greedy Algorithm</h2>
+        <div class="step-grid">
+          <div class="step-card">
+            <span class="step-number">1</span>
+            <strong>Choose a strategy</strong>
+            <p>Decide the sorting rule, selection criterion, or priority.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">2</span>
+            <strong>Iterate in stages</strong>
+            <p>Consider the input elements one by one in greedy order.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">3</span>
+            <strong>Check feasibility</strong>
+            <p>Add a choice only when it keeps the partial solution feasible.</p>
+          </div>
+        </div>
+        <pre class="code">GREEDY(A, n):
+    solution = []
+    for i in range(n):
+        if feasible(A[i], solution):
+            solution.append(A[i])
+    return solution</pre>
+        <div class="note-box">
+          <span class="box-label">Final step</span>
+          After all stages, return the constructed feasible solution.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-3">
+        <h2><span class="sec-no">10.3</span>Fractional Knapsack Problem</h2>
+        <div class="def-box">
+          <span class="box-label">Input and goal</span>
+          Given <strong>n</strong> items with weights and profits and a knapsack of
+          capacity <strong>W</strong>, maximize total profit. Fractions of items are allowed.
+          In the first lecture example, <strong>n = 3</strong> and the maximum bag
+          capacity is <strong>m = 20</strong>.
+        </div>
+        <table class="tbl" aria-label="Fractional knapsack lecture example one">
+          <thead>
+            <tr><th>Item</th><th>Item 1</th><th>Item 2</th><th>Item 3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Profit</td><td>25</td><td>24</td><td>15</td></tr>
+            <tr><td>Weight</td><td>18</td><td>15</td><td>10</td></tr>
+            <tr><td>Profit / weight</td><td>1.4</td><td>1.6</td><td>1.5</td></tr>
+          </tbody>
+        </table>
+        <div class="viz">
+          <div class="viz-head">
+            <div>
+              <div class="viz-title">Which greedy choice works?</div>
+              <div class="viz-sub">Knapsack capacity = 20. Compare all three strategies from the slides.</div>
+            </div>
+            <label class="control-label">strategy
+              <select id="knapsack-strategy">
+                <option value="profit">highest profit first</option>
+                <option value="weight">lowest weight first</option>
+                <option value="ratio" selected>highest profit/weight first</option>
+              </select>
+            </label>
+          </div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="knapsack-canvas" width="820" height="420"
+                    aria-label="Animated fractional knapsack comparison"></canvas>
+            <span class="stage-badge">capacity 20</span>
+          </div>
+          <div class="answer-banner" id="knapsack-answer">Profit: 0</div>
+          <div class="viz-label" id="knapsack-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="knapsack-play">Play</button>
+            <button id="knapsack-step">Step</button>
+            <button id="knapsack-reset">Reset</button>
+            <label class="control-label">speed
+              <select id="knapsack-speed">
+                <option value="1050">slow</option>
+                <option value="650" selected>normal</option>
+                <option value="320">fast</option>
+              </select>
+            </label>
+            <span class="viz-status" id="knapsack-status"></span>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="card">
+            <strong>Greedy by profit</strong>
+            <p>Item 1 first earns 25; adding 2/15 of Item 2 gives <strong>28.2</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Greedy for more items</strong>
+            <p>Item 3 + 10/15 of Item 2 gives <strong>31</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Greedy by profit/weight</strong>
+            <p>Item 2 first earns 24; adding 5/10 of Item 3 gives the optimum <strong>31.5</strong>.</p>
+          </div>
+        </div>
+
+        <h3>Second knapsack example</h3>
+        <table class="tbl" aria-label="Fractional knapsack lecture example two">
+          <thead>
+            <tr><th>Item</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Capacity</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Profit</td><td>60</td><td>100</td><td>120</td><td rowspan="2"><strong>50</strong></td></tr>
+            <tr><td>Weight</td><td>10</td><td>20</td><td>30</td></tr>
+          </tbody>
+        </table>
+        <div class="viz">
+          <div class="viz-title">Fill the 50-unit knapsack by decreasing profit/weight</div>
+          <div class="viz-sub">Ratios are 6, 5, and 4, so take Item 1, Item 2, then 20/30 of Item 3.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="knapsack-two-canvas" width="820" height="400"
+                    aria-label="Animated second fractional knapsack example"></canvas>
+            <span class="stage-badge">capacity 50</span>
+          </div>
+          <div class="answer-banner" id="knapsack-two-answer">Profit: 0</div>
+          <div class="viz-label" id="knapsack-two-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="knapsack-two-play">Play</button>
+            <button id="knapsack-two-step">Step</button>
+            <button id="knapsack-two-reset">Reset</button>
+            <span class="viz-status" id="knapsack-two-status"></span>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Result</span>
+          Item 1 and Item 2 are taken completely, followed by 20/30 of Item 3.
+          The maximum profit is <strong>60 + 100 + 80 = 240</strong>.
+        </div>
+        <pre class="code">def fractional_knapsack(items, capacity):
+    for item in items:
+        item.ratio = item.profit / item.weight
+
+    items.sort(key=lambda item: item.ratio, reverse=True)
+    total_profit = 0
+
+    for item in items:
+        if item.weight &lt;= capacity:
+            capacity -= item.weight
+            total_profit += item.profit
+        else:
+            total_profit += item.profit * (capacity / item.weight)
+            break
+
+    return total_profit</pre>
+      </section>
+
+      <section class="chapter-section" id="sec-4">
+        <h2><span class="sec-no">10.4</span>Huffman Coding</h2>
+        <div class="def-box">
+          <span class="box-label">Greedy compression</span>
+          Huffman coding is a <strong>greedy algorithm used for data compression</strong>.
+          It assigns variable-length codes according to frequency:
+          more frequent characters receive shorter codes. Depending on the data,
+          it can save roughly 20% to 90% of storage.
+        </div>
+        <table class="tbl" aria-label="Characters and frequencies">
+          <thead>
+            <tr><th>Character</th><th>A</th><th>E</th><th>I</th><th>O</th><th>U</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Frequency</td><td>5</td><td>7</td><td>3</td><td>6</td><td>4</td></tr>
+          </tbody>
+        </table>
+        <p>Total characters: <strong>25</strong>.</p>
+        <p>ASCII codes are normally used to encode characters, and each ASCII code is 8 bits long.</p>
+        <div class="viz">
+          <div class="viz-title">Compare the exact bit totals from the slides</div>
+          <div class="viz-sub">ASCII, fixed 3-bit encoding with its mapping table, and Huffman encoding with its mapping table.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="bit-cost-canvas" width="820" height="390"
+                    aria-label="Animated comparison of ASCII, fixed length, and Huffman bit totals"></canvas>
+          </div>
+          <div class="viz-label" id="bit-cost-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="bit-cost-play">Play</button>
+            <button id="bit-cost-step">Step</button>
+            <button id="bit-cost-reset">Reset</button>
+            <span class="viz-status" id="bit-cost-status"></span>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="card">
+            <strong>ASCII</strong>
+            <p>25 characters × 8 bits = <strong>200 bits</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Fixed 3-bit</strong>
+            <p>Five characters need ⌈log₂ 5⌉ = 3 bits each. Data 75 + symbols 40 + codes 15 = <strong>130 bits</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Huffman</strong>
+            <p>Data 57 + symbols 40 + codes 12 = <strong>109 bits</strong>.</p>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Questions from the slides</span>
+          <strong>Can we reduce the total bits?</strong> Fixed 3-bit encoding reduces
+          the total from 200 to 130 bits. <strong>Can we still reduce the total bits?</strong>
+          Huffman coding reduces it further to 109 bits, including its mapping table.
+        </div>
+
+        <h3>Exact character encodings and data-bit totals</h3>
+        <table class="tbl" aria-label="ASCII fixed length and Huffman encoding comparison">
+          <thead>
+            <tr>
+              <th>Character</th><th>Frequency</th><th>ASCII</th><th>ASCII bits</th>
+              <th>Fixed 3-bit</th><th>Fixed bits</th><th>Huffman</th><th>Huffman bits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>5</td><td><code>01100001</code></td><td>40</td><td><code>000</code></td><td>15</td><td><code>10</code></td><td>10</td></tr>
+            <tr><td>E</td><td>7</td><td><code>01100101</code></td><td>56</td><td><code>001</code></td><td>21</td><td><code>00</code></td><td>14</td></tr>
+            <tr><td>I</td><td>3</td><td><code>01001001</code></td><td>24</td><td><code>010</code></td><td>9</td><td><code>010</code></td><td>9</td></tr>
+            <tr><td>O</td><td>6</td><td><code>01001111</code></td><td>48</td><td><code>011</code></td><td>18</td><td><code>11</code></td><td>12</td></tr>
+            <tr><td>U</td><td>4</td><td><code>01010101</code></td><td>32</td><td><code>100</code></td><td>12</td><td><code>011</code></td><td>12</td></tr>
+            <tr><td><strong>Total</strong></td><td>25</td><td>—</td><td><strong>200</strong></td><td>—</td><td><strong>75</strong></td><td>—</td><td><strong>57</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="two-col">
+          <div class="card">
+            <strong>Fixed-code mapping table</strong>
+            <p>Five ASCII symbols use 40 bits and five 3-bit codes use 15 bits: mapping overhead = 55 bits.</p>
+          </div>
+          <div class="card">
+            <strong>Huffman mapping table</strong>
+            <p>Five ASCII symbols use 40 bits and the five variable codes use 12 bits: mapping overhead = 52 bits.</p>
+          </div>
+        </div>
+
+        <h3>The lecture’s Huffman codes</h3>
+        <table class="tbl" aria-label="Huffman codes for vowels">
+          <thead>
+            <tr><th>Character</th><th>Frequency</th><th>Code</th><th>Data bits</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>5</td><td><code>10</code></td><td>10</td></tr>
+            <tr><td>E</td><td>7</td><td><code>00</code></td><td>14</td></tr>
+            <tr><td>I</td><td>3</td><td><code>010</code></td><td>9</td></tr>
+            <tr><td>O</td><td>6</td><td><code>11</code></td><td>12</td></tr>
+            <tr><td>U</td><td>4</td><td><code>011</code></td><td>12</td></tr>
+            <tr><td><strong>Total</strong></td><td>25</td><td>12 mapping bits</td><td><strong>57</strong></td></tr>
+          </tbody>
+        </table>
+        <ol>
+          <li>Merge the two least frequent characters.</li>
+          <li>Repeat until the tree is constructed.</li>
+          <li>Add 0 to every left edge.</li>
+          <li>Add 1 to every right edge.</li>
+          <li>Traverse from the root to each leaf to obtain its Huffman code.</li>
+        </ol>
+        <div class="viz">
+          <div class="viz-title">Construct the exact coding tree</div>
+          <div class="viz-sub">Merge the two least frequent nodes, repeat, label left edges 0 and right edges 1, then traverse root to leaf.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="code-tree-canvas" width="820" height="520"
+                    aria-label="Animated Huffman coding tree for A E I O U"></canvas>
+          </div>
+          <div class="code-output" data-label="Printed Huffman codes from the lecture tree">
+            <span class="code-token">E = <b>00</b></span>
+            <span class="code-token">I = <b>010</b></span>
+            <span class="code-token">U = <b>011</b></span>
+            <span class="code-token">A = <b>10</b></span>
+            <span class="code-token">O = <b>11</b></span>
+          </div>
+          <div class="viz-label" id="code-tree-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="code-tree-play">Play</button>
+            <button id="code-tree-step">Step</button>
+            <button id="code-tree-reset">Reset</button>
+            <span class="viz-status" id="code-tree-status"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-5">
+        <h2><span class="sec-no">10.5</span>Building a Huffman Tree with a Priority Queue</h2>
+        <ol>
+          <li>Create a binary-tree node for every character and frequency.</li>
+          <li>Place the nodes in a priority queue—a min heap ordered by frequency.</li>
+          <li>Extract the two minimum nodes, attach them to a new node, and insert their sum.</li>
+          <li>Repeat until the queue contains one node: the root.</li>
+        </ol>
+        <div class="viz">
+          <div class="viz-title">Priority-queue construction for I:3, U:4, A:5, O:6, E:7</div>
+          <div class="viz-sub">Lower frequency means higher priority.</div>
+          <div class="queue" id="vowel-queue" aria-label="Current vowel Huffman priority queue"></div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="vowel-builder-canvas" width="820" height="500"
+                    aria-label="Animated priority queue construction of the vowel Huffman tree"></canvas>
+          </div>
+          <div class="code-output" data-label="Codes for the priority-queue tie ordering shown here">
+            <span class="code-token">A = <b>00</b></span>
+            <span class="code-token">O = <b>01</b></span>
+            <span class="code-token">E = <b>10</b></span>
+            <span class="code-token">I = <b>110</b></span>
+            <span class="code-token">U = <b>111</b></span>
+          </div>
+          <div class="viz-label" id="vowel-builder-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="vowel-builder-play">Play</button>
+            <button id="vowel-builder-step">Step</button>
+            <button id="vowel-builder-reset">Reset</button>
+            <label class="control-label">speed
+              <select id="vowel-builder-speed">
+                <option value="1200">slow</option>
+                <option value="760" selected>normal</option>
+                <option value="380">fast</option>
+              </select>
+            </label>
+            <span class="viz-status" id="vowel-builder-status"></span>
+          </div>
+        </div>
+        <div class="accuracy-box">
+          <span class="box-label">Tie at frequency 7</span>
+          The queue contains <code class="inline">E:7</code> and <code class="inline">IU:7</code>.
+          Either tie order is valid. It can swap subtrees and change the bit patterns,
+          but the prefix property and weighted total of <strong>57 bits</strong> remain unchanged.
+        </div>
+
+        <h3>Classic six-character construction</h3>
+        <p>
+          The second tree from the slides starts with
+          <code class="inline">f:5, e:9, c:12, b:13, d:16, a:45</code>.
+        </p>
+        <div class="viz">
+          <div class="queue" id="classic-queue" aria-label="Current classic Huffman priority queue"></div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="classic-builder-canvas" width="820" height="520"
+                    aria-label="Animated classic Huffman tree construction"></canvas>
+          </div>
+          <div class="code-output" data-label="Printed codes for the completed six-character tree">
+            <span class="code-token">a = <b>0</b></span>
+            <span class="code-token">c = <b>100</b></span>
+            <span class="code-token">b = <b>101</b></span>
+            <span class="code-token">f = <b>1100</b></span>
+            <span class="code-token">e = <b>1101</b></span>
+            <span class="code-token">d = <b>111</b></span>
+          </div>
+          <div class="viz-label" id="classic-builder-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="classic-builder-play">Play</button>
+            <button id="classic-builder-step">Step</button>
+            <button id="classic-builder-reset">Reset</button>
+            <span class="viz-status" id="classic-builder-status"></span>
+          </div>
+        </div>
+        <pre class="code">HUFFMAN(C):
+    n = |C|
+    Q = C
+    for i = 1 to n - 1:
+        allocate a new node z
+        x = EXTRACT_MIN(Q)
+        y = EXTRACT_MIN(Q)
+        z.left = x
+        z.right = y
+        z.freq = x.freq + y.freq
+        INSERT(Q, z)
+    return EXTRACT_MIN(Q)  # the root is the only node left</pre>
+      </section>
+
+      <section class="chapter-section" id="sec-6">
+        <h2><span class="sec-no">10.6</span>Job Sequencing with Deadlines</h2>
+        <div class="def-box">
+          <span class="box-label">Problem</span>
+          Each unit-time job has a deadline and a profit earned only when the job
+          finishes by that deadline. Schedule jobs to maximize total profit.
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <strong>Applications</strong>
+            <p>Operating-system task scheduling, project management, and manufacturing processes.</p>
+          </div>
+          <div class="card">
+            <strong>Capacity of the schedule</strong>
+            <p>If the highest deadline is k, at most k unit-time jobs can be scheduled.</p>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Brute force</span>
+          Trying all job permutations takes <strong>O(n!)</strong> time and is impractical for large n.
+        </div>
+        <div class="viz">
+          <div class="viz-head">
+            <div>
+              <div class="viz-title">Schedule each job in the latest available slot</div>
+              <div class="viz-sub">Sort by decreasing profit, then scan backward from each deadline.</div>
+            </div>
+            <label class="control-label">example
+              <select id="job-mode">
+                <option value="lecture">lecture · J1 to J5</option>
+                <option value="exercise">exercise · C, E, D, B, A</option>
+              </select>
+            </label>
+          </div>
+          <table class="tbl" id="job-table" aria-label="Current job sequencing data"></table>
+          <div class="slot-row" id="job-slots" aria-label="Job schedule slots"></div>
+          <div class="answer-banner" id="job-answer">Total profit: 0</div>
+          <div class="viz-label" id="job-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="job-play">Play</button>
+            <button id="job-step">Step</button>
+            <button id="job-reset">Reset</button>
+            <label class="control-label">speed
+              <select id="job-speed">
+                <option value="1100">slow</option>
+                <option value="700" selected>normal</option>
+                <option value="350">fast</option>
+              </select>
+            </label>
+            <span class="viz-status" id="job-status"></span>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="card">
+            <strong>First arrangement</strong>
+            <p>J1, J4, J3 is feasible and earns <strong>50</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Greedy optimum</strong>
+            <p>J2, J3, J1 fills slots 0–1, 1–2, 2–3 and earns <strong>53</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>Exercise</strong>
+            <p>C, A, E is feasible and earns <strong>142</strong>.</p>
+          </div>
+        </div>
+        <div class="slot-row" aria-label="Two lecture schedules">
+          <div class="slot filled">J1<small>0 – 1</small></div>
+          <div class="slot filled">J4<small>1 – 2</small></div>
+          <div class="slot filled">J3<small>2 – 3</small></div>
+        </div>
+        <div class="answer-banner">First feasible arrangement: J1, J4, J3 · Total profit = 20 + 15 + 15 = 50</div>
+        <div class="accuracy-box">
+          <span class="box-label">Deadline check</span>
+          J2 has deadline 1, so it must occupy the first slot. The valid 53-profit
+          schedule is <strong>J2, J3, J1</strong>.
+        </div>
+        <h3>Exercise data</h3>
+        <table class="tbl" aria-label="Job sequencing exercise">
+          <thead>
+            <tr><th>Job</th><th>C</th><th>E</th><th>D</th><th>B</th><th>A</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Profit</td><td>27</td><td>15</td><td>25</td><td>19</td><td>100</td></tr>
+            <tr><td>Deadline</td><td>1</td><td>3</td><td>1</td><td>1</td><td>2</td></tr>
+          </tbody>
+        </table>
+        <div class="answer-banner">Exercise schedule: C, A, E · Total profit = 27 + 100 + 15 = 142</div>
+        <div class="note-box">
+          <span class="box-label">Time complexity in the slides</span>
+          Sorting costs <strong>O(n log n)</strong>. With a simple backward scan,
+          job placement costs <strong>O(n²)</strong>, so the overall bound is <strong>O(n²)</strong>.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-7">
+        <h2><span class="sec-no">10.7</span>Optimal Merge Pattern</h2>
+        <p>
+          Before optimizing a sequence of file merges, recall how two sorted arrays
+          are merged in linear time.
+        </p>
+        <div class="viz">
+          <div class="viz-title">Merge A = [1, 3, 5, 6] and B = [2, 4, 8, 9]</div>
+          <div class="viz-sub">Compare A[i] with B[j], append the smaller element to C[m], and advance one pointer.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="array-merge-canvas" width="820" height="350"
+                    aria-label="Animated merge of two sorted arrays"></canvas>
+            <span class="stage-badge">O(n + m)</span>
+          </div>
+          <div class="viz-label" id="array-merge-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="array-merge-play">Play</button>
+            <button id="array-merge-step">Step</button>
+            <button id="array-merge-reset">Reset</button>
+            <span class="viz-status" id="array-merge-status"></span>
+          </div>
+        </div>
+        <pre class="code">i = j = m = 0
+while i &lt; len(A) and j &lt; len(B):
+    if A[i] &lt;= B[j]:
+        C[m] = A[i]
+        i += 1
+    else:
+        C[m] = B[j]
+        j += 1
+    m += 1
+
+# Append the remaining elements from A or B.</pre>
+
+        <div class="def-box">
+          <span class="box-label">Problem statement</span>
+          Given n sorted files with sizes S₁, S₂, …, Sₙ, merge them in pairs.
+          Merging two files costs the sum of their sizes. Find the merge order with
+          minimum total cost.
+        </div>
+        <table class="tbl" aria-label="Optimal merge lecture files">
+          <thead>
+            <tr><th>File</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Size</td><td>30</td><td>20</td><td>10</td><td>5</td></tr>
+          </tbody>
+        </table>
+        <div class="compare-grid">
+          <div class="cost-card">
+            <strong>Order 1</strong>
+            <code>50 + 60 + 65 = 175</code>
+          </div>
+          <div class="cost-card">
+            <strong>Order 2</strong>
+            <code>50 + 15 + 65 = 130</code>
+          </div>
+          <div class="cost-card best">
+            <strong>Optimal order</strong>
+            <code>15 + 35 + 65 = 115</code>
+          </div>
+        </div>
+        <div class="viz">
+          <div class="viz-title">Always merge the two smallest files first</div>
+          <div class="viz-sub">A min heap keeps the next two files at the front of the priority queue.</div>
+          <div class="queue" id="merge-queue" aria-label="Current optimal merge priority queue"></div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="optimal-merge-canvas" width="820" height="500"
+                    aria-label="Animated optimal merge pattern for four files"></canvas>
+          </div>
+          <div class="answer-banner" id="merge-answer">Total merge cost: 0</div>
+          <div class="viz-label" id="merge-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="merge-play">Play</button>
+            <button id="merge-step">Step</button>
+            <button id="merge-reset">Reset</button>
+            <label class="control-label">speed
+              <select id="merge-speed">
+                <option value="1200">slow</option>
+                <option value="760" selected>normal</option>
+                <option value="380">fast</option>
+              </select>
+            </label>
+            <span class="viz-status" id="merge-status"></span>
+          </div>
+        </div>
+        <ol>
+          <li>Insert all file sizes into a min heap (priority queue).</li>
+          <li>Extract the two smallest files.</li>
+          <li>Merge them; the merge cost is the sum of their sizes.</li>
+          <li>Insert the merged file back into the heap.</li>
+          <li>Repeat until one file remains; total cost is the sum of all merge costs.</li>
+        </ol>
+        <div class="metric-grid">
+          <div class="metric"><strong>Build heap</strong><b>O(n)</b></div>
+          <div class="metric"><strong>Two extracts</strong><b>O(log n)</b></div>
+          <div class="metric"><strong>Insert sum</strong><b>O(log n)</b></div>
+          <div class="metric"><strong>Total</strong><b>O(n log n)</b></div>
+        </div>
+        <div class="accuracy-box">
+          <span class="box-label">Equal file sizes</span>
+          When equal-size files tie for the smallest values, either tied file may be
+          chosen. Continue applying the two-smallest rule after every merge; an arbitrary
+          unbalanced merge order is not generally equivalent.
+        </div>
+        <div class="note-box">
+          <span class="box-label">Real-world applications</span>
+          Huffman coding, external sorting for large database datasets, and data-merge
+          operations such as log-file merging and distributed computing.
+        </div>
+        <details class="answer">
+          <summary>Homework answer</summary>
+          <p>
+            With total file size n and exactly four subfiles, there are three merges.
+            Since four is constant, the worst-case merging time is <strong>Θ(n)</strong>
+            in terms of n.
+          </p>
+        </details>
+      </section>
+
+      <nav class="chapter-nav">
+        <a href="chapter9.html">← Chapter 9: Heaps and Heap Sort</a>
+        <a href="topics.html">All topics</a>
+        <span>Chapter 11 (coming soon) →</span>
+      </nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Design and Analysis of Algorithms</span>
+      <span>© 2026
+        <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+          Dr. Alakesh Kalita
+        </a>
+        · Mathematics and Computing · IIT (ISM) Dhanbad
+      </span>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var COLORS = {
+      ink:"#101c33", soft:"#46536b", line:"#8fa0b8", pale:"#f4f6fa",
+      blue:"#dbe7ff", teal:"#0b7285", tealSoft:"#c9edf1",
+      amber:"#b45309", amberSoft:"#fdf1df", red:"#c2410c",
+      redSoft:"#fff0eb", green:"#0f766e", greenSoft:"#d7f4eb",
+      purple:"#6d4cc3", purpleSoft:"#eee8ff", white:"#ffffff"
+    };
+
+    function prepareCanvas(canvas) {
+      if (!canvas.dataset.logicalWidth) {
+        canvas.dataset.logicalWidth = String(canvas.width);
+        canvas.dataset.logicalHeight = String(canvas.height);
+      }
+      var width = Number(canvas.dataset.logicalWidth);
+      var height = Number(canvas.dataset.logicalHeight);
+      var scale = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+      var pixelWidth = Math.round(width * scale);
+      var pixelHeight = Math.round(height * scale);
+      if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+        canvas.width = pixelWidth;
+        canvas.height = pixelHeight;
+      }
+      var context = canvas.getContext("2d");
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+      context.imageSmoothingEnabled = true;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      return {context:context,width:width,height:height};
+    }
+
+    function roundedRect(context, x, y, width, height, radius, fill, stroke, lineWidth) {
+      var r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+      if (fill) { context.fillStyle = fill; context.fill(); }
+      if (stroke) {
+        context.strokeStyle = stroke;
+        context.lineWidth = lineWidth || 1.5;
+        context.stroke();
+      }
+    }
+
+    function drawArrow(context, fromX, fromY, toX, toY, color, width) {
+      var angle = Math.atan2(toY - fromY, toX - fromX);
+      context.strokeStyle = color;
+      context.fillStyle = color;
+      context.lineWidth = width || 2;
+      context.beginPath();
+      context.moveTo(fromX, fromY);
+      context.lineTo(toX, toY);
+      context.stroke();
+      context.beginPath();
+      context.moveTo(toX, toY);
+      context.lineTo(toX - 9 * Math.cos(angle - Math.PI / 6), toY - 9 * Math.sin(angle - Math.PI / 6));
+      context.lineTo(toX - 9 * Math.cos(angle + Math.PI / 6), toY - 9 * Math.sin(angle + Math.PI / 6));
+      context.closePath();
+      context.fill();
+    }
+
+    function createPlayer(options) {
+      var frames = [];
+      var position = 0;
+      var timer = null;
+      var playButton = document.getElementById(options.play);
+      var stepButton = document.getElementById(options.step);
+      var resetButton = document.getElementById(options.reset);
+      var speedElement = options.speed ? document.getElementById(options.speed) : null;
+
+      function pause() {
+        window.clearInterval(timer);
+        timer = null;
+        playButton.textContent = "Play";
+      }
+      function render() {
+        options.render(frames[position], position, frames.length);
+        var ended = position === frames.length - 1;
+        playButton.disabled = ended;
+        stepButton.disabled = ended;
+        if (ended && timer) pause();
+      }
+      function step() {
+        if (position < frames.length - 1) position += 1;
+        render();
+      }
+      function play() {
+        step();
+        if (position < frames.length - 1) {
+          timer = window.setInterval(step, speedElement ? Number(speedElement.value) : (options.interval || 700));
+          playButton.textContent = "Pause";
+        }
+      }
+      function reset() {
+        if (timer) pause();
+        frames = options.frames();
+        position = 0;
+        playButton.disabled = false;
+        stepButton.disabled = false;
+        render();
+      }
+      playButton.addEventListener("click", function () { timer ? pause() : play(); });
+      stepButton.addEventListener("click", step);
+      resetButton.addEventListener("click", reset);
+      if (speedElement) {
+        speedElement.addEventListener("change", function () {
+          if (!timer) return;
+          pause();
+          timer = window.setInterval(step, Number(speedElement.value));
+          playButton.textContent = "Pause";
+        });
+      }
+      reset();
+      return {reset:reset,pause:pause};
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    document.querySelectorAll("pre.code").forEach(function (block) {
+      var pattern = /(#[^\n]*)|\b(GREEDY|HUFFMAN|EXTRACT_MIN|INSERT)\b|\b(def|if|else|for|in|range|return|break|to|allocate|new|node|reverse|True|lambda)\b|\b(items|item|capacity|profit|weight|ratio|solution|total_profit|left|right|freq|root|key|C|Q|A|n|i|x|y|z)\b|(\d+)|(&lt;=|&gt;=|==|!=|&lt;|&gt;|=|\+=|-=|\+|-|\*|\/|\|)/g;
+      block.innerHTML = escapeHtml(block.textContent).replace(pattern, function (token, comment, title, keyword, name, number) {
+        if (comment) return '<span class="syn-comment">' + token + "</span>";
+        if (title) return '<span class="syn-title">' + token + "</span>";
+        if (keyword) return '<span class="syn-keyword">' + token + "</span>";
+        if (name) return '<span class="syn-name">' + token + "</span>";
+        if (number) return '<span class="syn-number">' + token + "</span>";
+        return '<span class="syn-operator">' + token + "</span>";
+      });
+    });
+
+    (function setupPageObservers() {
+      var links = document.querySelectorAll(".toc a");
+      var sections = document.querySelectorAll(".chapter-section");
+      if (!("IntersectionObserver" in window)) {
+        sections.forEach(function (section) { section.classList.add("in"); });
+        return;
+      }
+      var byId = {};
+      links.forEach(function (link) { byId[link.getAttribute("href").slice(1)] = link; });
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          links.forEach(function (link) { link.classList.remove("current"); });
+          if (byId[entry.target.id]) byId[entry.target.id].classList.add("current");
+        });
+      }, {rootMargin:"-20% 0px -70% 0px"});
+      var reveal = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          reveal.unobserve(entry.target);
+        });
+      }, {rootMargin:"0px 0px -7% 0px",threshold:.03});
+      sections.forEach(function (section) {
+        section.classList.add("reveal");
+        spy.observe(section);
+        reveal.observe(section);
+      });
+    })();
+
+    function drawGreedyFlow(canvas, frame) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      var width = surface.width;
+      var height = surface.height;
+      context.clearRect(0, 0, width, height);
+      var boxes = [
+        {x:35,y:145,w:180,h:82,title:"Optimization problem",sub:"maximize or minimize"},
+        {x:320,y:48,w:180,h:70,title:"Many solutions",sub:"all candidates"},
+        {x:320,y:160,w:180,h:70,title:"Feasible solutions",sub:"constraints satisfied"},
+        {x:605,y:160,w:180,h:70,title:"Optimal solution",sub:"best feasible choice"}
+      ];
+      var arrows = [[0,1],[1,2],[2,3]];
+      arrows.forEach(function (edge, index) {
+        if (frame.stage <= index) return;
+        var from = boxes[edge[0]];
+        var to = boxes[edge[1]];
+        if (edge[0] === 0) {
+          drawArrow(context, from.x + from.w, from.y + 15, to.x, to.y + to.h / 2, COLORS.line);
+        } else {
+          drawArrow(context, from.x + from.w / 2, from.y + from.h, to.x + to.w / 2, to.y, COLORS.line);
+        }
+      });
+      boxes.forEach(function (box, index) {
+        var visible = index === 0 || frame.stage >= index;
+        context.globalAlpha = visible ? 1 : .18;
+        var active = index === frame.stage;
+        roundedRect(context, box.x, box.y, box.w, box.h, 16,
+          active ? COLORS.amberSoft : (index === 3 ? COLORS.tealSoft : COLORS.white),
+          active ? COLORS.amber : (index === 3 ? COLORS.teal : COLORS.line),
+          active ? 3 : 1.8);
+        context.fillStyle = COLORS.ink;
+        context.textAlign = "center";
+        context.font = "600 17px IBM Plex Sans, sans-serif";
+        context.fillText(box.title, box.x + box.w / 2, box.y + 30);
+        context.fillStyle = COLORS.soft;
+        context.font = "14px IBM Plex Mono, monospace";
+        context.fillText(box.sub, box.x + box.w / 2, box.y + 52);
+        context.globalAlpha = 1;
+      });
+      if (frame.stage >= 1) {
+        context.fillStyle = COLORS.soft;
+        context.textAlign = "center";
+        context.font = "13px IBM Plex Mono, monospace";
+        context.fillText("impose constraints", 410, 143);
+      }
+      if (frame.stage >= 3) {
+        context.fillStyle = COLORS.teal;
+        context.font = "600 13px IBM Plex Mono, monospace";
+        context.fillText("find the best", 550, 197);
+      }
+    }
+
+    (function initGreedyFlow() {
+      var canvas = document.getElementById("greedy-flow-canvas");
+      var label = document.getElementById("greedy-flow-label");
+      var status = document.getElementById("greedy-flow-status");
+      var frames = [
+        {stage:0,label:"Start with an optimization problem: maximize a benefit or minimize a cost."},
+        {stage:1,label:"The problem may have many possible solutions."},
+        {stage:2,label:"Constraints remove invalid choices and leave only feasible solutions."},
+        {stage:3,label:"Among the feasible solutions, the objective identifies an optimal solution."}
+      ];
+      createPlayer({
+        play:"greedy-flow-play",step:"greedy-flow-step",reset:"greedy-flow-reset",interval:850,
+        frames:function () { return frames; },
+        render:function (frame, position, length) {
+          drawGreedyFlow(canvas, frame);
+          label.textContent = frame.label;
+          status.textContent = "stage " + (position + 1) + "/" + length;
+        }
+      });
+    })();
+
+    function fractionalFrames(items, capacity, order) {
+      var fractions = {};
+      items.forEach(function (item) { fractions[item.id] = 0; });
+      var frames = [{
+        items:items,capacity:capacity,fractions:Object.assign({},fractions),
+        used:0,profit:0,active:null,
+        label:"Begin with an empty knapsack of capacity " + capacity + "."
+      }];
+      var remaining = capacity;
+      var total = 0;
+      order.forEach(function (id) {
+        if (remaining <= 0) return;
+        var item = items.filter(function (entry) { return entry.id === id; })[0];
+        var fraction = Math.min(1, remaining / item.weight);
+        fractions[id] = fraction;
+        var addedWeight = item.weight * fraction;
+        var addedProfit = item.profit * fraction;
+        remaining -= addedWeight;
+        total += addedProfit;
+        frames.push({
+          items:items,capacity:capacity,fractions:Object.assign({},fractions),
+          used:capacity - remaining,profit:total,active:id,
+          label:(fraction === 1 ? "Take all of " : "Take " + addedWeight + "/" + item.weight + " of ") +
+            item.id + ": add weight " + addedWeight + " and profit " +
+            (Math.round(addedProfit * 10) / 10) + "."
+        });
+      });
+      frames.push({
+        items:items,capacity:capacity,fractions:Object.assign({},fractions),
+        used:capacity - remaining,profit:total,active:null,
+        label:"The knapsack is full. Final profit = " + (Math.round(total * 10) / 10) + "."
+      });
+      return frames;
+    }
+
+    function drawKnapsack(canvas, frame) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      var width = surface.width;
+      var height = surface.height;
+      context.clearRect(0, 0, width, height);
+      var colors = [COLORS.tealSoft,COLORS.amberSoft,COLORS.purpleSoft];
+      var strokes = [COLORS.teal,COLORS.amber,COLORS.purple];
+      context.fillStyle = COLORS.soft;
+      context.font = "600 14px IBM Plex Mono, monospace";
+      context.textAlign = "left";
+      context.fillText("available items", 44, 42);
+      frame.items.forEach(function (item, index) {
+        var x = 44 + index * 164;
+        var y = 66;
+        var active = item.id === frame.active;
+        roundedRect(context, x, y, 138, 96, 10, colors[index], active ? COLORS.red : strokes[index], active ? 3 : 1.8);
+        context.fillStyle = COLORS.ink;
+        context.font = "600 17px IBM Plex Sans, sans-serif";
+        context.fillText(item.id, x + 14, y + 25);
+        context.fillStyle = COLORS.soft;
+        context.font = "14px IBM Plex Mono, monospace";
+        context.fillText("weight " + item.weight, x + 14, y + 50);
+        context.fillText("profit " + item.profit, x + 14, y + 70);
+        context.fillText("ratio " + (Math.round(item.profit / item.weight * 10) / 10), x + 14, y + 89);
+      });
+      var bagX = 92;
+      var bagY = 260;
+      var bagW = width - 184;
+      var bagH = 78;
+      roundedRect(context, bagX, bagY, bagW, bagH, 12, COLORS.white, COLORS.ink, 2.5);
+      var cursor = bagX;
+      frame.items.forEach(function (item, index) {
+        var fraction = frame.fractions[item.id] || 0;
+        if (!fraction) return;
+        var segment = bagW * (item.weight * fraction / frame.capacity);
+        context.fillStyle = colors[index];
+        context.fillRect(cursor + 2, bagY + 2, Math.max(0, segment - 2), bagH - 4);
+        context.fillStyle = COLORS.ink;
+        context.textAlign = "center";
+        context.font = "600 13px IBM Plex Mono, monospace";
+        var segmentLabel = segment < 92 ? item.id.replace("Item ", "I") : item.id;
+        context.fillText(segmentLabel + " · " + Math.round(item.weight * fraction * 10) / 10,
+          cursor + segment / 2, bagY + bagH / 2 + 4);
+        cursor += segment;
+      });
+      context.fillStyle = COLORS.soft;
+      context.textAlign = "left";
+      context.font = "600 14px IBM Plex Mono, monospace";
+      context.fillText("knapsack: " + (Math.round(frame.used * 10) / 10) + "/" + frame.capacity + " weight", bagX, bagY - 14);
+      context.textAlign = "right";
+      context.fillStyle = COLORS.teal;
+      context.fillText("profit " + (Math.round(frame.profit * 10) / 10), bagX + bagW, bagY - 14);
+    }
+
+    function initKnapsackPlayer(config) {
+      var canvas = document.getElementById(config.canvas);
+      var label = document.getElementById(config.label);
+      var answer = document.getElementById(config.answer);
+      var status = document.getElementById(config.status);
+      return createPlayer({
+        play:config.play,step:config.step,reset:config.reset,speed:config.speed,interval:700,
+        frames:config.frames,
+        render:function (frame, position, length) {
+          drawKnapsack(canvas, frame);
+          label.textContent = frame.label;
+          answer.textContent = "Profit: " + (Math.round(frame.profit * 10) / 10) +
+            " · Weight used: " + (Math.round(frame.used * 10) / 10) + "/" + frame.capacity;
+          status.textContent = "choice " + (position + 1) + "/" + length;
+        }
+      });
+    }
+
+    (function initKnapsackOne() {
+      var items = [
+        {id:"Item 1",profit:25,weight:18},
+        {id:"Item 2",profit:24,weight:15},
+        {id:"Item 3",profit:15,weight:10}
+      ];
+      var orders = {
+        profit:["Item 1","Item 2","Item 3"],
+        weight:["Item 3","Item 2","Item 1"],
+        ratio:["Item 2","Item 3","Item 1"]
+      };
+      var strategy = document.getElementById("knapsack-strategy");
+      var player = initKnapsackPlayer({
+        canvas:"knapsack-canvas",label:"knapsack-label",answer:"knapsack-answer",status:"knapsack-status",
+        play:"knapsack-play",step:"knapsack-step",reset:"knapsack-reset",speed:"knapsack-speed",
+        frames:function () { return fractionalFrames(items, 20, orders[strategy.value]); }
+      });
+      strategy.addEventListener("change", player.reset);
+    })();
+
+    (function initKnapsackTwo() {
+      var items = [
+        {id:"Item 1",profit:60,weight:10},
+        {id:"Item 2",profit:100,weight:20},
+        {id:"Item 3",profit:120,weight:30}
+      ];
+      initKnapsackPlayer({
+        canvas:"knapsack-two-canvas",label:"knapsack-two-label",answer:"knapsack-two-answer",status:"knapsack-two-status",
+        play:"knapsack-two-play",step:"knapsack-two-step",reset:"knapsack-two-reset",
+        frames:function () { return fractionalFrames(items, 50, ["Item 1","Item 2","Item 3"]); }
+      });
+    })();
+
+    function drawBitCosts(canvas, active) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      var width = surface.width;
+      var height = surface.height;
+      context.clearRect(0, 0, width, height);
+      var data = [
+        {name:"ASCII",data:200,map:0,total:200,color:COLORS.red},
+        {name:"Fixed 3-bit",data:75,map:55,total:130,color:COLORS.amber},
+        {name:"Huffman",data:57,map:52,total:109,color:COLORS.teal}
+      ];
+      var chartBottom = height - 54;
+      var maxHeight = height - 105;
+      data.forEach(function (entry, index) {
+        var x = 95 + index * 245;
+        var barW = 112;
+        var dataH = maxHeight * entry.data / 200;
+        var mapH = maxHeight * entry.map / 200;
+        context.globalAlpha = index <= active ? 1 : .2;
+        context.fillStyle = entry.color;
+        context.fillRect(x, chartBottom - dataH, barW, dataH);
+        if (entry.map) {
+          context.fillStyle = COLORS.purple;
+          context.fillRect(x, chartBottom - dataH - mapH, barW, mapH);
+        }
+        context.strokeStyle = index === active ? COLORS.ink : COLORS.line;
+        context.lineWidth = index === active ? 3 : 1.5;
+        context.strokeRect(x, chartBottom - dataH - mapH, barW, dataH + mapH);
+        context.fillStyle = COLORS.ink;
+        context.textAlign = "center";
+        context.font = "600 16px IBM Plex Sans, sans-serif";
+        context.fillText(entry.name, x + barW / 2, chartBottom + 25);
+        context.font = "600 16px IBM Plex Mono, monospace";
+        context.fillText(entry.total + " bits", x + barW / 2, chartBottom - dataH - mapH - 14);
+        context.globalAlpha = 1;
+      });
+      context.fillStyle = COLORS.soft;
+      context.textAlign = "left";
+      context.font = "14px IBM Plex Mono, monospace";
+      context.fillText("data bits", 24, 25);
+      context.fillStyle = COLORS.teal;
+      context.fillRect(98, 16, 18, 10);
+      context.fillStyle = COLORS.soft;
+      context.fillText("mapping overhead", 175, 25);
+      context.fillStyle = COLORS.purple;
+      context.fillRect(319, 16, 18, 10);
+    }
+
+    (function initBitCosts() {
+      var canvas = document.getElementById("bit-cost-canvas");
+      var label = document.getElementById("bit-cost-label");
+      var status = document.getElementById("bit-cost-status");
+      var frames = [
+        {active:0,label:"ASCII uses 8 bits per character: 25 × 8 = 200 bits."},
+        {active:1,label:"Five fixed codes need 3 bits each: 75 data bits + 40 symbol bits + 15 code bits = 130 bits."},
+        {active:2,label:"Huffman uses 57 data bits + 40 symbol bits + 12 code bits = 109 bits."}
+      ];
+      createPlayer({
+        play:"bit-cost-play",step:"bit-cost-step",reset:"bit-cost-reset",interval:900,
+        frames:function () { return frames; },
+        render:function (frame, position, length) {
+          drawBitCosts(canvas, frame.active);
+          label.textContent = frame.label;
+          status.textContent = "encoding " + (position + 1) + "/" + length;
+        }
+      });
+    })();
+
+    function leaf(id, label, freq) {
+      return {id:id,label:label,freq:freq,left:null,right:null};
+    }
+    function branch(id, left, right) {
+      return {id:id,label:"",freq:left.freq + right.freq,left:left,right:right};
+    }
+    function countLeaves(node) {
+      return node.left || node.right ? countLeaves(node.left) + countLeaves(node.right) : 1;
+    }
+    function maxDepth(node) {
+      if (!node.left && !node.right) return 0;
+      return 1 + Math.max(maxDepth(node.left), maxDepth(node.right));
+    }
+    function assignTreePositions(node, leftX, rightX, depth, maxD, top, bottom, positions) {
+      if (!node.left && !node.right) {
+        positions[node.id] = {x:(leftX + rightX) / 2,y:bottom};
+        return;
+      }
+      var leftLeaves = countLeaves(node.left);
+      var rightLeaves = countLeaves(node.right);
+      var split = leftX + (rightX - leftX) * leftLeaves / (leftLeaves + rightLeaves);
+      assignTreePositions(node.left, leftX, split, depth + 1, maxD, top, bottom, positions);
+      assignTreePositions(node.right, split, rightX, depth + 1, maxD, top, bottom, positions);
+      positions[node.id] = {
+        x:(positions[node.left.id].x + positions[node.right.id].x) / 2,
+        y:top + (depth / Math.max(1,maxD)) * (bottom - top)
+      };
+    }
+    function collectNodes(node, result) {
+      if (!node) return;
+      result.push(node);
+      collectNodes(node.left, result);
+      collectNodes(node.right, result);
+    }
+    function drawTree(context, root, region, options) {
+      options = options || {};
+      var positions = {};
+      var depth = maxDepth(root);
+      assignTreePositions(root, region.x, region.x + region.w, 0, depth, region.y + 26, region.y + region.h - 35, positions);
+      var nodes = [];
+      collectNodes(root, nodes);
+      var visible = options.visible ? new Set(options.visible) : null;
+
+      nodes.forEach(function (node) {
+        if (!node.left || !node.right) return;
+        if (visible && (!visible.has(node.id) || !visible.has(node.left.id) || !visible.has(node.right.id))) return;
+        var from = positions[node.id];
+        [node.left,node.right].forEach(function (child, childIndex) {
+          var to = positions[child.id];
+          context.strokeStyle = COLORS.line;
+          context.lineWidth = 1.8;
+          context.beginPath();
+          context.moveTo(from.x, from.y);
+          context.lineTo(to.x, to.y);
+          context.stroke();
+          if (options.bits) {
+            context.fillStyle = childIndex === 0 ? COLORS.red : COLORS.purple;
+            context.font = "600 15px IBM Plex Mono, monospace";
+            context.textAlign = "center";
+            context.fillText(childIndex === 0 ? "0" : "1",
+              from.x + (to.x - from.x) * .45 - (childIndex === 0 ? 7 : -7),
+              from.y + (to.y - from.y) * .45);
+          }
+        });
+      });
+      nodes.forEach(function (node) {
+        if (visible && !visible.has(node.id)) return;
+        var point = positions[node.id];
+        var isLeaf = !node.left && !node.right;
+        var active = options.active === node.id;
+        var radius = isLeaf ? 27 : 23;
+        context.fillStyle = active ? COLORS.amberSoft : (isLeaf ? COLORS.white : COLORS.tealSoft);
+        context.strokeStyle = active ? COLORS.amber : (isLeaf ? COLORS.purple : COLORS.teal);
+        context.lineWidth = active ? 3.5 : 2;
+        context.beginPath();
+        context.arc(point.x, point.y, radius, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+        context.fillStyle = COLORS.ink;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.font = "600 15px IBM Plex Mono, monospace";
+        context.fillText(isLeaf ? node.label : String(node.freq), point.x, point.y - (isLeaf ? 5 : 0));
+        if (isLeaf) {
+          context.fillStyle = COLORS.soft;
+          context.font = "12px IBM Plex Mono, monospace";
+          context.fillText(String(node.freq), point.x, point.y + 13);
+          if (options.codes && options.codes[node.label]) {
+            roundedRect(context,point.x - 31,point.y + 34,62,26,6,COLORS.white,COLORS.teal,1.5);
+            context.fillStyle = COLORS.teal;
+            context.font = "600 14px IBM Plex Mono, monospace";
+            context.fillText(options.codes[node.label],point.x,point.y + 47);
+          }
+        }
+      });
+    }
+
+    var vowelLeaves = {
+      I:leaf("I","I",3), U:leaf("U","U",4), A:leaf("A","A",5),
+      O:leaf("O","O",6), E:leaf("E","E",7)
+    };
+    var vowelIU = branch("IU",vowelLeaves.I,vowelLeaves.U);
+    var vowelAO = branch("AO",vowelLeaves.A,vowelLeaves.O);
+    var vowelEIU = branch("EIU",vowelLeaves.E,vowelIU);
+    var vowelPriorityRoot = branch("ROOTPQ",vowelAO,vowelEIU);
+    var vowelCodeRoot = branch("ROOTCODE",vowelEIU,vowelAO);
+
+    (function initCodeTree() {
+      var canvas = document.getElementById("code-tree-canvas");
+      var label = document.getElementById("code-tree-label");
+      var status = document.getElementById("code-tree-status");
+      var frames = [
+        {visible:["I","U","A","O","E"],active:null,bits:false,label:"Start with five leaves: I:3, U:4, A:5, O:6, E:7."},
+        {visible:["I","U","IU","A","O","E"],active:"IU",bits:false,label:"Merge I:3 and U:4 to create 7."},
+        {visible:["I","U","IU","A","O","AO","E"],active:"AO",bits:false,label:"Merge A:5 and O:6 to create 11."},
+        {visible:["I","U","IU","E","EIU","A","O","AO"],active:"EIU",bits:false,label:"Merge E:7 and IU:7 to create 14."},
+        {visible:["I","U","IU","E","EIU","A","O","AO","ROOTCODE"],active:"ROOTCODE",bits:false,label:"Merge 14 and 11 to create the root 25."},
+        {visible:null,active:null,bits:true,codes:{E:"00",I:"010",U:"011",A:"10",O:"11"},label:"Label left edges 0 and right edges 1: E=00, I=010, U=011, A=10, O=11."}
+      ];
+      createPlayer({
+        play:"code-tree-play",step:"code-tree-step",reset:"code-tree-reset",interval:850,
+        frames:function () { return frames; },
+        render:function (frame, position, length) {
+          var surface = prepareCanvas(canvas);
+          surface.context.clearRect(0,0,surface.width,surface.height);
+          drawTree(surface.context,vowelCodeRoot,{x:45,y:20,w:surface.width-90,h:surface.height-80},{
+            visible:frame.visible,active:frame.active,bits:frame.bits,codes:frame.codes
+          });
+          label.textContent = frame.label;
+          status.textContent = "tree step " + (position + 1) + "/" + length;
+        }
+      });
+    })();
+
+    function renderQueue(element, roots, activeIds) {
+      var active = new Set(activeIds || []);
+      element.innerHTML = "";
+      roots.forEach(function (node, index) {
+        var item = document.createElement("span");
+        item.className = "queue-item";
+        if (active.has(node.id)) item.classList.add("active");
+        if (node.left || node.right) item.classList.add("merged");
+        item.dataset.index = index === 0 ? "minimum" : String(index + 1);
+        item.textContent = (node.label || node.id) + " : " + node.freq;
+        element.appendChild(item);
+      });
+    }
+
+    function drawForest(canvas, roots, activeId, showBits, codes) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      var width = surface.width;
+      var height = surface.height;
+      context.clearRect(0,0,width,height);
+      var totalLeaves = roots.reduce(function (sum,node) { return sum + countLeaves(node); },0);
+      var cursor = 28;
+      roots.forEach(function (root) {
+        var share = (width - 56) * countLeaves(root) / totalLeaves;
+        var treeHeight = codes ? height - 82 : height - 42;
+        drawTree(context,root,{x:cursor,y:20,w:share,h:treeHeight},{active:activeId,bits:showBits,codes:codes});
+        cursor += share;
+      });
+    }
+
+    function initTreeBuilder(config) {
+      var canvas = document.getElementById(config.canvas);
+      var queue = document.getElementById(config.queue);
+      var label = document.getElementById(config.label);
+      var status = document.getElementById(config.status);
+      createPlayer({
+        play:config.play,step:config.step,reset:config.reset,speed:config.speed,interval:760,
+        frames:function () { return config.frames; },
+        render:function (frame, position, length) {
+          renderQueue(queue,frame.roots,frame.active);
+          drawForest(canvas,frame.roots,frame.active && frame.active[0],frame.bits,frame.codes);
+          label.textContent = frame.label;
+          status.textContent = "merge " + (position + 1) + "/" + length;
+        }
+      });
+    }
+
+    (function initVowelBuilder() {
+      initTreeBuilder({
+        canvas:"vowel-builder-canvas",queue:"vowel-queue",label:"vowel-builder-label",status:"vowel-builder-status",
+        play:"vowel-builder-play",step:"vowel-builder-step",reset:"vowel-builder-reset",speed:"vowel-builder-speed",
+        frames:[
+          {roots:[vowelLeaves.I,vowelLeaves.U,vowelLeaves.A,vowelLeaves.O,vowelLeaves.E],active:[],bits:false,label:"Initial min-priority queue: I:3, U:4, A:5, O:6, E:7."},
+          {roots:[vowelLeaves.A,vowelLeaves.O,vowelLeaves.E,vowelIU],active:["IU"],bits:false,label:"Extract I:3 and U:4; insert IU:7."},
+          {roots:[vowelLeaves.E,vowelIU,vowelAO],active:["AO"],bits:false,label:"Extract A:5 and O:6; insert AO:11."},
+          {roots:[vowelAO,vowelEIU],active:["EIU"],bits:false,label:"Extract E:7 and IU:7; insert EIU:14."},
+          {roots:[vowelPriorityRoot],active:["ROOTPQ"],bits:false,label:"Extract AO:11 and EIU:14; insert the root 25."},
+          {roots:[vowelPriorityRoot],active:[],bits:true,codes:{A:"00",O:"01",E:"10",I:"110",U:"111"},label:"The queue contains only the root. Printed codes: A=00, O=01, E=10, I=110, U=111."}
+        ]
+      });
+    })();
+
+    var classicLeaves = {
+      f:leaf("f","f",5),e:leaf("e","e",9),c:leaf("c","c",12),
+      b:leaf("b","b",13),d:leaf("d","d",16),a:leaf("a","a",45)
+    };
+    var classicFE = branch("fe",classicLeaves.f,classicLeaves.e);
+    var classicCB = branch("cb",classicLeaves.c,classicLeaves.b);
+    var classicFED = branch("fed",classicFE,classicLeaves.d);
+    var classic55 = branch("n55",classicCB,classicFED);
+    var classicRoot = branch("n100",classicLeaves.a,classic55);
+
+    (function initClassicBuilder() {
+      initTreeBuilder({
+        canvas:"classic-builder-canvas",queue:"classic-queue",label:"classic-builder-label",status:"classic-builder-status",
+        play:"classic-builder-play",step:"classic-builder-step",reset:"classic-builder-reset",
+        frames:[
+          {roots:[classicLeaves.f,classicLeaves.e,classicLeaves.c,classicLeaves.b,classicLeaves.d,classicLeaves.a],active:[],bits:false,label:"Initial queue: f:5, e:9, c:12, b:13, d:16, a:45."},
+          {roots:[classicLeaves.c,classicLeaves.b,classicFE,classicLeaves.d,classicLeaves.a],active:["fe"],bits:false,label:"Merge f:5 and e:9 to create 14."},
+          {roots:[classicFE,classicLeaves.d,classicCB,classicLeaves.a],active:["cb"],bits:false,label:"Merge c:12 and b:13 to create 25."},
+          {roots:[classicCB,classicFED,classicLeaves.a],active:["fed"],bits:false,label:"Merge 14 and d:16 to create 30."},
+          {roots:[classicLeaves.a,classic55],active:["n55"],bits:false,label:"Merge 25 and 30 to create 55."},
+          {roots:[classicRoot],active:["n100"],bits:false,label:"Merge a:45 and 55 to create the root 100."},
+          {roots:[classicRoot],active:[],bits:true,codes:{a:"0",c:"100",b:"101",f:"1100",e:"1101",d:"111"},label:"Printed codes: a=0, c=100, b=101, f=1100, e=1101, d=111."}
+        ]
+      });
+    })();
+
+    var JOB_DATA = {
+      lecture:[
+        {id:"J1",profit:20,deadline:3},
+        {id:"J2",profit:18,deadline:1},
+        {id:"J3",profit:15,deadline:3},
+        {id:"J4",profit:15,deadline:2},
+        {id:"J5",profit:14,deadline:3}
+      ],
+      exercise:[
+        {id:"C",profit:27,deadline:1},
+        {id:"E",profit:15,deadline:3},
+        {id:"D",profit:25,deadline:1},
+        {id:"B",profit:19,deadline:1},
+        {id:"A",profit:100,deadline:2}
+      ]
+    };
+
+    function jobFrames(jobs) {
+      var sorted = jobs.slice().sort(function (a,b) {
+        return b.profit - a.profit || a.id.localeCompare(b.id);
+      });
+      var maxDeadline = Math.max.apply(null,jobs.map(function (job) { return job.deadline; }));
+      var slots = Array(maxDeadline).fill(null);
+      var total = 0;
+      var frames = [{
+        jobs:jobs,sorted:sorted,slots:slots.slice(),active:null,trying:null,total:0,
+        label:"Begin with " + maxDeadline + " empty slots because the highest deadline is " + maxDeadline + "."
+      }];
+      frames.push({
+        jobs:jobs,sorted:sorted,slots:slots.slice(),active:null,trying:null,total:0,
+        label:"Sort jobs by decreasing profit: " + sorted.map(function (job) { return job.id + "(" + job.profit + ")"; }).join(", ") + "."
+      });
+      sorted.forEach(function (job) {
+        var chosen = -1;
+        for (var slot = Math.min(maxDeadline,job.deadline) - 1; slot >= 0; slot -= 1) {
+          if (slots[slot] === null) { chosen = slot; break; }
+        }
+        if (chosen >= 0) {
+          slots[chosen] = job;
+          total += job.profit;
+          frames.push({
+            jobs:jobs,sorted:sorted,slots:slots.slice(),active:job.id,trying:chosen,total:total,
+            label:"Place " + job.id + " in the latest free slot before deadline " + job.deadline +
+              ": slot " + (chosen + 1) + "."
+          });
+        } else {
+          frames.push({
+            jobs:jobs,sorted:sorted,slots:slots.slice(),active:job.id,trying:null,total:total,
+            label:"Skip " + job.id + ": every slot through deadline " + job.deadline + " is occupied."
+          });
+        }
+      });
+      frames.push({
+        jobs:jobs,sorted:sorted,slots:slots.slice(),active:null,trying:null,total:total,
+        label:"Final schedule: " + slots.map(function (job) { return job.id; }).join(", ") +
+          ". Total profit = " + total + "."
+      });
+      return frames;
+    }
+
+    function renderJobTable(element, jobs, activeId) {
+      var activeStyle = function (job) {
+        return job.id === activeId ? ' style="background:#fdf1df;color:#101c33;"' : "";
+      };
+      element.innerHTML =
+        "<thead><tr><th>Jobs</th>" + jobs.map(function (job) {
+          return "<th" + activeStyle(job) + ">" + job.id + "</th>";
+        }).join("") + "</tr></thead><tbody>" +
+        "<tr><td>Profit</td>" + jobs.map(function (job) {
+          return "<td" + activeStyle(job) + ">" + job.profit + "</td>";
+        }).join("") + "</tr>" +
+        "<tr><td>Deadline</td>" + jobs.map(function (job) {
+          return "<td" + activeStyle(job) + ">" + job.deadline + "</td>";
+        }).join("") + "</tr></tbody>";
+    }
+
+    function renderSlots(element, frame) {
+      element.innerHTML = "";
+      frame.slots.forEach(function (job,index) {
+        var slot = document.createElement("div");
+        slot.className = "slot";
+        if (job) slot.classList.add("filled");
+        if (index === frame.trying) slot.classList.add("trying");
+        slot.innerHTML = (job ? job.id : "empty") + "<small>" + index + " – " + (index + 1) + "</small>";
+        element.appendChild(slot);
+      });
+    }
+
+    (function initJobs() {
+      var mode = document.getElementById("job-mode");
+      var table = document.getElementById("job-table");
+      var slots = document.getElementById("job-slots");
+      var answer = document.getElementById("job-answer");
+      var label = document.getElementById("job-label");
+      var status = document.getElementById("job-status");
+      var player = createPlayer({
+        play:"job-play",step:"job-step",reset:"job-reset",speed:"job-speed",
+        frames:function () { return jobFrames(JOB_DATA[mode.value]); },
+        render:function (frame, position, length) {
+          renderJobTable(table,frame.jobs,frame.active);
+          renderSlots(slots,frame);
+          answer.textContent = "Total profit: " + frame.total;
+          label.textContent = frame.label;
+          status.textContent = "job " + (position + 1) + "/" + length;
+        }
+      });
+      mode.addEventListener("change", player.reset);
+    })();
+
+    function mergeArrayFrames(left, right) {
+      var i = 0;
+      var j = 0;
+      var output = [];
+      var frames = [{
+        left:left,right:right,i:0,j:0,output:[],chosen:null,
+        label:"Begin with i = 0, j = 0, and an empty output array C."
+      }];
+      while (i < left.length && j < right.length) {
+        var fromLeft = left[i] <= right[j];
+        var chosen = fromLeft ? left[i] : right[j];
+        output.push(chosen);
+        frames.push({
+          left:left,right:right,i:i,j:j,output:output.slice(),chosen:fromLeft ? "A" : "B",
+          label:"Compare " + left[i] + " and " + right[j] + "; append " + chosen +
+            " from " + (fromLeft ? "A" : "B") + "."
+        });
+        if (fromLeft) i += 1; else j += 1;
+      }
+      while (i < left.length) {
+        output.push(left[i]);
+        frames.push({left:left,right:right,i:i,j:j,output:output.slice(),chosen:"A",label:"B is exhausted; append " + left[i] + " from A."});
+        i += 1;
+      }
+      while (j < right.length) {
+        output.push(right[j]);
+        frames.push({left:left,right:right,i:i,j:j,output:output.slice(),chosen:"B",label:"A is exhausted; append " + right[j] + " from B."});
+        j += 1;
+      }
+      frames.push({left:left,right:right,i:i,j:j,output:output.slice(),chosen:null,label:"Merge complete: C = [" + output.join(", ") + "]."});
+      return frames;
+    }
+
+    function drawArrayRow(context, label, values, x, y, pointer, color) {
+      context.fillStyle = COLORS.ink;
+      context.textAlign = "right";
+      context.textBaseline = "middle";
+      context.font = "600 15px IBM Plex Mono, monospace";
+      context.fillText(label, x - 14, y + 23);
+      values.forEach(function (value,index) {
+        var cellX = x + index * 60;
+        roundedRect(context,cellX,y,52,46,6,
+          index === pointer ? COLORS.amberSoft : COLORS.white,
+          index === pointer ? COLORS.amber : COLORS.line,
+          index === pointer ? 3 : 1.5);
+        context.fillStyle = color || COLORS.ink;
+        context.textAlign = "center";
+        context.font = "600 17px IBM Plex Mono, monospace";
+        context.fillText(String(value),cellX + 26,y + 24);
+      });
+      if (pointer < values.length) {
+        context.fillStyle = COLORS.amber;
+        context.textAlign = "center";
+        context.font = "600 13px IBM Plex Mono, monospace";
+        context.fillText(label.toLowerCase(),x + pointer * 60 + 26,y - 12);
+        drawArrow(context,x + pointer * 60 + 26,y - 6,x + pointer * 60 + 26,y + 2,COLORS.amber,1.5);
+      }
+    }
+
+    function drawArrayMerge(canvas, frame) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      context.clearRect(0,0,surface.width,surface.height);
+      drawArrayRow(context,"A",frame.left,155,54,frame.i,frame.chosen === "A" ? COLORS.teal : COLORS.ink);
+      drawArrayRow(context,"B",frame.right,155,143,frame.j,frame.chosen === "B" ? COLORS.teal : COLORS.ink);
+      drawArrayRow(context,"C",frame.output,155,252,-1,COLORS.teal);
+    }
+
+    (function initArrayMerge() {
+      var frames = mergeArrayFrames([1,3,5,6],[2,4,8,9]);
+      var canvas = document.getElementById("array-merge-canvas");
+      var label = document.getElementById("array-merge-label");
+      var status = document.getElementById("array-merge-status");
+      createPlayer({
+        play:"array-merge-play",step:"array-merge-step",reset:"array-merge-reset",interval:520,
+        frames:function () { return frames; },
+        render:function (frame, position, length) {
+          drawArrayMerge(canvas,frame);
+          label.textContent = frame.label;
+          status.textContent = "comparison " + (position + 1) + "/" + length;
+        }
+      });
+    })();
+
+    var fileA = leaf("fileA","A",30);
+    var fileB = leaf("fileB","B",20);
+    var fileC = leaf("fileC","C",10);
+    var fileD = leaf("fileD","D",5);
+    var fileCD = branch("fileCD",fileD,fileC);
+    var fileBCD = branch("fileBCD",fileCD,fileB);
+    var fileRoot = branch("fileRoot",fileA,fileBCD);
+
+    (function initOptimalMerge() {
+      var frames = [
+        {roots:[fileD,fileC,fileB,fileA],active:[],cost:0,label:"Insert D:5, C:10, B:20, and A:30 into the min heap."},
+        {roots:[fileCD,fileB,fileA],active:["fileCD"],cost:15,label:"Extract 5 and 10; merge them into 15. Running cost = 15."},
+        {roots:[fileA,fileBCD],active:["fileBCD"],cost:50,label:"Extract 15 and 20; merge them into 35. Running cost = 15 + 35 = 50."},
+        {roots:[fileRoot],active:["fileRoot"],cost:115,label:"Extract 30 and 35; merge them into 65. Total cost = 15 + 35 + 65 = 115."},
+        {roots:[fileRoot],active:[],cost:115,label:"One file remains. The optimal merge pattern costs 115."}
+      ];
+      var canvas = document.getElementById("optimal-merge-canvas");
+      var queue = document.getElementById("merge-queue");
+      var answer = document.getElementById("merge-answer");
+      var label = document.getElementById("merge-label");
+      var status = document.getElementById("merge-status");
+      createPlayer({
+        play:"merge-play",step:"merge-step",reset:"merge-reset",speed:"merge-speed",
+        frames:function () { return frames; },
+        render:function (frame, position, length) {
+          renderQueue(queue,frame.roots,frame.active);
+          drawForest(canvas,frame.roots,frame.active[0],false);
+          answer.textContent = "Total merge cost: " + frame.cost;
+          label.textContent = frame.label;
+          status.textContent = "merge " + (position + 1) + "/" + length;
+        }
+      });
+    })();
+  })();
+  </script>
+</body>
+</html>
