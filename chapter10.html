@@ -145,11 +145,6 @@
       color: var(--ink-soft);
       font-size: 1.08rem;
     }
-    .course-line {
-      margin-top: 14px;
-      color: var(--accent-dark);
-      font: 600 14.5px var(--font-mono);
-    }
     .chapter-section { margin-top: 56px; }
     .chapter-section > h2 {
       margin-bottom: 18px;
@@ -225,6 +220,39 @@
       color: #fff;
       font: 600 12px var(--font-mono);
     }
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0 22px !important;
+      list-style: none;
+      counter-reset: method-step;
+    }
+    .method-steps li {
+      position: relative;
+      min-height: 72px;
+      margin: 0;
+      padding: 14px 16px 14px 54px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      counter-increment: method-step;
+    }
+    .method-steps li::before {
+      content: counter(method-step);
+      position: absolute;
+      top: 15px;
+      left: 16px;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font: 600 12px var(--font-mono);
+    }
+    .method-steps li:last-child:nth-child(odd) { grid-column: 1 / -1; }
     .metric { text-align: center; }
     .metric b { display: block; color: var(--ink); font: 700 1.25rem var(--font-mono); }
 
@@ -432,6 +460,15 @@
       border-radius: 9px;
       background: var(--accent-soft);
     }
+    .code-output.animated-result { display: none; }
+    .code-output.animated-result.is-visible {
+      display: flex;
+      animation: result-in .28s ease-out;
+    }
+    @keyframes result-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
     .code-output::before {
       content: attr(data-label);
       flex-basis: 100%;
@@ -538,7 +575,8 @@
         font-size: 12.5px;
       }
       .toc li a.current { border-color: var(--accent); background: var(--accent-soft); }
-      .two-col, .three-col, .step-grid, .metric-grid, .compare-grid { grid-template-columns: 1fr; }
+      .two-col, .three-col, .step-grid, .metric-grid, .compare-grid, .method-steps { grid-template-columns: 1fr; }
+      .method-steps li:last-child:nth-child(odd) { grid-column: auto; }
       .viz { padding: 14px; }
       .viz-head { align-items: flex-start; }
       .viz-status { flex-basis: 100%; margin-left: 0; }
@@ -547,6 +585,7 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .reveal { opacity: 1; transform: none; transition: none; }
+      .code-output.animated-result.is-visible { animation: none; }
     }
   </style>
 </head>
@@ -591,15 +630,14 @@
         This chapter develops that idea through fractional knapsack, Huffman coding,
         job sequencing with deadlines, and the optimal merge pattern.
       </p>
-      <p class="course-line">Advanced Data Structures and Algorithms · NMCC509 · Dr. Alakesh Kalita · Mathematics and Computing · IIT (ISM) Dhanbad</p>
-
       <section class="chapter-section" id="sec-1">
         <h2><span class="sec-no">10.1</span>Introduction to Greedy Algorithms</h2>
         <div class="def-box">
           <span class="box-label">Core idea</span>
-          A greedy algorithm builds a solution step by step, always choosing the
-          <strong>locally optimal choice</strong> and hoping it leads to the
-          <strong>global optimum</strong>.
+          A greedy algorithm builds a solution step by step by choosing the
+          <strong>best feasible option at the current stage</strong>. For problems
+          with the greedy-choice property and optimal substructure, these choices
+          produce a <strong>globally optimal solution</strong>.
         </div>
         <div class="viz">
           <div class="viz-title">From many solutions to an optimal solution</div>
@@ -661,11 +699,14 @@
             <p>Add a choice only when it keeps the partial solution feasible.</p>
           </div>
         </div>
-        <pre class="code">GREEDY(A, n):
+        <pre class="code">GREEDY(A):
+    candidates = order_by_greedy_rule(A)
     solution = []
-    for i in range(n):
-        if feasible(A[i], solution):
-            solution.append(A[i])
+
+    for candidate in candidates:
+        if feasible(candidate, solution):
+            solution.append(candidate)
+
     return solution</pre>
         <div class="note-box">
           <span class="box-label">Final step</span>
@@ -689,7 +730,7 @@
           <tbody>
             <tr><td>Profit</td><td>25</td><td>24</td><td>15</td></tr>
             <tr><td>Weight</td><td>18</td><td>15</td><td>10</td></tr>
-            <tr><td>Profit / weight</td><td>1.4</td><td>1.6</td><td>1.5</td></tr>
+            <tr><td>Profit / weight</td><td>≈ 1.39</td><td>1.60</td><td>1.50</td></tr>
           </tbody>
         </table>
         <div class="viz">
@@ -782,6 +823,9 @@
     total_profit = 0
 
     for item in items:
+        if capacity == 0:
+            break
+
         if item.weight &lt;= capacity:
             capacity -= item.weight
             total_profit += item.profit
@@ -801,6 +845,8 @@
           more frequent characters receive shorter codes. Depending on the data,
           it can save roughly 20% to 90% of storage.
         </div>
+
+        <h3>1. Problem data</h3>
         <table class="tbl" aria-label="Characters and frequencies">
           <thead>
             <tr><th>Character</th><th>A</th><th>E</th><th>I</th><th>O</th><th>U</th></tr>
@@ -809,8 +855,96 @@
             <tr><td>Frequency</td><td>5</td><td>7</td><td>3</td><td>6</td><td>4</td></tr>
           </tbody>
         </table>
-        <p>Total characters: <strong>25</strong>.</p>
-        <p>ASCII codes are normally used to encode characters, and each ASCII code is 8 bits long.</p>
+        <div class="two-col">
+          <div class="card">
+            <strong>Input size</strong>
+            <p>The five character frequencies add up to <strong>25 characters</strong>.</p>
+          </div>
+          <div class="card">
+            <strong>ASCII baseline</strong>
+            <p>For this comparison, each character is stored in one 8-bit byte, so the data requires <strong>25 × 8 = 200 bits</strong>.</p>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Questions from the slides</span>
+          <strong>Can we reduce the total bits?</strong><br>
+          <strong>Can we still reduce the total bits?</strong>
+        </div>
+
+        <h3>2. Huffman solution approach</h3>
+        <ol class="method-steps">
+          <li>Merge the two least frequent nodes into a new node whose frequency is their sum.</li>
+          <li>Put the new node back and repeat until one root remains.</li>
+          <li>Add 0 to every left edge.</li>
+          <li>Add 1 to every right edge.</li>
+          <li>Traverse from the root to each leaf to obtain its Huffman code.</li>
+        </ol>
+        <div class="viz">
+          <div class="viz-title">Construct the exact coding tree</div>
+          <div class="viz-sub">Merge the two least frequent nodes, repeat, label left edges 0 and right edges 1, then traverse root to leaf.</div>
+          <div class="canvas-stage">
+            <canvas class="diagram-canvas" id="code-tree-canvas" width="820" height="520"
+                    aria-label="Animated Huffman coding tree for A E I O U"></canvas>
+          </div>
+          <div class="viz-label" id="code-tree-label"></div>
+          <div class="viz-controls">
+            <button class="primary" id="code-tree-play">Play</button>
+            <button id="code-tree-step">Step</button>
+            <button id="code-tree-reset">Reset</button>
+            <span class="viz-status" id="code-tree-status"></span>
+          </div>
+          <div class="code-output animated-result" id="code-tree-output"
+               data-label="Final codes from the completed lecture tree" aria-live="polite">
+            <span class="code-token">E = <b>00</b></span>
+            <span class="code-token">I = <b>010</b></span>
+            <span class="code-token">U = <b>011</b></span>
+            <span class="code-token">A = <b>10</b></span>
+            <span class="code-token">O = <b>11</b></span>
+          </div>
+        </div>
+
+        <h3>3. Final answer — the lecture’s Huffman codes</h3>
+        <table class="tbl" aria-label="Huffman codes for vowels">
+          <thead>
+            <tr><th>Character</th><th>Frequency</th><th>Code</th><th>Data bits</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>5</td><td><code>10</code></td><td>10</td></tr>
+            <tr><td>E</td><td>7</td><td><code>00</code></td><td>14</td></tr>
+            <tr><td>I</td><td>3</td><td><code>010</code></td><td>9</td></tr>
+            <tr><td>O</td><td>6</td><td><code>11</code></td><td>12</td></tr>
+            <tr><td>U</td><td>4</td><td><code>011</code></td><td>12</td></tr>
+            <tr><td><strong>Total</strong></td><td>25</td><td>12 mapping bits</td><td><strong>57</strong></td></tr>
+          </tbody>
+        </table>
+
+        <h3>4. Verify the storage saving</h3>
+        <table class="tbl" aria-label="ASCII fixed length and Huffman encoding comparison">
+          <thead>
+            <tr>
+              <th>Character</th><th>Frequency</th><th>ASCII</th><th>ASCII bits</th>
+              <th>Fixed 3-bit</th><th>Fixed bits</th><th>Huffman</th><th>Huffman bits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>A</td><td>5</td><td><code>01000001</code></td><td>40</td><td><code>000</code></td><td>15</td><td><code>10</code></td><td>10</td></tr>
+            <tr><td>E</td><td>7</td><td><code>01000101</code></td><td>56</td><td><code>001</code></td><td>21</td><td><code>00</code></td><td>14</td></tr>
+            <tr><td>I</td><td>3</td><td><code>01001001</code></td><td>24</td><td><code>010</code></td><td>9</td><td><code>010</code></td><td>9</td></tr>
+            <tr><td>O</td><td>6</td><td><code>01001111</code></td><td>48</td><td><code>011</code></td><td>18</td><td><code>11</code></td><td>12</td></tr>
+            <tr><td>U</td><td>4</td><td><code>01010101</code></td><td>32</td><td><code>100</code></td><td>12</td><td><code>011</code></td><td>12</td></tr>
+            <tr><td><strong>Total</strong></td><td>25</td><td>—</td><td><strong>200</strong></td><td>—</td><td><strong>75</strong></td><td>—</td><td><strong>57</strong></td></tr>
+          </tbody>
+        </table>
+        <div class="two-col">
+          <div class="card">
+            <strong>Fixed-code mapping table</strong>
+            <p>Five ASCII symbols use 40 bits and five 3-bit codes use 15 bits: mapping overhead = 55 bits.</p>
+          </div>
+          <div class="card">
+            <strong>Huffman mapping table</strong>
+            <p>Five ASCII symbols use 40 bits and the five variable codes use 12 bits: mapping overhead = 52 bits.</p>
+          </div>
+        </div>
         <div class="viz">
           <div class="viz-title">Compare the exact bit totals from the slides</div>
           <div class="viz-sub">ASCII, fixed 3-bit encoding with its mapping table, and Huffman encoding with its mapping table.</div>
@@ -841,93 +975,32 @@
           </div>
         </div>
         <div class="note-box">
-          <span class="box-label">Questions from the slides</span>
-          <strong>Can we reduce the total bits?</strong> Fixed 3-bit encoding reduces
-          the total from 200 to 130 bits. <strong>Can we still reduce the total bits?</strong>
-          Huffman coding reduces it further to 109 bits, including its mapping table.
-        </div>
-
-        <h3>Exact character encodings and data-bit totals</h3>
-        <table class="tbl" aria-label="ASCII fixed length and Huffman encoding comparison">
-          <thead>
-            <tr>
-              <th>Character</th><th>Frequency</th><th>ASCII</th><th>ASCII bits</th>
-              <th>Fixed 3-bit</th><th>Fixed bits</th><th>Huffman</th><th>Huffman bits</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>A</td><td>5</td><td><code>01100001</code></td><td>40</td><td><code>000</code></td><td>15</td><td><code>10</code></td><td>10</td></tr>
-            <tr><td>E</td><td>7</td><td><code>01100101</code></td><td>56</td><td><code>001</code></td><td>21</td><td><code>00</code></td><td>14</td></tr>
-            <tr><td>I</td><td>3</td><td><code>01001001</code></td><td>24</td><td><code>010</code></td><td>9</td><td><code>010</code></td><td>9</td></tr>
-            <tr><td>O</td><td>6</td><td><code>01001111</code></td><td>48</td><td><code>011</code></td><td>18</td><td><code>11</code></td><td>12</td></tr>
-            <tr><td>U</td><td>4</td><td><code>01010101</code></td><td>32</td><td><code>100</code></td><td>12</td><td><code>011</code></td><td>12</td></tr>
-            <tr><td><strong>Total</strong></td><td>25</td><td>—</td><td><strong>200</strong></td><td>—</td><td><strong>75</strong></td><td>—</td><td><strong>57</strong></td></tr>
-          </tbody>
-        </table>
-        <div class="two-col">
-          <div class="card">
-            <strong>Fixed-code mapping table</strong>
-            <p>Five ASCII symbols use 40 bits and five 3-bit codes use 15 bits: mapping overhead = 55 bits.</p>
-          </div>
-          <div class="card">
-            <strong>Huffman mapping table</strong>
-            <p>Five ASCII symbols use 40 bits and the five variable codes use 12 bits: mapping overhead = 52 bits.</p>
-          </div>
-        </div>
-
-        <h3>The lecture’s Huffman codes</h3>
-        <table class="tbl" aria-label="Huffman codes for vowels">
-          <thead>
-            <tr><th>Character</th><th>Frequency</th><th>Code</th><th>Data bits</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>A</td><td>5</td><td><code>10</code></td><td>10</td></tr>
-            <tr><td>E</td><td>7</td><td><code>00</code></td><td>14</td></tr>
-            <tr><td>I</td><td>3</td><td><code>010</code></td><td>9</td></tr>
-            <tr><td>O</td><td>6</td><td><code>11</code></td><td>12</td></tr>
-            <tr><td>U</td><td>4</td><td><code>011</code></td><td>12</td></tr>
-            <tr><td><strong>Total</strong></td><td>25</td><td>12 mapping bits</td><td><strong>57</strong></td></tr>
-          </tbody>
-        </table>
-        <ol>
-          <li>Merge the two least frequent characters.</li>
-          <li>Repeat until the tree is constructed.</li>
-          <li>Add 0 to every left edge.</li>
-          <li>Add 1 to every right edge.</li>
-          <li>Traverse from the root to each leaf to obtain its Huffman code.</li>
-        </ol>
-        <div class="viz">
-          <div class="viz-title">Construct the exact coding tree</div>
-          <div class="viz-sub">Merge the two least frequent nodes, repeat, label left edges 0 and right edges 1, then traverse root to leaf.</div>
-          <div class="canvas-stage">
-            <canvas class="diagram-canvas" id="code-tree-canvas" width="820" height="520"
-                    aria-label="Animated Huffman coding tree for A E I O U"></canvas>
-          </div>
-          <div class="code-output" data-label="Printed Huffman codes from the lecture tree">
-            <span class="code-token">E = <b>00</b></span>
-            <span class="code-token">I = <b>010</b></span>
-            <span class="code-token">U = <b>011</b></span>
-            <span class="code-token">A = <b>10</b></span>
-            <span class="code-token">O = <b>11</b></span>
-          </div>
-          <div class="viz-label" id="code-tree-label"></div>
-          <div class="viz-controls">
-            <button class="primary" id="code-tree-play">Play</button>
-            <button id="code-tree-step">Step</button>
-            <button id="code-tree-reset">Reset</button>
-            <span class="viz-status" id="code-tree-status"></span>
-          </div>
+          <span class="box-label">Answers to the slide questions</span>
+          Fixed 3-bit encoding reduces the total from 200 to 130 bits.
+          Huffman coding reduces it further to <strong>109 bits</strong>, including its mapping table.
         </div>
       </section>
 
       <section class="chapter-section" id="sec-5">
         <h2><span class="sec-no">10.5</span>Building a Huffman Tree with a Priority Queue</h2>
-        <ol>
+        <ol class="method-steps">
           <li>Create a binary-tree node for every character and frequency.</li>
           <li>Place the nodes in a priority queue—a min heap ordered by frequency.</li>
           <li>Extract the two minimum nodes, attach them to a new node, and insert their sum.</li>
           <li>Repeat until the queue contains one node: the root.</li>
         </ol>
+        <pre class="code">HUFFMAN(C):
+    n = |C|
+    Q = C
+    for i = 1 to n - 1:
+        allocate a new node z
+        x = EXTRACT_MIN(Q)
+        y = EXTRACT_MIN(Q)
+        z.left = x
+        z.right = y
+        z.freq = x.freq + y.freq
+        INSERT(Q, z)
+    return EXTRACT_MIN(Q)  # the root is the only node left</pre>
         <div class="viz">
           <div class="viz-title">Priority-queue construction for I:3, U:4, A:5, O:6, E:7</div>
           <div class="viz-sub">Lower frequency means higher priority.</div>
@@ -935,13 +1008,6 @@
           <div class="canvas-stage">
             <canvas class="diagram-canvas" id="vowel-builder-canvas" width="820" height="500"
                     aria-label="Animated priority queue construction of the vowel Huffman tree"></canvas>
-          </div>
-          <div class="code-output" data-label="Codes for the priority-queue tie ordering shown here">
-            <span class="code-token">A = <b>00</b></span>
-            <span class="code-token">O = <b>01</b></span>
-            <span class="code-token">E = <b>10</b></span>
-            <span class="code-token">I = <b>110</b></span>
-            <span class="code-token">U = <b>111</b></span>
           </div>
           <div class="viz-label" id="vowel-builder-label"></div>
           <div class="viz-controls">
@@ -957,12 +1023,22 @@
             </label>
             <span class="viz-status" id="vowel-builder-status"></span>
           </div>
+          <div class="code-output animated-result" id="vowel-builder-output"
+               data-label="Codes for the priority-queue tie ordering shown here" aria-live="polite">
+            <span class="code-token">A = <b>00</b></span>
+            <span class="code-token">O = <b>01</b></span>
+            <span class="code-token">E = <b>10</b></span>
+            <span class="code-token">I = <b>110</b></span>
+            <span class="code-token">U = <b>111</b></span>
+          </div>
         </div>
         <div class="accuracy-box">
-          <span class="box-label">Tie at frequency 7</span>
+          <span class="box-label">Why the printed codes can differ</span>
           The queue contains <code class="inline">E:7</code> and <code class="inline">IU:7</code>.
-          Either tie order is valid. It can swap subtrees and change the bit patterns,
-          but the prefix property and weighted total of <strong>57 bits</strong> remain unchanged.
+          Either may be extracted first. Also, the left and right children of any
+          merged node may be swapped. These choices change the printed 0/1 patterns,
+          but not the code lengths, prefix property, or weighted total of
+          <strong>57 bits</strong>.
         </div>
 
         <h3>Classic six-character construction</h3>
@@ -976,14 +1052,6 @@
             <canvas class="diagram-canvas" id="classic-builder-canvas" width="820" height="520"
                     aria-label="Animated classic Huffman tree construction"></canvas>
           </div>
-          <div class="code-output" data-label="Printed codes for the completed six-character tree">
-            <span class="code-token">a = <b>0</b></span>
-            <span class="code-token">c = <b>100</b></span>
-            <span class="code-token">b = <b>101</b></span>
-            <span class="code-token">f = <b>1100</b></span>
-            <span class="code-token">e = <b>1101</b></span>
-            <span class="code-token">d = <b>111</b></span>
-          </div>
           <div class="viz-label" id="classic-builder-label"></div>
           <div class="viz-controls">
             <button class="primary" id="classic-builder-play">Play</button>
@@ -991,19 +1059,16 @@
             <button id="classic-builder-reset">Reset</button>
             <span class="viz-status" id="classic-builder-status"></span>
           </div>
+          <div class="code-output animated-result" id="classic-builder-output"
+               data-label="Printed codes for the completed six-character tree" aria-live="polite">
+            <span class="code-token">a = <b>0</b></span>
+            <span class="code-token">c = <b>100</b></span>
+            <span class="code-token">b = <b>101</b></span>
+            <span class="code-token">f = <b>1100</b></span>
+            <span class="code-token">e = <b>1101</b></span>
+            <span class="code-token">d = <b>111</b></span>
+          </div>
         </div>
-        <pre class="code">HUFFMAN(C):
-    n = |C|
-    Q = C
-    for i = 1 to n - 1:
-        allocate a new node z
-        x = EXTRACT_MIN(Q)
-        y = EXTRACT_MIN(Q)
-        z.left = x
-        z.right = y
-        z.freq = x.freq + y.freq
-        INSERT(Q, z)
-    return EXTRACT_MIN(Q)  # the root is the only node left</pre>
       </section>
 
       <section class="chapter-section" id="sec-6">
@@ -1027,6 +1092,11 @@
           <span class="box-label">Brute force</span>
           Trying all job permutations takes <strong>O(n!)</strong> time and is impractical for large n.
         </div>
+        <h3>Greedy solution</h3>
+        <ol class="method-steps">
+          <li>Sort the jobs in decreasing order of profit.</li>
+          <li>For each job, place it in the latest empty slot that is no later than its deadline.</li>
+        </ol>
         <div class="viz">
           <div class="viz-head">
             <div>
@@ -1058,42 +1128,23 @@
             <span class="viz-status" id="job-status"></span>
           </div>
         </div>
-        <div class="three-col">
-          <div class="card">
-            <strong>First arrangement</strong>
-            <p>J1, J4, J3 is feasible and earns <strong>50</strong>.</p>
-          </div>
-          <div class="card">
-            <strong>Greedy optimum</strong>
-            <p>J2, J3, J1 fills slots 0–1, 1–2, 2–3 and earns <strong>53</strong>.</p>
-          </div>
-          <div class="card">
-            <strong>Exercise</strong>
-            <p>C, A, E is feasible and earns <strong>142</strong>.</p>
-          </div>
-        </div>
-        <div class="slot-row" aria-label="Two lecture schedules">
-          <div class="slot filled">J1<small>0 – 1</small></div>
-          <div class="slot filled">J4<small>1 – 2</small></div>
-          <div class="slot filled">J3<small>2 – 3</small></div>
-        </div>
-        <div class="answer-banner">First feasible arrangement: J1, J4, J3 · Total profit = 20 + 15 + 15 = 50</div>
-        <div class="accuracy-box">
-          <span class="box-label">Deadline check</span>
-          J2 has deadline 1, so it must occupy the first slot. The valid 53-profit
-          schedule is <strong>J2, J3, J1</strong>.
-        </div>
-        <h3>Exercise data</h3>
-        <table class="tbl" aria-label="Job sequencing exercise">
+        <h3>Results from the slides</h3>
+        <table class="tbl" aria-label="Job sequencing results">
           <thead>
-            <tr><th>Job</th><th>C</th><th>E</th><th>D</th><th>B</th><th>A</th></tr>
+            <tr><th>Example</th><th>Schedule by time slot</th><th>Total profit</th></tr>
           </thead>
           <tbody>
-            <tr><td>Profit</td><td>27</td><td>15</td><td>25</td><td>19</td><td>100</td></tr>
-            <tr><td>Deadline</td><td>1</td><td>3</td><td>1</td><td>1</td><td>2</td></tr>
+            <tr><td>First feasible arrangement</td><td>J1, J4, J3</td><td>20 + 15 + 15 = <strong>50</strong></td></tr>
+            <tr><td>Greedy lecture solution</td><td>J2, J3, J1</td><td>18 + 15 + 20 = <strong>53</strong></td></tr>
+            <tr><td>Exercise solution</td><td>C, A, E</td><td>27 + 100 + 15 = <strong>142</strong></td></tr>
           </tbody>
         </table>
-        <div class="answer-banner">Exercise schedule: C, A, E · Total profit = 27 + 100 + 15 = 142</div>
+        <div class="accuracy-box">
+          <span class="box-label">Deadline check</span>
+          J2 has deadline 1, so it must occupy the first slot. In the lecture’s
+          53-profit schedule, J3 occupies the second slot and J1 occupies the third.
+          Select the exercise dataset above to replay <strong>C, A, E</strong>.
+        </div>
         <div class="note-box">
           <span class="box-label">Time complexity in the slides</span>
           Sorting costs <strong>O(n log n)</strong>. With a simple backward scan,
@@ -1149,20 +1200,14 @@ while i &lt; len(A) and j &lt; len(B):
             <tr><td>Size</td><td>30</td><td>20</td><td>10</td><td>5</td></tr>
           </tbody>
         </table>
-        <div class="compare-grid">
-          <div class="cost-card">
-            <strong>Order 1</strong>
-            <code>50 + 60 + 65 = 175</code>
-          </div>
-          <div class="cost-card">
-            <strong>Order 2</strong>
-            <code>50 + 15 + 65 = 130</code>
-          </div>
-          <div class="cost-card best">
-            <strong>Optimal order</strong>
-            <code>15 + 35 + 65 = 115</code>
-          </div>
-        </div>
+        <h3>Greedy solution</h3>
+        <ol class="method-steps">
+          <li>Insert all file sizes into a min heap (priority queue).</li>
+          <li>Extract the two smallest files.</li>
+          <li>Merge them; the merge cost is the sum of their sizes.</li>
+          <li>Insert the merged file back into the heap.</li>
+          <li>Repeat until one file remains; add every merge cost to the total.</li>
+        </ol>
         <div class="viz">
           <div class="viz-title">Always merge the two smallest files first</div>
           <div class="viz-sub">A min heap keeps the next two files at the front of the priority queue.</div>
@@ -1187,13 +1232,21 @@ while i &lt; len(A) and j &lt; len(B):
             <span class="viz-status" id="merge-status"></span>
           </div>
         </div>
-        <ol>
-          <li>Insert all file sizes into a min heap (priority queue).</li>
-          <li>Extract the two smallest files.</li>
-          <li>Merge them; the merge cost is the sum of their sizes.</li>
-          <li>Insert the merged file back into the heap.</li>
-          <li>Repeat until one file remains; total cost is the sum of all merge costs.</li>
-        </ol>
+        <h3>Cost comparison from the slides</h3>
+        <div class="compare-grid">
+          <div class="cost-card">
+            <strong>Order 1</strong>
+            <code>50 + 60 + 65 = 175</code>
+          </div>
+          <div class="cost-card">
+            <strong>Order 2</strong>
+            <code>50 + 15 + 65 = 130</code>
+          </div>
+          <div class="cost-card best">
+            <strong>Two-smallest rule</strong>
+            <code>15 + 35 + 65 = 115</code>
+          </div>
+        </div>
         <div class="metric-grid">
           <div class="metric"><strong>Build heap</strong><b>O(n)</b></div>
           <div class="metric"><strong>Two extracts</strong><b>O(log n)</b></div>
@@ -1211,8 +1264,13 @@ while i &lt; len(A) and j &lt; len(B):
           Huffman coding, external sorting for large database datasets, and data-merge
           operations such as log-file merging and distributed computing.
         </div>
+        <div class="note-box">
+          <span class="box-label">Homework</span>
+          If the total file size is n and there are exactly four subfiles, what is
+          the worst-case merging time in terms of n?
+        </div>
         <details class="answer">
-          <summary>Homework answer</summary>
+          <summary>Reveal the answer</summary>
           <p>
             With total file size n and exactly four subfiles, there are three merges.
             Since four is constant, the worst-case merging time is <strong>Θ(n)</strong>
@@ -1368,8 +1426,12 @@ while i &lt; len(A) and j &lt; len(B):
       return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
+    document.querySelectorAll(".viz-label, .answer-banner").forEach(function (element) {
+      element.setAttribute("aria-live", "polite");
+    });
+
     document.querySelectorAll("pre.code").forEach(function (block) {
-      var pattern = /(#[^\n]*)|\b(GREEDY|HUFFMAN|EXTRACT_MIN|INSERT)\b|\b(def|if|else|for|in|range|return|break|to|allocate|new|node|reverse|True|lambda)\b|\b(items|item|capacity|profit|weight|ratio|solution|total_profit|left|right|freq|root|key|C|Q|A|n|i|x|y|z)\b|(\d+)|(&lt;=|&gt;=|==|!=|&lt;|&gt;|=|\+=|-=|\+|-|\*|\/|\|)/g;
+      var pattern = /(#[^\n]*)|\b(GREEDY|HUFFMAN|EXTRACT_MIN|INSERT|fractional_knapsack|order_by_greedy_rule|feasible)\b|\b(def|if|else|for|in|range|return|break|to|allocate|new|node|reverse|True|lambda)\b|\b(items|item|candidate|candidates|capacity|profit|weight|ratio|solution|total_profit|left|right|freq|root|key|C|Q|A|n|i|x|y|z)\b|(\d+)|(&lt;=|&gt;=|==|!=|&lt;|&gt;|=|\+=|-=|\+|-|\*|\/|\|)/g;
       block.innerHTML = escapeHtml(block.textContent).replace(pattern, function (token, comment, title, keyword, name, number) {
         if (comment) return '<span class="syn-comment">' + token + "</span>";
         if (title) return '<span class="syn-title">' + token + "</span>";
@@ -1804,6 +1866,7 @@ while i &lt; len(A) and j &lt; len(B):
       var canvas = document.getElementById("code-tree-canvas");
       var label = document.getElementById("code-tree-label");
       var status = document.getElementById("code-tree-status");
+      var output = document.getElementById("code-tree-output");
       var frames = [
         {visible:["I","U","A","O","E"],active:null,bits:false,label:"Start with five leaves: I:3, U:4, A:5, O:6, E:7."},
         {visible:["I","U","IU","A","O","E"],active:"IU",bits:false,label:"Merge I:3 and U:4 to create 7."},
@@ -1823,6 +1886,7 @@ while i &lt; len(A) and j &lt; len(B):
           });
           label.textContent = frame.label;
           status.textContent = "tree step " + (position + 1) + "/" + length;
+          output.classList.toggle("is-visible", Boolean(frame.codes));
         }
       });
     })();
@@ -1862,6 +1926,7 @@ while i &lt; len(A) and j &lt; len(B):
       var queue = document.getElementById(config.queue);
       var label = document.getElementById(config.label);
       var status = document.getElementById(config.status);
+      var output = config.output ? document.getElementById(config.output) : null;
       createPlayer({
         play:config.play,step:config.step,reset:config.reset,speed:config.speed,interval:760,
         frames:function () { return config.frames; },
@@ -1870,6 +1935,7 @@ while i &lt; len(A) and j &lt; len(B):
           drawForest(canvas,frame.roots,frame.active && frame.active[0],frame.bits,frame.codes);
           label.textContent = frame.label;
           status.textContent = "merge " + (position + 1) + "/" + length;
+          if (output) output.classList.toggle("is-visible", Boolean(frame.codes));
         }
       });
     }
@@ -1877,6 +1943,7 @@ while i &lt; len(A) and j &lt; len(B):
     (function initVowelBuilder() {
       initTreeBuilder({
         canvas:"vowel-builder-canvas",queue:"vowel-queue",label:"vowel-builder-label",status:"vowel-builder-status",
+        output:"vowel-builder-output",
         play:"vowel-builder-play",step:"vowel-builder-step",reset:"vowel-builder-reset",speed:"vowel-builder-speed",
         frames:[
           {roots:[vowelLeaves.I,vowelLeaves.U,vowelLeaves.A,vowelLeaves.O,vowelLeaves.E],active:[],bits:false,label:"Initial min-priority queue: I:3, U:4, A:5, O:6, E:7."},
@@ -1902,6 +1969,7 @@ while i &lt; len(A) and j &lt; len(B):
     (function initClassicBuilder() {
       initTreeBuilder({
         canvas:"classic-builder-canvas",queue:"classic-queue",label:"classic-builder-label",status:"classic-builder-status",
+        output:"classic-builder-output",
         play:"classic-builder-play",step:"classic-builder-step",reset:"classic-builder-reset",
         frames:[
           {roots:[classicLeaves.f,classicLeaves.e,classicLeaves.c,classicLeaves.b,classicLeaves.d,classicLeaves.a],active:[],bits:false,label:"Initial queue: f:5, e:9, c:12, b:13, d:16, a:45."},
