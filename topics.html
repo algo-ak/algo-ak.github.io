@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Topics · Design &amp; Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
   <style>
 /* ============================================================
    NMCC509 — Advanced Data Structures & Algorithms
@@ -377,12 +377,12 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   <div class="topics-head">
     <div>
       <h2 class="section-title">Topics</h2>
-      <p class="section-sub" style="margin-bottom:0;">Chapters 1–7 — slide-based explanations, exact diagrams, colored code, and interactive animations.</p>
+      <p class="section-sub" style="margin-bottom:0;">Chapters 1–10 — slide-based explanations, exact programmatic diagrams, colored code, and interactive animations.</p>
     </div>
   </div>
 
   <div class="topics-tools">
-    <input type="search" class="topic-search" id="topic-search" placeholder="Search chapters — e.g. merge sort, recursion, linked lists…" aria-label="Search chapters">
+    <input type="search" class="topic-search" id="topic-search" placeholder="Search chapters — e.g. merge sort, recursion, trees, heaps, greedy…" aria-label="Search chapters">
     <button class="filter-chip on" data-filter="all">All</button>
     <button class="filter-chip" data-filter="live">Published</button>
   </div>
@@ -484,10 +484,53 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
     </a>
 
+    <a class="chapter-card reveal" data-status="live" href="chapter8.html">
+      <span class="chapter-num">Chapter 08</span>
+      <h3>Trees and Binary Search Trees</h3>
+      <p>Tree terminology and representations, binary-tree types and traversals,
+         recursive and iterative depth-first traversal, level-order traversal,
+         reconstruction from traversals, and BST searching and construction.</p>
+      <div class="card-tags">
+        <span class="tag">binary trees</span>
+        <span class="tag">traversals</span>
+        <span class="tag">BFS</span>
+        <span class="tag">BST</span>
+      </div>
+    </a>
+
+    <a class="chapter-card reveal" data-status="live" href="chapter9.html">
+      <span class="chapter-num">Chapter 09</span>
+      <h3>Heap Data Structure and Heap Sort</h3>
+      <p>Complete binary trees and array representation, min-heap and max-heap
+         properties, insertion and deletion, heapify, bottom-up heap construction,
+         heap sort, amortized analysis, and Fibonacci heaps.</p>
+      <div class="card-tags">
+        <span class="tag">heaps</span>
+        <span class="tag">heapify</span>
+        <span class="tag">heap sort</span>
+        <span class="tag">Fibonacci heap</span>
+      </div>
+    </a>
+
+    <a class="chapter-card reveal" data-status="live" href="chapter10.html">
+      <span class="chapter-num">Chapter 10</span>
+      <h3>Greedy Algorithms</h3>
+      <p>Greedy-choice and optimal-substructure principles through fractional
+         knapsack, Huffman coding with priority queues, job sequencing with
+         deadlines, and the optimal merge pattern.</p>
+      <div class="card-tags">
+        <span class="tag">greedy</span>
+        <span class="tag">knapsack</span>
+        <span class="tag">Huffman coding</span>
+        <span class="tag">job sequencing</span>
+        <span class="tag">optimal merge</span>
+      </div>
+    </a>
+
   </div>
 
   <div class="no-match" id="no-match">
-    No chapter matches your search. Try a broader term — e.g. "sort", "recursion", or "queue".
+    No chapter matches your search. Try a broader term — e.g. "sort", "tree", "heap", or "greedy".
   </div>
 
 </main>
