@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chapter 11: Graph data structures, graph representations, BFS, DFS, topological sorting, cycle detection, articulation points, and shortest paths.">
+  <title>Chapter 11 · Graph Data Structure · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --ink: #101c33;
+      --ink-soft: #46536b;
+      --line: #dbe4f0;
+      --grid: #e7edf6;
+      --accent: #0b7285;
+      --accent-dark: #085a68;
+      --accent-soft: #e0f1f4;
+      --amber: #b45309;
+      --amber-soft: #fdf1df;
+      --red: #c2410c;
+      --red-soft: #fff0eb;
+      --green: #0f766e;
+      --green-soft: #d7f4eb;
+      --purple: #6d4cc3;
+      --purple-soft: #eee8ff;
+      --blue: #2563eb;
+      --code-bg: #0f1a2e;
+      --code-text: #dbe7ff;
+      --radius: 11px;
+      --maxw: 1180px;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "IBM Plex Sans", sans-serif;
+      --font-mono: "IBM Plex Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body { min-width: 320px; background: var(--paper); color: var(--ink); font: 18px/1.68 var(--font-body); }
+    h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-dark); }
+    code, pre { font-family: var(--font-mono); }
+    button, select { font: inherit; }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
+
+    .skip-link {
+      position: fixed; top: 8px; left: 8px; z-index: 100;
+      padding: 8px 12px; border-radius: 7px; background: var(--ink); color: #fff;
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: none; }
+
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(8px);
+    }
+    .reading-progress {
+      position: absolute; left: 0; bottom: -1px; width: 0; height: 3px;
+      background: linear-gradient(90deg,var(--accent),#14b8a6);
+      transform-origin: left center;
+    }
+    .nav {
+      max-width: var(--maxw); margin: 0 auto; padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 9px; background: var(--ink); color: #fff;
+      font: 600 13px var(--font-mono);
+    }
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text strong { font: 600 16px var(--font-display); }
+    .brand-text span { color: var(--ink-soft); font-size: 13px; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a {
+      display: block; padding: 8px 14px; border-radius: 8px;
+      color: var(--ink-soft); font-weight: 500; font-size: 16px;
+    }
+    .nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+    .nav-links a.active { background: var(--ink); color: #fff; }
+
+    .chapter-layout {
+      max-width: var(--maxw); margin: 0 auto; padding: 40px 24px 90px;
+      display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 44px;
+    }
+    .toc {
+      position: sticky; top: 86px; align-self: start;
+      max-height: calc(100vh - 108px); overflow-y: auto; padding-right: 6px;
+    }
+    .toc h4 {
+      margin-bottom: 12px; color: var(--ink-soft);
+      font: 600 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+    }
+    .toc ol { border-left: 2px solid var(--line); list-style: none; }
+    .toc a {
+      display: block; margin-left: -2px; padding: 7px 14px;
+      border-left: 2px solid transparent; color: var(--ink-soft);
+      font-size: 14.5px; line-height: 1.4;
+    }
+    .toc a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+
+    .chapter-body { min-width: 0; }
+    .chapter-kicker {
+      color: var(--accent-dark); font: 13px var(--font-mono);
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .chapter-body > h1 {
+      max-width: 820px; margin: 8px 0 10px;
+      font-size: clamp(2rem,3.7vw,2.85rem); letter-spacing: -.025em;
+    }
+    .chapter-intro { max-width: 800px; color: var(--ink-soft); font-size: 1.08rem; }
+    .chapter-section { margin-top: 58px; }
+    .chapter-section > h2 {
+      margin-bottom: 18px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--line); font-size: 1.68rem;
+    }
+    .chapter-section h3 { margin: 28px 0 10px; font-size: 1.25rem; }
+    .chapter-section p { max-width: 79ch; margin-bottom: 14px; }
+    .chapter-section ul, .chapter-section ol { margin: 0 0 16px 23px; }
+    .chapter-section li { max-width: 78ch; margin-bottom: 7px; }
+    .sec-no { margin-right: 10px; color: var(--accent); font: 1.05rem var(--font-mono); }
+
+    .def-box, .note-box, .accuracy-box, .answer-box {
+      margin: 18px 0; padding: 17px 20px; border-radius: var(--radius);
+    }
+    .def-box { border: 1px solid #bfdee5; background: var(--accent-soft); }
+    .note-box { border: 1px solid #f3ddb4; background: var(--amber-soft); }
+    .accuracy-box { border: 1px solid #d6c9f6; background: var(--purple-soft); }
+    .answer-box { border: 1px solid #b8dfd3; background: var(--green-soft); }
+    .box-label {
+      display: block; margin-bottom: 6px;
+      font: 600 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .def-box .box-label { color: var(--accent-dark); }
+    .note-box .box-label { color: var(--amber); }
+    .accuracy-box .box-label { color: var(--purple); }
+    .answer-box .box-label { color: var(--green); }
+    code.inline { padding: 2px 7px; border-radius: 5px; background: #eaeff7; color: #24344f; font-size: .88em; }
+
+    .two-col, .three-col, .four-col {
+      display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 14px; align-items: stretch;
+    }
+    .three-col { grid-template-columns: repeat(3,minmax(0,1fr)); }
+    .four-col { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .card {
+      min-width: 0; padding: 17px; border: 1px solid var(--line);
+      border-radius: var(--radius); background: var(--card);
+    }
+    .card strong { display: block; margin-bottom: 6px; color: var(--accent-dark); font-family: var(--font-display); }
+    .card p { margin: 0; color: var(--ink-soft); font-size: 16px; }
+    .card ul { margin-bottom: 0; }
+    .metric { text-align: center; }
+    .metric b { display: block; color: var(--accent-dark); font: 600 1.3rem var(--font-mono); }
+    .metric span { color: var(--ink-soft); font-size: 14px; }
+
+    .type-demo {
+      margin: 20px 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px;
+    }
+    .type-card { padding: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    .edge-sample { height: 76px; display: flex; align-items: center; justify-content: center; }
+    .sample-node {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border: 2px solid var(--accent); border-radius: 50%; background: var(--accent-soft);
+      font: 600 13px var(--font-mono);
+    }
+    .sample-edge { position: relative; width: 96px; height: 2px; background: #718096; }
+    .sample-edge.directed::after {
+      content: ""; position: absolute; right: -1px; top: -5px;
+      border-left: 9px solid #718096; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+    }
+    .sample-edge.weighted::before {
+      content: "7"; position: absolute; left: 42px; top: -26px;
+      padding: 1px 6px; border-radius: 5px; background: #fff; color: var(--amber); font: 600 12px var(--font-mono);
+    }
+
+    .table-wrap { margin: 18px 0; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #f0f4f9; color: var(--ink); font: 600 14px var(--font-display); }
+    td { font-size: 15px; }
+    tr:last-child td { border-bottom: 0; }
+
+    .code {
+      margin: 16px 0; padding: 18px 20px; overflow-x: auto;
+      border: 1px solid #263652; border-radius: var(--radius);
+      background: var(--code-bg); color: var(--code-text);
+      font: 14px/1.65 var(--font-mono); tab-size: 4;
+    }
+    .code .kw { color: #c792ea; }
+    .code .fn { color: #82aaff; }
+    .code .num { color: #f78c6c; }
+    .code .str { color: #c3e88d; }
+    .code .cm { color: #7f93b5; }
+    .code .name { color: #89ddff; }
+
+    details.code-details, details.qa {
+      margin: 14px 0; border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+    }
+    details summary {
+      padding: 14px 17px; cursor: pointer; list-style: none; font: 600 16px var(--font-display);
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after { content: "+"; float: right; color: var(--accent); font: 600 20px var(--font-mono); }
+    details[open] summary::after { content: "−"; }
+    .details-body { padding: 0 17px 16px; }
+
+    .lab {
+      margin: 22px 0; overflow: hidden;
+      border: 1px solid var(--line); border-radius: 14px; background: #fff;
+    }
+    .lab-head {
+      padding: 17px 19px; display: flex; align-items: center;
+      justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line);
+    }
+    .lab-head h3 { margin: 0; font-size: 1.14rem; }
+    .lab-head p { margin: 3px 0 0; color: var(--ink-soft); font-size: 14px; }
+    .lab-stage {
+      position: relative; min-height: 410px; padding: 16px;
+      background:
+        linear-gradient(var(--grid) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px),
+        #fbfcff;
+      background-size: 28px 28px;
+    }
+    .lab-stage.compact { min-height: 350px; }
+    .lab canvas { display: block; width: 100%; height: 360px; }
+    .lab-stage.compact canvas { height: 300px; }
+    .lab-readout {
+      padding: 15px 18px; display: grid; grid-template-columns: minmax(0,1fr) auto;
+      gap: 14px; align-items: center; border-top: 1px solid var(--line);
+    }
+    .lab-message { min-height: 26px; color: var(--ink-soft); }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .controls button, .controls select, .repr-tabs button {
+      padding: 8px 13px; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; color: var(--ink); cursor: pointer; font-weight: 600; font-size: 14px;
+    }
+    .controls button.primary, .repr-tabs button.active { border-color: var(--ink); background: var(--ink); color: #fff; }
+    .controls button:hover, .repr-tabs button:hover { border-color: var(--accent); }
+    .status { color: var(--accent-dark); font: 12px var(--font-mono); white-space: nowrap; }
+
+    .structure-strip {
+      min-height: 62px; padding: 10px 18px; display: flex; align-items: center; gap: 8px;
+      border-top: 1px solid var(--line); background: #f9fbfe;
+    }
+    .structure-strip strong { margin-right: 6px; font: 600 13px var(--font-display); }
+    .chip {
+      min-width: 34px; height: 34px; padding: 0 8px; display: inline-grid; place-items: center;
+      border: 1px solid #a9cfd4; border-radius: 999px; background: var(--accent-soft);
+      color: var(--accent-dark); font: 600 13px var(--font-mono);
+    }
+    .chip.active { border-color: var(--amber); background: var(--amber-soft); color: var(--amber); }
+    .empty-state { color: #8090a9; font: 13px var(--font-mono); }
+
+    .repr-layout { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(260px,.9fr); }
+    .repr-output { padding: 18px; border-left: 1px solid var(--line); background: #fff; }
+    .repr-tabs { margin-bottom: 12px; display: flex; gap: 8px; }
+    .matrix-grid { display: grid; grid-template-columns: repeat(6,32px); gap: 4px; align-items: center; }
+    .matrix-cell {
+      width: 32px; height: 32px; display: grid; place-items: center;
+      border: 1px solid var(--line); border-radius: 4px; background: #fff; font: 12px var(--font-mono);
+    }
+    .matrix-cell.head { border-color: transparent; background: transparent; color: var(--accent-dark); font-weight: 600; }
+    .matrix-cell.one { border-color: #91cbd1; background: var(--accent-soft); color: var(--accent-dark); font-weight: 600; }
+    .adj-list { display: grid; gap: 7px; }
+    .adj-row { display: flex; align-items: center; gap: 6px; font: 13px var(--font-mono); }
+    .adj-row b { width: 25px; color: var(--accent-dark); }
+
+    .timeline {
+      margin: 18px 0; display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .time-chip {
+      padding: 6px 10px; border: 1px solid #f0d9ac; border-radius: 999px;
+      background: var(--amber-soft); color: var(--amber); font: 12px var(--font-mono);
+    }
+    .result-line {
+      margin: 14px 0; padding: 12px 14px; border-left: 4px solid var(--accent);
+      background: #fff; font-family: var(--font-mono); overflow-x: auto;
+    }
+    .valid { color: var(--green); font-weight: 600; }
+    .invalid { color: var(--red); font-weight: 600; }
+    .quiz-options {
+      padding: 15px 18px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 9px; border-top: 1px solid var(--line); background: #f9fbfe;
+    }
+    .quiz-option {
+      padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; color: var(--ink); text-align: left; cursor: pointer;
+      font: 500 13px/1.45 var(--font-mono);
+    }
+    .quiz-option:hover { border-color: var(--accent); background: var(--accent-soft); }
+    .quiz-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(11,114,133,.12); }
+    .quiz-option.correct { border-color: var(--green); background: var(--green-soft); color: #075b54; }
+    .quiz-option.incorrect { border-color: var(--red); background: var(--red-soft); color: #9a3412; }
+    .diagram-caption {
+      padding: 10px 16px; border-top: 1px solid var(--line);
+      background: #fff; color: var(--ink-soft); font-size: 14px; text-align: center;
+    }
+
+    .chapter-nav {
+      margin-top: 64px; padding-top: 22px; display: flex; justify-content: space-between;
+      gap: 14px; flex-wrap: wrap; border-top: 1px solid var(--line);
+    }
+    .chapter-nav a, .chapter-nav span { font: 600 16px var(--font-display); }
+    .chapter-nav span { color: #9aa7bd; }
+    .site-footer { border-top: 1px solid var(--line); background: #fff; }
+    .footer-inner {
+      max-width: var(--maxw); margin: 0 auto; padding: 25px 24px;
+      display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+      color: var(--ink-soft); font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .chapter-layout { grid-template-columns: 1fr; gap: 12px; }
+      .toc { position: static; max-height: none; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+      .toc ol { columns: 2; }
+      .repr-layout { grid-template-columns: 1fr; }
+      .repr-output { border-left: 0; border-top: 1px solid var(--line); }
+      .four-col { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 760px) {
+      html { scroll-padding-top: 132px; }
+      .nav { min-height: 112px; flex-direction: column; justify-content: center; gap: 8px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
+      .nav-links a { padding: 6px 10px; font-size: 14px; }
+      .brand-text span { display: none; }
+      .chapter-layout { padding: 28px 16px 68px; }
+      .toc ol { columns: 1; }
+      .two-col, .three-col, .type-demo { grid-template-columns: 1fr; }
+      .lab-head, .lab-readout { grid-template-columns: 1fr; display: grid; }
+      .controls { justify-content: flex-start; }
+      .lab-stage { min-height: 330px; padding: 8px; }
+      .lab canvas { height: 300px; }
+      .lab-stage.compact canvas { height: 270px; }
+      .matrix-grid { grid-template-columns: repeat(6,29px); gap: 3px; }
+      .matrix-cell { width: 29px; height: 29px; }
+      .quiz-options { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .four-col { grid-template-columns: 1fr; }
+      .lab canvas { height: 270px; }
+      .structure-strip { overflow-x: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="https://algo-ak.github.io/index.html">
+        <span class="brand-mark">O(n)</span>
+        <span class="brand-text">
+          <strong>Design &amp; Analysis of Algorithms</strong>
+        </span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="https://algo-ak.github.io/index.html">Home</a></li>
+        <li><a class="active" href="https://algo-ak.github.io/topics.html" aria-current="page">Topics</a></li>
+        <li><a href="https://algo-ak.github.io/practical.html">Practical</a></li>
+        <li><a href="https://algo-ak.github.io/tutorials.html">Tutorials</a></li>
+      </ul>
+    </nav>
+    <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+  </header>
+
+  <div class="chapter-layout" id="main-content">
+    <aside class="toc" aria-label="Chapter contents">
+      <h4>Chapter 11</h4>
+      <ol>
+        <li><a href="#sec-1">Graph foundations</a></li>
+        <li><a href="#sec-2">Graph representations</a></li>
+        <li><a href="#sec-3">Why graphs &amp; traversal</a></li>
+        <li><a href="#sec-4">Breadth-first search</a></li>
+        <li><a href="#sec-5">Depth-first search</a></li>
+        <li><a href="#sec-6">Topological sort &amp; cycles</a></li>
+        <li><a href="#sec-7">Articulation points</a></li>
+        <li><a href="#sec-8">Questions &amp; shortest paths</a></li>
+      </ol>
+    </aside>
+
+    <main class="chapter-body">
+      <span class="chapter-kicker">Chapter 11</span>
+      <h1>Graph Data Structure</h1>
+      <p class="chapter-intro">
+        Graphs model connections that are not restricted to a hierarchy. This chapter develops
+        graph terminology and representations, then traces BFS, DFS, topological sorting,
+        cycle detection, articulation points, and shortest-path reasoning.
+      </p>
+
+      <section class="chapter-section" id="sec-1">
+        <h2><span class="sec-no">11.1</span>Graph foundations</h2>
+
+        <div class="def-box">
+          <span class="box-label">Definition</span>
+          A graph <strong>G = (V, E)</strong> consists of a set <strong>V</strong> of vertices
+          (nodes) and a set <strong>E</strong> of edges (links) that connect pairs of vertices.
+        </div>
+
+        <h3>Where graphs appear</h3>
+        <div class="two-col">
+          <div class="card"><strong>Web</strong><p>Webpages are vertices; hyperlinks are edges.</p></div>
+          <div class="card"><strong>Road network</strong><p>Cities are vertices; roads are edges.</p></div>
+          <div class="card"><strong>Social network</strong><p>People are vertices; friendships are edges.</p></div>
+          <div class="card"><strong>ER diagram</strong><p>Entities are vertices; relationships are edges.</p></div>
+        </div>
+
+        <h3>Directed, undirected, weighted, and unweighted</h3>
+        <div class="type-demo">
+          <article class="type-card">
+            <strong>Directed — like a one-way road</strong>
+            <div class="edge-sample" aria-hidden="true">
+              <span class="sample-node">A</span><span class="sample-edge directed"></span><span class="sample-node">B</span>
+            </div>
+            <p>A is the source and B is the destination. B is adjacent from A, but A is not adjacent from B through this edge.</p>
+          </article>
+          <article class="type-card">
+            <strong>Undirected — like a two-way rail link</strong>
+            <div class="edge-sample" aria-hidden="true">
+              <span class="sample-node">A</span><span class="sample-edge"></span><span class="sample-node">B</span>
+            </div>
+            <p>A and B are adjacent to each other.</p>
+          </article>
+          <article class="type-card">
+            <strong>Weighted</strong>
+            <div class="edge-sample" aria-hidden="true">
+              <span class="sample-node">A</span><span class="sample-edge directed weighted"></span><span class="sample-node">B</span>
+            </div>
+            <p>Each edge carries a cost, distance, time, or another numerical weight.</p>
+          </article>
+          <article class="type-card">
+            <strong>Unweighted</strong>
+            <div class="edge-sample" aria-hidden="true">
+              <span class="sample-node">A</span><span class="sample-edge"></span><span class="sample-node">B</span>
+            </div>
+            <p>Every edge is treated equally; path length is measured by the number of edges.</p>
+          </article>
+        </div>
+
+        <h3>Sparse and dense graphs</h3>
+        <div class="two-col">
+          <div class="card"><strong>Sparse graph</strong><p>Has relatively few edges, commonly <em>E = O(V)</em>.</p></div>
+          <div class="card"><strong>Dense graph</strong><p>Has close to the maximum possible number of edges, so <em>E = Θ(V²)</em>.</p></div>
+        </div>
+        <div class="accuracy-box">
+          <span class="box-label">Maximum edges in a simple graph</span>
+          An undirected simple graph has at most <strong>V(V − 1)/2</strong> edges; a directed
+          simple graph without self-loops has at most <strong>V(V − 1)</strong>. Both are Θ(V²).
+        </div>
+
+        <h3>Degree of a vertex</h3>
+        <ul>
+          <li>In an <strong>undirected graph</strong>, <code class="inline">deg(v)</code> is the number of incident edges.</li>
+          <li>In a <strong>directed graph</strong>, in-degree counts incoming edges and out-degree counts outgoing edges.</li>
+          <li>Total directed degree is in-degree plus out-degree.</li>
+        </ul>
+
+        <h3>Self-loop, path, and cycle</h3>
+        <div class="three-col">
+          <div class="card"><strong>Self-loop</strong><p>An edge that connects a vertex to itself.</p></div>
+          <div class="card"><strong>Path</strong><p>A sequence of adjacent vertices with no repeated vertex, such as G → C → B → A → D → E.</p></div>
+          <div class="card"><strong>Cycle</strong><p>A closed path: the start is repeated at the end, but no other vertex is repeated.</p></div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Terminology</span>
+          A sequence that may repeat vertices is a <strong>walk</strong>. A path does not repeat vertices.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-2">
+        <h2><span class="sec-no">11.2</span>Graph representations</h2>
+        <p>
+          A representation must preserve vertex relationships in memory. The two standard
+          choices are an <strong>adjacency matrix</strong> and an <strong>adjacency list</strong>.
+        </p>
+
+        <div class="def-box">
+          <span class="box-label">Adjacency matrix</span>
+          A <strong>|V| × |V|</strong> matrix A uses A[i][j] = 1 when an unweighted edge i → j
+          exists, A[i][j] = w for a weighted edge, and A[i][j] = 0 otherwise. If zero is a
+          valid edge weight, use a distinct marker such as <code class="inline">None</code> or ∞
+          for “no edge.”
+        </div>
+
+        <div class="lab" id="representation-lab">
+          <div class="lab-head">
+            <div>
+              <h3>Build both representations edge by edge</h3>
+              <p>Graph: 0→1, 0→4, 1→2, 1→3, 1→4, 2→3, 3→4.</p>
+            </div>
+            <span class="status" id="repr-status">edge 0/7</span>
+          </div>
+          <div class="repr-layout">
+            <div class="lab-stage compact">
+              <canvas id="repr-canvas" role="img" aria-label="Directed five-vertex graph"></canvas>
+            </div>
+            <div class="repr-output">
+              <div class="repr-tabs" role="tablist" aria-label="Representation">
+                <button class="active" id="repr-matrix-tab" type="button" role="tab"
+                  aria-selected="true" aria-controls="repr-matrix">Matrix</button>
+                <button id="repr-list-tab" type="button" role="tab"
+                  aria-selected="false" aria-controls="repr-list">List</button>
+              </div>
+              <div id="repr-matrix" role="tabpanel" aria-labelledby="repr-matrix-tab" aria-live="polite"></div>
+              <div id="repr-list" class="adj-list" role="tabpanel" aria-labelledby="repr-list-tab"
+                hidden aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="lab-readout">
+            <div class="lab-message" id="repr-message">Start with five vertices and no edges.</div>
+            <div class="controls">
+              <button class="primary" id="repr-next" type="button">Add next edge</button>
+              <button id="repr-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <details class="code-details" open>
+          <summary>Python: adjacency matrix</summary>
+          <div class="details-body">
+<pre class="code"><code><span class="kw">class</span> <span class="name">GraphMatrix</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vertices):
+        self.vertices = vertices
+        self.adj = [[<span class="num">0</span>] * vertices <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(vertices)]
+
+    <span class="kw">def</span> <span class="fn">add_edge</span>(self, u, v):
+        self.adj[u][v] = <span class="num">1</span>
+
+    <span class="kw">def</span> <span class="fn">display</span>(self):
+        <span class="kw">for</span> row <span class="kw">in</span> self.adj:
+            <span class="fn">print</span>(row)
+
+g = GraphMatrix(<span class="num">5</span>)
+<span class="kw">for</span> u, v <span class="kw">in</span> [(<span class="num">0</span>,<span class="num">1</span>), (<span class="num">0</span>,<span class="num">4</span>), (<span class="num">1</span>,<span class="num">2</span>), (<span class="num">1</span>,<span class="num">3</span>),
+             (<span class="num">1</span>,<span class="num">4</span>), (<span class="num">2</span>,<span class="num">3</span>), (<span class="num">3</span>,<span class="num">4</span>)]:
+    g.add_edge(u, v)
+g.display()</code></pre>
+          </div>
+        </details>
+
+        <details class="code-details">
+          <summary>Python: adjacency list</summary>
+          <div class="details-body">
+<pre class="code"><code><span class="kw">class</span> <span class="name">GraphList</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vertices):
+        self.vertices = vertices
+        self.adj = {i: [] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(vertices)}
+
+    <span class="kw">def</span> <span class="fn">add_edge</span>(self, u, v):
+        self.adj[u].append(v)
+
+    <span class="kw">def</span> <span class="fn">display</span>(self):
+        <span class="kw">for</span> vertex, neighbors <span class="kw">in</span> self.adj.items():
+            <span class="fn">print</span>(vertex, <span class="str">":"</span>, neighbors)</code></pre>
+          </div>
+        </details>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Representation</th><th>Space</th><th>Edge lookup</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td>Adjacency matrix</td><td>O(V²)</td><td>O(1)</td><td>Dense graphs</td></tr>
+              <tr><td>Adjacency list</td><td>O(V + E)</td><td>O(deg(u)); O(V) worst case</td><td>Sparse graphs</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Adjacency-list size</span>
+          A directed graph stores one list entry per edge: <strong>E</strong>. An undirected graph
+          stores each edge at both endpoints: <strong>2E</strong>, which is asymptotically O(E).
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-3">
+        <h2><span class="sec-no">11.3</span>Why graphs and how traversal works</h2>
+        <div class="two-col">
+          <div class="card"><strong>Cycles</strong><p>Unlike trees, graphs can represent cyclic road and computer networks.</p></div>
+          <div class="card"><strong>Multiple paths</strong><p>Graphs can offer several routes between two vertices, enabling shortest-path problems.</p></div>
+          <div class="card"><strong>Bidirectional relations</strong><p>Mutual friendships do not fit a strict parent–child hierarchy.</p></div>
+          <div class="card"><strong>Many-to-many relations</strong><p>Course prerequisites and other networks may have multiple parents and connections.</p></div>
+        </div>
+
+        <div class="def-box">
+          <span class="box-label">Graph traversal</span>
+          The systematic process of visiting graph vertices. The two principal methods are
+          <strong>breadth-first search (BFS)</strong> and <strong>depth-first search (DFS)</strong>.
+        </div>
+        <ul>
+          <li><strong>Visited (discovered):</strong> the vertex has been seen.</li>
+          <li><strong>Explored:</strong> all adjacent vertices of that vertex have been considered.</li>
+        </ul>
+        <p>
+          Applications include pathfinding, web crawling, social-network analysis, and network routing.
+        </p>
+      </section>
+
+      <section class="chapter-section" id="sec-4">
+        <h2><span class="sec-no">11.4</span>Breadth-first search (BFS)</h2>
+        <ol>
+          <li>Enqueue the starting vertex and mark it visited.</li>
+          <li>Dequeue a vertex, process it, then enqueue and mark each unvisited neighbor.</li>
+          <li>Repeat until the queue is empty.</li>
+        </ol>
+
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>Exact BFS sequence from the slides</h3><p>Start at 0; neighbors are considered left to right.</p></div>
+            <span class="status" id="bfs-status">step 1</span>
+          </div>
+          <div class="lab-stage"><canvas id="bfs-canvas" role="img" aria-label="Animated breadth-first traversal"></canvas></div>
+          <div class="structure-strip" id="bfs-structure" aria-live="polite"></div>
+          <div class="lab-readout">
+            <div class="lab-message" id="bfs-message">Enqueue 0 and mark it visited.</div>
+            <div class="controls">
+              <button class="primary" id="bfs-play" type="button">Play</button>
+              <button id="bfs-step" type="button">Step</button>
+              <button id="bfs-reset" type="button">Reset</button>
+              <select id="bfs-speed" aria-label="BFS animation speed"><option value="850">Normal</option><option value="1250">Slow</option><option value="500">Fast</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="result-line">BFS sequence: 0, 1, 2, 3, 4, 5, 6</div>
+
+<pre class="code"><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
+    visited = {start}
+    queue = deque([start])
+    order = []
+
+    <span class="kw">while</span> queue:
+        u = queue.popleft()
+        order.append(u)
+        <span class="kw">for</span> v <span class="kw">in</span> graph[u]:
+            <span class="kw">if</span> v <span class="kw">not in</span> visited:
+                visited.add(v)
+                queue.append(v)
+    <span class="kw">return</span> order</code></pre>
+
+        <h3>Analysis</h3>
+        <div class="four-col">
+          <div class="card metric"><b>O(V)</b><span>visited array</span></div>
+          <div class="card metric"><b>O(V)</b><span>queue, worst case</span></div>
+          <div class="card metric"><b>O(V + E)</b><span>adjacency list time</span></div>
+          <div class="card metric"><b>O(V²)</b><span>adjacency matrix time</span></div>
+        </div>
+        <p>
+          Initializing visited takes O(V). Across the traversal, adjacency-list scanning examines
+          all vertices and edges once, giving O(V + E).
+        </p>
+        <div class="answer-box">
+          <span class="box-label">Applications from the slides</span>
+          BFS can find mutual-friend candidates by exploring nearby social-network levels. In an
+          unweighted graph, it also finds the minimum number of edges from the source to every reachable vertex.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-5">
+        <h2><span class="sec-no">11.5</span>Depth-first search (DFS)</h2>
+        <ol>
+          <li>Start at a vertex and mark it visited.</li>
+          <li>Recursively visit an unvisited neighbor.</li>
+          <li>Backtrack when no unvisited neighbor remains.</li>
+        </ol>
+
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>Exact DFS sequence from the slides</h3><p>The active recursion stack is shown below the graph.</p></div>
+            <span class="status" id="dfs-status">step 1</span>
+          </div>
+          <div class="lab-stage"><canvas id="dfs-canvas" role="img" aria-label="Animated depth-first traversal"></canvas></div>
+          <div class="structure-strip" id="dfs-structure" aria-live="polite"></div>
+          <div class="lab-readout">
+            <div class="lab-message" id="dfs-message">Visit 0 and push it on the recursion stack.</div>
+            <div class="controls">
+              <button class="primary" id="dfs-play" type="button">Play</button>
+              <button id="dfs-step" type="button">Step</button>
+              <button id="dfs-reset" type="button">Reset</button>
+              <select id="dfs-speed" aria-label="DFS animation speed"><option value="850">Normal</option><option value="1250">Slow</option><option value="500">Fast</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="result-line">DFS sequence: 0, 1, 4, 6, 2, 5, 3</div>
+
+<pre class="code"><code><span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=<span class="kw">None</span>, order=<span class="kw">None</span>):
+    <span class="kw">if</span> visited <span class="kw">is None</span>:
+        visited = <span class="fn">set</span>()
+    <span class="kw">if</span> order <span class="kw">is None</span>:
+        order = []
+    visited.add(node)
+    order.append(node)
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            dfs(graph, neighbor, visited, order)
+    <span class="kw">return</span> order</code></pre>
+
+        <h3>Analysis and comparison</h3>
+        <p>
+          DFS uses O(V) space for visited plus up to O(V) recursive calls or explicit stack entries.
+          Its time is O(V + E) with adjacency lists and O(V²) with an adjacency matrix.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Feature</th><th>BFS</th><th>DFS</th></tr></thead>
+            <tbody>
+              <tr><td>Approach</td><td>Level by level</td><td>Deep first, then backtrack</td></tr>
+              <tr><td>Data structure</td><td>Queue (FIFO)</td><td>Stack (LIFO) or recursion</td></tr>
+              <tr><td>Time with lists</td><td>O(V + E)</td><td>O(V + E)</td></tr>
+              <tr><td>Auxiliary space</td><td>O(V)</td><td>O(V)</td></tr>
+              <tr><td>Typical use</td><td>Unweighted shortest path</td><td>Maze solving, cycle detection</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-6">
+        <h2><span class="sec-no">11.6</span>Topological sort and cycle detection</h2>
+        <div class="def-box">
+          <span class="box-label">Topological ordering</span>
+          For every directed edge (u, v), u appears before v. A topological ordering exists only
+          for a <strong>directed acyclic graph (DAG)</strong>.
+        </div>
+        <p>
+          In a DFS implementation, insert each vertex at the front of the result when it finishes
+          (equivalently, push it to a stack and reverse the finish stack).
+        </p>
+
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>DFS finish times → topological order</h3><p>Watch vertices enter the finish stack, then leave in reverse order.</p></div>
+            <span class="status" id="topo-status">step 1</span>
+          </div>
+          <div class="lab-stage"><canvas id="topo-canvas" role="img" aria-label="Animated topological sorting"></canvas></div>
+          <div class="structure-strip" id="topo-structure" aria-live="polite"></div>
+          <div class="lab-readout">
+            <div class="lab-message" id="topo-message">Start DFS at vertex 0.</div>
+            <div class="controls">
+              <button class="primary" id="topo-play" type="button">Play</button>
+              <button id="topo-step" type="button">Step</button>
+              <button id="topo-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+        <div class="result-line">One valid order: 0, 3, 2, 5, 1, 4, 6</div>
+
+        <h3>Clothing example and DFS times</h3>
+        <p>
+          Constraints include undershorts → pants, undershorts → shoes, pants → belt,
+          pants → shoes, socks → shoes, shirt → belt, shirt → tie, belt → jacket,
+          and tie → jacket. The watch is independent.
+        </p>
+        <div class="timeline" aria-label="Discovery and finish times">
+          <span class="time-chip">shirt 1/8</span><span class="time-chip">tie 2/5</span>
+          <span class="time-chip">jacket 3/4</span><span class="time-chip">belt 6/7</span>
+          <span class="time-chip">watch 9/10</span><span class="time-chip">undershorts 11/16</span>
+          <span class="time-chip">pants 12/15</span><span class="time-chip">shoes 13/14</span>
+          <span class="time-chip">socks 17/18</span>
+        </div>
+        <p><strong>1/8</strong> means discovery time 1 and finish time 8.</p>
+        <div class="result-line">socks, undershorts, pants, shoes, watch, shirt, belt, tie, jacket</div>
+
+        <h3>Cycle detection using DFS</h3>
+        <p>
+          Keep a recursion-stack state in addition to visited. An edge to a vertex that is already
+          visited <em>and still in the current stack</em> is a back edge, so the directed graph contains a cycle.
+        </p>
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>Directed cycle trace</h3><p>The red back edge closes 1 → 4 → 6 → 5 → 2 → 1.</p></div>
+            <span class="status" id="cycle-status">ready</span>
+          </div>
+          <div class="lab-stage compact"><canvas id="cycle-canvas" role="img" aria-label="Directed graph cycle detection"></canvas></div>
+          <div class="lab-readout">
+            <div class="lab-message" id="cycle-message">Trace the active DFS path.</div>
+            <div class="controls">
+              <button class="primary" id="cycle-play" type="button">Trace cycle</button>
+              <button id="cycle-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <details class="qa">
+          <summary>Homework: detect a cycle in an undirected graph</summary>
+          <div class="details-body">
+            <p>
+              Run DFS with a parent parameter. If an adjacent vertex is unvisited, recurse. If it
+              is already visited and is not the current vertex’s parent, a cycle exists.
+            </p>
+<pre class="code"><code><span class="kw">def</span> <span class="fn">has_cycle</span>(graph):
+    visited = <span class="fn">set</span>()
+    <span class="kw">def</span> <span class="fn">visit</span>(u, parent):
+        visited.add(u)
+        <span class="kw">for</span> v <span class="kw">in</span> graph[u]:
+            <span class="kw">if</span> v <span class="kw">not in</span> visited:
+                <span class="kw">if</span> visit(v, u): <span class="kw">return True</span>
+            <span class="kw">elif</span> v != parent:
+                <span class="kw">return True</span>
+        <span class="kw">return False</span>
+    <span class="kw">return any</span>(visit(u, <span class="kw">None</span>) <span class="kw">for</span> u <span class="kw">in</span> graph <span class="kw">if</span> u <span class="kw">not in</span> visited)</code></pre>
+          </div>
+        </details>
+      </section>
+
+      <section class="chapter-section" id="sec-7">
+        <h2><span class="sec-no">11.7</span>Articulation points (cut vertices)</h2>
+        <div class="def-box">
+          <span class="box-label">Definition</span>
+          An articulation point is a vertex whose removal increases the number of connected components.
+        </div>
+        <p>
+          Let <code class="inline">disc[u]</code> be u’s discovery time and
+          <code class="inline">low[u]</code> the smallest discovery time reachable from u’s DFS
+          subtree using tree edges and at most one back edge.
+        </p>
+        <div class="accuracy-box">
+          <span class="box-label">DFS rule</span>
+          A non-root vertex u is an articulation point if it has a child v with
+          <strong>low[v] ≥ disc[u]</strong>. The DFS root is an articulation point only if it has
+          more than one DFS-tree child.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Vertex</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead>
+            <tbody>
+              <tr><td>Discovery time</td><td>1</td><td>6</td><td>3</td><td>2</td><td>4</td><td>5</td></tr>
+              <tr><td>Low value</td><td>1</td><td>1</td><td>1</td><td>1</td><td>3</td><td>3</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>Remove a vertex and count components</h3><p>The slide graph has edges 1–4, 1–2, 4–3, 2–3, 3–5, 3–6, and 5–6.</p></div>
+            <span class="status" id="cut-status">connected</span>
+          </div>
+          <div class="lab-stage compact"><canvas id="cut-canvas" role="img" aria-label="Interactive articulation-point graph"></canvas></div>
+          <div class="lab-readout">
+            <div class="lab-message" id="cut-message">Choose a vertex to remove.</div>
+            <div class="controls">
+              <select id="cut-select" aria-label="Vertex to remove">
+                <option value="">No removal</option><option>1</option><option>2</option><option>3</option>
+                <option>4</option><option>5</option><option>6</option>
+              </select>
+              <button class="primary" id="cut-test" type="button">Test removal</button>
+              <button id="cut-reset" type="button">Reset</button>
+            </div>
+          </div>
+        </div>
+        <div class="answer-box">
+          <span class="box-label">Result for the slide graph</span>
+          Vertex <strong>3</strong> is an articulation point. Removing it separates {5,6} from {1,2,4}.
+        </div>
+
+        <h3>Second slide example</h3>
+        <p>
+          For the graph with edges G–C, C–B, C–D, B–A, A–D, D–F, F–E, and D–E,
+          starting DFS at A gives discovery/low labels A 1/1, B 2/1, C 3/1,
+          D 4/1, E 5/4, F 6/4, and G 7/7.
+        </p>
+        <div class="lab">
+          <div class="lab-head">
+            <div><h3>Exact second articulation graph</h3><p>The highlighted vertices separate the two leaf-side regions.</p></div>
+            <span class="status">start at A</span>
+          </div>
+          <div class="lab-stage compact">
+            <canvas id="cut-example-canvas" role="img" aria-label="Graph with articulation points C and D"></canvas>
+          </div>
+          <div class="diagram-caption">DFS labels: A 1/1 · B 2/1 · C 3/1 · D 4/1 · E 5/4 · F 6/4 · G 7/7</div>
+        </div>
+        <div class="answer-box">
+          <span class="box-label">Answer</span>
+          The articulation points are <strong>C</strong> and <strong>D</strong>.
+        </div>
+        <div class="note-box">
+          <span class="box-label">Maximum possible</span>
+          For <strong>n ≥ 2</strong>, a connected graph of order n can contain at most
+          <strong>n − 2</strong> cut vertices, attained by a path graph.
+        </div>
+      </section>
+
+      <section class="chapter-section" id="sec-8">
+        <h2><span class="sec-no">11.8</span>Questions, applications, and shortest paths</h2>
+
+        <details class="qa" open>
+          <summary>Which DFS(a) sequences are valid?</summary>
+          <div class="details-body">
+            <p>Select a sequence. The exact graph from the slide will trace the proposed DFS path.</p>
+            <div class="lab">
+              <div class="lab-head">
+                <div><h3>DFS sequence check</h3><p>Start at a; adjacency-list order may vary.</p></div>
+                <span class="status" id="dfs-quiz-status">choose an option</span>
+              </div>
+              <div class="lab-stage compact">
+                <canvas id="dfs-quiz-canvas" role="img" aria-label="Six-vertex graph for checking DFS sequences"></canvas>
+              </div>
+              <div class="structure-strip" id="dfs-quiz-structure" aria-live="polite"></div>
+              <div class="quiz-options" id="dfs-quiz-options">
+                <button class="quiz-option" id="dfs-quiz-1" type="button" aria-pressed="false" data-sequence="a,b,e,g,h,f" data-valid="true">1 · a, b, e, g, h, f</button>
+                <button class="quiz-option" id="dfs-quiz-2" type="button" aria-pressed="false" data-sequence="a,b,f,e,h,g" data-valid="false">2 · a, b, f, e, h, g</button>
+                <button class="quiz-option" id="dfs-quiz-3" type="button" aria-pressed="false" data-sequence="a,b,f,h,g,e" data-valid="true">3 · a, b, f, h, g, e</button>
+                <button class="quiz-option" id="dfs-quiz-4" type="button" aria-pressed="false" data-sequence="a,f,g,h,b,e" data-valid="true">4 · a, f, g, h, b, e</button>
+              </div>
+              <div class="lab-readout">
+                <div class="lab-message" id="dfs-quiz-message">Choose one of the four proposed orders.</div>
+                <div class="controls">
+                  <button id="dfs-quiz-reset" type="button">Reset</button>
+                </div>
+              </div>
+            </div>
+            <p>
+              Valid sequences are <strong>1, 3, and 4</strong>. Sequence 2 fails after
+              a → b → f: vertex f still has unvisited neighbors h and g, so DFS cannot
+              backtrack and visit e next.
+            </p>
+          </div>
+        </details>
+
+        <details class="qa" open>
+          <summary>What can be the maximum DFS stack length?</summary>
+          <div class="details-body">
+            <p>Follow the exact numbered path from the slide and watch the recursion stack grow.</p>
+            <div class="lab">
+              <div class="lab-head">
+                <div><h3>Maximum-depth DFS path</h3><p>The two unnumbered vertices are not on this active recursion path.</p></div>
+                <span class="status" id="stack-status">depth 1/19</span>
+              </div>
+              <div class="lab-stage compact">
+                <canvas id="stack-canvas" role="img" aria-label="Graph showing a DFS recursion path of length nineteen"></canvas>
+              </div>
+              <div class="structure-strip" id="stack-structure" aria-live="polite"></div>
+              <div class="lab-readout">
+                <div class="lab-message" id="stack-message">Visit vertex 1; stack depth is 1.</div>
+                <div class="controls">
+                  <button class="primary" id="stack-play" type="button">Play</button>
+                  <button id="stack-step" type="button">Step</button>
+                  <button id="stack-reset" type="button">Reset</button>
+                </div>
+              </div>
+            </div>
+            <div class="answer-box">
+              <span class="box-label">Answer</span>
+              A DFS recursion stack can contain up to <strong>V</strong> vertices in the
+              worst case. For this slide graph, the shown active path reaches
+              <strong>19 vertices</strong>.
+            </div>
+          </div>
+        </details>
+
+        <details class="qa">
+          <summary>Best representation for testing whether a vertex is isolated in an undirected graph</summary>
+          <div class="details-body">
+            <p>
+              An adjacency list is convenient: the vertex is isolated exactly when its list is empty.
+              With an adjacency matrix, its complete row must be checked. In a directed graph,
+              isolation additionally requires both in-degree and out-degree to be zero.
+            </p>
+          </div>
+        </details>
+
+        <details class="qa">
+          <summary>Count connected components of an undirected graph using DFS</summary>
+          <div class="details-body">
+            <p>
+              Scan all vertices. Whenever an unvisited vertex is found, start DFS and increment the
+              component count. Complexity is <strong>O(V + E)</strong> with adjacency lists and
+              <strong>O(V²)</strong> with an adjacency matrix. Directed graphs require a chosen
+              notion of connectivity, such as weak or strong connectivity.
+            </p>
+          </div>
+        </details>
+
+        <details class="qa">
+          <summary>Detect strongly connected components using DFS</summary>
+          <div class="details-body">
+            <p>
+              Kosaraju’s algorithm runs DFS to record finish order, transposes every directed edge,
+              then runs DFS on the transpose in decreasing finish order. Each DFS tree in the second
+              pass is one strongly connected component. Time: <strong>O(V + E)</strong>.
+            </p>
+          </div>
+        </details>
+
+        <h3>Shortest paths: weighted versus unweighted graphs</h3>
+        <div class="two-col">
+          <div class="card">
+            <strong>Unweighted graph</strong>
+            <p>BFS explores level by level. The first arrival uses the fewest edges, so BFS gives shortest paths.</p>
+          </div>
+          <div class="card">
+            <strong>Weighted graph</strong>
+            <p>BFS minimizes edge count, not total weight. Use Dijkstra’s algorithm when all edge weights are non-negative.</p>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="box-label">Slide counterexample</span>
+          In the weighted graph, S→M→D costs 7+2=9 while S→N→D costs 5+1=6.
+          BFS may discover M first and cannot guarantee the minimum-weight route.
+        </div>
+        <div class="accuracy-box">
+          <span class="box-label">Why not DFS?</span>
+          DFS follows one path deeply and may take a long detour before reaching the target. It does
+          not guarantee shortest paths in general graphs.
+        </div>
+
+        <nav class="chapter-nav" aria-label="Chapter navigation">
+          <a href="chapter10.html">← Chapter 10</a>
+          <span>End of current material</span>
+        </nav>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Chapter 11 · Graph Data Structure</span>
+      <a href="topics.html">Back to all topics</a>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var COLORS = {
+      ink: "#101c33", soft: "#46536b", line: "#c7d2e2", teal: "#0b7285",
+      tealSoft: "#e0f1f4", amber: "#b45309", amberSoft: "#fdf1df",
+      red: "#c2410c", redSoft: "#fff0eb", green: "#0f766e",
+      purple: "#6d4cc3", white: "#ffffff", pale: "#f7f9fc"
+    };
+    var NODE_COLORS = {
+      "0": "#d9a3b9", "1": "#6ca9dc", "2": "#ffad42", "3": "#6eae4f",
+      "4": "#8d77c3", "5": "#e4ada4", "6": "#ffe08a"
+    };
+    var graphNodes = {
+      "0": [.50,.12], "1": [.23,.43], "2": [.50,.43], "3": [.77,.43],
+      "4": [.34,.72], "5": [.66,.72], "6": [.50,.94]
+    };
+    var graphEdges = [["0","1"],["0","2"],["0","3"],["1","4"],["2","4"],["2","5"],["3","5"],["4","6"],["5","6"]];
+    var adjacency = {
+      "0": ["1","2","3"], "1": ["4"], "2": ["4","5"], "3": ["5"],
+      "4": ["6"], "5": ["6"], "6": []
+    };
+    var redraws = [];
+
+    function prepareCanvas(canvas) {
+      var width = Math.max(280, canvas.clientWidth || 700);
+      var height = Math.max(240, canvas.clientHeight || 360);
+      var ratio = Math.min(window.devicePixelRatio || 1, 2.5);
+      var pixelWidth = Math.round(width * ratio);
+      var pixelHeight = Math.round(height * ratio);
+      if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+        canvas.width = pixelWidth;
+        canvas.height = pixelHeight;
+      }
+      var context = canvas.getContext("2d");
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return {context: context, width: width, height: height};
+    }
+
+    function roundRect(context, x, y, width, height, radius, fill, stroke, lineWidth) {
+      var r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+      if (fill) { context.fillStyle = fill; context.fill(); }
+      if (stroke) { context.strokeStyle = stroke; context.lineWidth = lineWidth || 1; context.stroke(); }
+    }
+
+    function edgeKey(a, b) { return String(a) + ">" + String(b); }
+
+    function drawEdge(context, from, to, directed, color, width, radius) {
+      var dx = to.x - from.x;
+      var dy = to.y - from.y;
+      var length = Math.hypot(dx, dy) || 1;
+      var ux = dx / length;
+      var uy = dy / length;
+      var startX = from.x + ux * radius;
+      var startY = from.y + uy * radius;
+      var endX = to.x - ux * radius;
+      var endY = to.y - uy * radius;
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(endX, endY);
+      context.strokeStyle = color;
+      context.lineWidth = width;
+      context.stroke();
+      if (directed) {
+        var angle = Math.atan2(dy, dx);
+        context.beginPath();
+        context.moveTo(endX, endY);
+        context.lineTo(endX - 9 * Math.cos(angle - Math.PI / 6), endY - 9 * Math.sin(angle - Math.PI / 6));
+        context.lineTo(endX - 9 * Math.cos(angle + Math.PI / 6), endY - 9 * Math.sin(angle + Math.PI / 6));
+        context.closePath();
+        context.fillStyle = color;
+        context.fill();
+      }
+    }
+
+    function drawGraph(canvas, nodes, edges, state) {
+      var surface = prepareCanvas(canvas);
+      var context = surface.context;
+      var width = surface.width;
+      var height = surface.height;
+      var dense = Boolean(state && state.dense);
+      var radius = dense
+        ? Math.max(10, Math.min(16, width / 48))
+        : Math.max(17, Math.min(24, width / 30));
+      var padX = Math.max(44, width * .08);
+      var padTop = 35;
+      var padBottom = 30;
+      var points = {};
+      var visited = new Set((state && state.visited) || []);
+      var activeEdges = new Set((state && state.activeEdges) || []);
+      var current = state && state.current != null ? String(state.current) : null;
+      var removed = state && state.removed != null ? String(state.removed) : null;
+      var componentMap = (state && state.componentMap) || {};
+      var labels = (state && state.labels) || {};
+
+      context.clearRect(0, 0, width, height);
+      Object.keys(nodes).forEach(function (id) {
+        points[id] = {
+          x: padX + nodes[id][0] * (width - padX * 2),
+          y: padTop + nodes[id][1] * (height - padTop - padBottom)
+        };
+      });
+
+      edges.forEach(function (edge) {
+        var a = String(edge[0]);
+        var b = String(edge[1]);
+        if (a === removed || b === removed) return;
+        var active = activeEdges.has(edgeKey(a,b)) || (!state.directed && activeEdges.has(edgeKey(b,a)));
+        drawEdge(context, points[a], points[b], state.directed !== false,
+          active ? COLORS.red : COLORS.line, active ? 3.5 : 1.7, radius);
+      });
+
+      Object.keys(nodes).forEach(function (id) {
+        var point = points[id];
+        var isCurrent = id === current;
+        var isVisited = visited.has(id);
+        var fill = isVisited ? (NODE_COLORS[id] || COLORS.tealSoft) : COLORS.white;
+        if (componentMap[id]) fill = componentMap[id];
+        if (id === removed) fill = COLORS.redSoft;
+        context.beginPath();
+        context.arc(point.x, point.y, isCurrent ? radius + 3 : radius, 0, Math.PI * 2);
+        context.fillStyle = fill;
+        context.fill();
+        context.strokeStyle = id === removed ? COLORS.red : isCurrent ? COLORS.amber : COLORS.soft;
+        context.lineWidth = isCurrent ? 3.5 : 1.7;
+        context.stroke();
+        context.fillStyle = id === removed ? COLORS.red : COLORS.ink;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.font = "600 " + Math.max(dense ? 10 : 13, radius * .72) + "px IBM Plex Mono, monospace";
+        context.fillText(Object.prototype.hasOwnProperty.call(labels, id) ? labels[id] : id, point.x, point.y);
+        if (id === removed) {
+          context.beginPath();
+          context.moveTo(point.x - radius * .62, point.y - radius * .62);
+          context.lineTo(point.x + radius * .62, point.y + radius * .62);
+          context.moveTo(point.x + radius * .62, point.y - radius * .62);
+          context.lineTo(point.x - radius * .62, point.y + radius * .62);
+          context.strokeStyle = COLORS.red;
+          context.lineWidth = 3;
+          context.stroke();
+        }
+      });
+    }
+
+    function renderChips(target, label, values, active) {
+      target.innerHTML = "";
+      var title = document.createElement("strong");
+      title.textContent = label;
+      target.appendChild(title);
+      if (!values.length) {
+        var empty = document.createElement("span");
+        empty.className = "empty-state";
+        empty.textContent = "empty";
+        target.appendChild(empty);
+        return;
+      }
+      values.forEach(function (value, index) {
+        var chip = document.createElement("span");
+        chip.className = "chip" + (index === active ? " active" : "");
+        chip.textContent = value;
+        target.appendChild(chip);
+      });
+    }
+
+    function createPlayer(config) {
+      var frames = config.frames;
+      var index = 0;
+      var timer = null;
+      var play = document.getElementById(config.play);
+      var step = document.getElementById(config.step);
+      var reset = document.getElementById(config.reset);
+      var speed = config.speed ? document.getElementById(config.speed) : null;
+
+      function render() { config.render(frames[index], index, frames.length); }
+      function stop() {
+        if (timer) window.clearInterval(timer);
+        timer = null;
+        if (play) play.textContent = "Play";
+      }
+      function next() {
+        if (index >= frames.length - 1) { stop(); return; }
+        index += 1;
+        render();
+        if (index >= frames.length - 1) stop();
+      }
+      if (play) {
+        play.addEventListener("click", function () {
+          if (timer) { stop(); return; }
+          if (index >= frames.length - 1) index = 0;
+          play.textContent = "Pause";
+          render();
+          timer = window.setInterval(next, speed ? Number(speed.value) : (config.interval || 800));
+        });
+      }
+      if (step) step.addEventListener("click", function () { stop(); next(); });
+      if (reset) reset.addEventListener("click", function () { stop(); index = 0; render(); });
+      if (speed) speed.addEventListener("change", function () {
+        if (!timer) return;
+        stop();
+        play.click();
+      });
+      render();
+      redraws.push(render);
+      return {render: render, stop: stop};
+    }
+
+    /* Adjacency matrix and adjacency list */
+    var reprCanvas = document.getElementById("repr-canvas");
+    var reprEdges = [["0","1"],["0","4"],["1","2"],["1","3"],["1","4"],["2","3"],["3","4"]];
+    var reprNodes = {"0":[.12,.18],"1":[.56,.14],"2":[.16,.78],"3":[.53,.74],"4":[.86,.47]};
+    var reprIndex = 0;
+
+    function buildMatrix(edgeCount) {
+      var matrix = Array.from({length: 5}, function () { return [0,0,0,0,0]; });
+      reprEdges.slice(0, edgeCount).forEach(function (edge) { matrix[Number(edge[0])][Number(edge[1])] = 1; });
+      var target = document.getElementById("repr-matrix");
+      target.innerHTML = "";
+      var grid = document.createElement("div");
+      grid.className = "matrix-grid";
+      ["",0,1,2,3,4].forEach(function (head) {
+        var cell = document.createElement("span");
+        cell.className = "matrix-cell head";
+        cell.textContent = head;
+        grid.appendChild(cell);
+      });
+      matrix.forEach(function (row, rowIndex) {
+        var rowHead = document.createElement("span");
+        rowHead.className = "matrix-cell head";
+        rowHead.textContent = rowIndex;
+        grid.appendChild(rowHead);
+        row.forEach(function (value) {
+          var cell = document.createElement("span");
+          cell.className = "matrix-cell" + (value ? " one" : "");
+          cell.textContent = value;
+          grid.appendChild(cell);
+        });
+      });
+      target.appendChild(grid);
+    }
+
+    function buildList(edgeCount) {
+      var lists = {"0":[],"1":[],"2":[],"3":[],"4":[]};
+      reprEdges.slice(0, edgeCount).forEach(function (edge) { lists[edge[0]].push(edge[1]); });
+      var target = document.getElementById("repr-list");
+      target.innerHTML = "";
+      Object.keys(lists).forEach(function (key) {
+        var row = document.createElement("div");
+        row.className = "adj-row";
+        var label = document.createElement("b");
+        label.textContent = key + ":";
+        row.appendChild(label);
+        if (!lists[key].length) {
+          var empty = document.createElement("span");
+          empty.className = "empty-state";
+          empty.textContent = "∅";
+          row.appendChild(empty);
+        } else {
+          lists[key].forEach(function (value) {
+            var chip = document.createElement("span");
+            chip.className = "chip";
+            chip.textContent = value;
+            row.appendChild(chip);
+          });
+        }
+        target.appendChild(row);
+      });
+    }
+
+    function renderRepresentation() {
+      var shownEdges = reprEdges.slice(0, reprIndex);
+      drawGraph(reprCanvas, reprNodes, shownEdges, {
+        directed: true, visited: ["0","1","2","3","4"],
+        activeEdges: reprIndex ? [edgeKey(reprEdges[reprIndex - 1][0], reprEdges[reprIndex - 1][1])] : []
+      });
+      buildMatrix(reprIndex);
+      buildList(reprIndex);
+      document.getElementById("repr-status").textContent = "edge " + reprIndex + "/" + reprEdges.length;
+      document.getElementById("repr-message").textContent = reprIndex
+        ? "Added edge " + reprEdges[reprIndex - 1][0] + " → " + reprEdges[reprIndex - 1][1] + "."
+        : "Start with five vertices and no edges.";
+    }
+    document.getElementById("repr-next").addEventListener("click", function () {
+      reprIndex = Math.min(reprEdges.length, reprIndex + 1);
+      renderRepresentation();
+    });
+    document.getElementById("repr-reset").addEventListener("click", function () { reprIndex = 0; renderRepresentation(); });
+    document.getElementById("repr-matrix-tab").addEventListener("click", function () {
+      document.getElementById("repr-matrix").hidden = false;
+      document.getElementById("repr-list").hidden = true;
+      this.classList.add("active");
+      this.setAttribute("aria-selected", "true");
+      document.getElementById("repr-list-tab").classList.remove("active");
+      document.getElementById("repr-list-tab").setAttribute("aria-selected", "false");
+    });
+    document.getElementById("repr-list-tab").addEventListener("click", function () {
+      document.getElementById("repr-matrix").hidden = true;
+      document.getElementById("repr-list").hidden = false;
+      this.classList.add("active");
+      this.setAttribute("aria-selected", "true");
+      document.getElementById("repr-matrix-tab").classList.remove("active");
+      document.getElementById("repr-matrix-tab").setAttribute("aria-selected", "false");
+    });
+    renderRepresentation();
+    redraws.push(renderRepresentation);
+
+    function bfsFrames() {
+      var visited = new Set(["0"]);
+      var queue = ["0"];
+      var order = [];
+      var frames = [{
+        visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: "0", activeEdges: [],
+        message: "Enqueue 0 and mark it visited."
+      }];
+      while (queue.length) {
+        var u = queue.shift();
+        order.push(u);
+        frames.push({
+          visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: u, activeEdges: [],
+          message: "Dequeue " + u + " and process it."
+        });
+        adjacency[u].forEach(function (v) {
+          if (visited.has(v)) {
+            frames.push({
+              visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: u,
+              activeEdges: [edgeKey(u,v)], message: v + " is already visited; do not enqueue it again."
+            });
+            return;
+          }
+          visited.add(v);
+          queue.push(v);
+          frames.push({
+            visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: v,
+            activeEdges: [edgeKey(u,v)], message: "Discover " + v + " from " + u + "; mark it and enqueue it."
+          });
+        });
+      }
+      frames.push({visited: Array.from(visited), queue: [], order: order.slice(), current: null, activeEdges: [], message: "Queue empty. BFS is complete."});
+      return frames;
+    }
+
+    function dfsFrames() {
+      var visited = new Set();
+      var stack = [];
+      var order = [];
+      var frames = [];
+      function visit(u, parent) {
+        visited.add(u);
+        stack.push(u);
+        order.push(u);
+        frames.push({
+          visited: Array.from(visited), stack: stack.slice(), order: order.slice(), current: u,
+          activeEdges: parent == null ? [] : [edgeKey(parent,u)],
+          message: "Visit " + u + " and push it on the recursion stack."
+        });
+        adjacency[u].forEach(function (v) {
+          if (visited.has(v)) return;
+          frames.push({
+            visited: Array.from(visited), stack: stack.slice(), order: order.slice(), current: u,
+            activeEdges: [edgeKey(u,v)], message: "Follow " + u + " → " + v + "."
+          });
+          visit(v, u);
+        });
+        stack.pop();
+        frames.push({
+          visited: Array.from(visited), stack: stack.slice(), order: order.slice(),
+          current: stack.length ? stack[stack.length - 1] : null, activeEdges: [],
+          message: "No unvisited neighbor remains at " + u + "; backtrack."
+        });
+      }
+      visit("0", null);
+      frames.push({visited: Array.from(visited), stack: [], order: order.slice(), current: null, activeEdges: [], message: "DFS is complete."});
+      return frames;
+    }
+
+    var bfsCanvas = document.getElementById("bfs-canvas");
+    createPlayer({
+      frames: bfsFrames(), play: "bfs-play", step: "bfs-step", reset: "bfs-reset", speed: "bfs-speed",
+      render: function (frame, index, total) {
+        drawGraph(bfsCanvas, graphNodes, graphEdges, frame);
+        renderChips(document.getElementById("bfs-structure"), "Queue (front →)", frame.queue, 0);
+        document.getElementById("bfs-message").textContent = frame.message;
+        document.getElementById("bfs-status").textContent = "step " + (index + 1) + "/" + total;
+      }
+    });
+
+    var dfsCanvas = document.getElementById("dfs-canvas");
+    createPlayer({
+      frames: dfsFrames(), play: "dfs-play", step: "dfs-step", reset: "dfs-reset", speed: "dfs-speed",
+      render: function (frame, index, total) {
+        drawGraph(dfsCanvas, graphNodes, graphEdges, frame);
+        renderChips(document.getElementById("dfs-structure"), "Stack (bottom → top)", frame.stack, frame.stack.length - 1);
+        document.getElementById("dfs-message").textContent = frame.message;
+        document.getElementById("dfs-status").textContent = "step " + (index + 1) + "/" + total;
+      }
+    });
+
+    function topoFrames() {
+      var visited = new Set();
+      var active = [];
+      var finish = [];
+      var output = [];
+      var frames = [];
+      function visit(u, parent) {
+        visited.add(u);
+        active.push(u);
+        frames.push({
+          visited: Array.from(visited), current: u, activeEdges: parent == null ? [] : [edgeKey(parent,u)],
+          finish: finish.slice(), output: output.slice(), message: "Discover " + u + "."
+        });
+        adjacency[u].forEach(function (v) { if (!visited.has(v)) visit(v, u); });
+        active.pop();
+        finish.push(u);
+        frames.push({
+          visited: Array.from(visited), current: u, activeEdges: [], finish: finish.slice(), output: output.slice(),
+          message: "Finish " + u + "; push it onto the finish stack."
+        });
+      }
+      visit("0", null);
+      var work = finish.slice();
+      while (work.length) {
+        var u = work.pop();
+        output.push(u);
+        frames.push({
+          visited: Array.from(visited), current: u, activeEdges: [], finish: work.slice(), output: output.slice(),
+          message: "Pop " + u + " into the topological ordering."
+        });
+      }
+      frames.push({
+        visited: Array.from(visited), current: null, activeEdges: [], finish: [], output: output.slice(),
+        message: "Topological ordering complete: " + output.join(", ") + "."
+      });
+      return frames;
+    }
+
+    function renderTopoStructure(frame) {
+      var target = document.getElementById("topo-structure");
+      target.innerHTML = "";
+      function appendGroup(label, values) {
+        var strong = document.createElement("strong");
+        strong.textContent = label;
+        target.appendChild(strong);
+        if (!values.length) {
+          var empty = document.createElement("span");
+          empty.className = "empty-state";
+          empty.textContent = "empty";
+          target.appendChild(empty);
+        } else {
+          values.forEach(function (value) {
+            var chip = document.createElement("span");
+            chip.className = "chip";
+            chip.textContent = value;
+            target.appendChild(chip);
+          });
+        }
+      }
+      appendGroup("Finish stack", frame.finish);
+      appendGroup("Order", frame.output);
+    }
+
+    var topoCanvas = document.getElementById("topo-canvas");
+    createPlayer({
+      frames: topoFrames(), play: "topo-play", step: "topo-step", reset: "topo-reset", interval: 760,
+      render: function (frame, index, total) {
+        drawGraph(topoCanvas, graphNodes, graphEdges, frame);
+        renderTopoStructure(frame);
+        document.getElementById("topo-message").textContent = frame.message;
+        document.getElementById("topo-status").textContent = "step " + (index + 1) + "/" + total;
+      }
+    });
+
+    /* Directed cycle trace */
+    var cycleCanvas = document.getElementById("cycle-canvas");
+    var cycleNodes = graphNodes;
+    var cycleEdges = [["0","1"],["0","2"],["0","3"],["1","4"],["4","6"],["6","5"],["5","2"],["2","1"],["3","5"]];
+    var cyclePath = ["0","1","4","6","5","2","1"];
+    var cycleFrame = 0;
+    var cycleTimer = null;
+
+    function renderCycle() {
+      var visited = cyclePath.slice(0, Math.min(cycleFrame + 1, cyclePath.length - 1));
+      var activeEdges = [];
+      for (var i = 0; i < Math.min(cycleFrame, cyclePath.length - 1); i += 1) {
+        activeEdges.push(edgeKey(cyclePath[i], cyclePath[i + 1]));
+      }
+      drawGraph(cycleCanvas, cycleNodes, cycleEdges, {
+        directed: true, visited: visited, current: cycleFrame < cyclePath.length ? cyclePath[cycleFrame] : null,
+        activeEdges: activeEdges
+      });
+      if (cycleFrame >= cyclePath.length - 1) {
+        document.getElementById("cycle-message").textContent = "Back edge 2 → 1 reaches a vertex still in the DFS stack: cycle detected.";
+        document.getElementById("cycle-status").textContent = "cycle found";
+      } else {
+        document.getElementById("cycle-message").textContent = cycleFrame
+          ? "Continue along the active DFS path."
+          : "Trace the active DFS path.";
+        document.getElementById("cycle-status").textContent = "depth " + cycleFrame;
+      }
+    }
+    document.getElementById("cycle-play").addEventListener("click", function () {
+      if (cycleTimer) return;
+      cycleFrame = 0;
+      renderCycle();
+      cycleTimer = window.setInterval(function () {
+        cycleFrame += 1;
+        renderCycle();
+        if (cycleFrame >= cyclePath.length - 1) {
+          window.clearInterval(cycleTimer);
+          cycleTimer = null;
+        }
+      }, 650);
+    });
+    document.getElementById("cycle-reset").addEventListener("click", function () {
+      if (cycleTimer) window.clearInterval(cycleTimer);
+      cycleTimer = null;
+      cycleFrame = 0;
+      renderCycle();
+    });
+    renderCycle();
+    redraws.push(renderCycle);
+
+    /* Articulation-point removal */
+    var cutCanvas = document.getElementById("cut-canvas");
+    var cutNodes = {"1":[.50,.10],"4":[.24,.42],"2":[.76,.42],"3":[.50,.60],"5":[.36,.88],"6":[.64,.88]};
+    var cutEdges = [["1","4"],["1","2"],["4","3"],["2","3"],["3","5"],["3","6"],["5","6"]];
+    var removedCut = null;
+
+    function componentData(removed) {
+      var ids = Object.keys(cutNodes).filter(function (id) { return id !== removed; });
+      var graph = {};
+      ids.forEach(function (id) { graph[id] = []; });
+      cutEdges.forEach(function (edge) {
+        if (edge[0] === removed || edge[1] === removed) return;
+        graph[edge[0]].push(edge[1]);
+        graph[edge[1]].push(edge[0]);
+      });
+      var seen = new Set();
+      var groups = [];
+      ids.forEach(function (start) {
+        if (seen.has(start)) return;
+        var group = [];
+        var queue = [start];
+        seen.add(start);
+        while (queue.length) {
+          var u = queue.shift();
+          group.push(u);
+          graph[u].forEach(function (v) { if (!seen.has(v)) { seen.add(v); queue.push(v); } });
+        }
+        groups.push(group);
+      });
+      return groups;
+    }
+
+    function renderCut() {
+      var groups = componentData(removedCut);
+      var palette = ["#d7f4eb","#eee8ff","#fdf1df","#e0f1f4"];
+      var componentMap = {};
+      groups.forEach(function (group, index) { group.forEach(function (id) { componentMap[id] = palette[index % palette.length]; }); });
+      drawGraph(cutCanvas, cutNodes, cutEdges, {
+        directed: false, visited: Object.keys(cutNodes), current: null, activeEdges: [],
+        removed: removedCut, componentMap: componentMap
+      });
+      var status = document.getElementById("cut-status");
+      var message = document.getElementById("cut-message");
+      if (!removedCut) {
+        status.textContent = "1 component";
+        message.textContent = "Choose a vertex to remove.";
+      } else {
+        status.textContent = groups.length + " components";
+        message.textContent = groups.length > 1
+          ? "Removing " + removedCut + " disconnects the graph: it is an articulation point."
+          : "Removing " + removedCut + " leaves the graph connected.";
+      }
+    }
+    document.getElementById("cut-test").addEventListener("click", function () {
+      removedCut = document.getElementById("cut-select").value || null;
+      renderCut();
+    });
+    document.getElementById("cut-reset").addEventListener("click", function () {
+      removedCut = null;
+      document.getElementById("cut-select").value = "";
+      renderCut();
+    });
+    renderCut();
+    redraws.push(renderCut);
+
+    /* Exact second articulation-point example from the slides */
+    var cutExampleCanvas = document.getElementById("cut-example-canvas");
+    var cutExampleNodes = {
+      "G":[.08,.35], "C":[.28,.14], "B":[.28,.76], "A":[.50,.76],
+      "D":[.50,.14], "F":[.78,.14], "E":[.78,.76]
+    };
+    var cutExampleEdges = [
+      ["G","C"],["C","B"],["C","D"],["B","A"],
+      ["A","D"],["D","F"],["F","E"],["D","E"]
+    ];
+    function renderCutExample() {
+      drawGraph(cutExampleCanvas, cutExampleNodes, cutExampleEdges, {
+        directed: false,
+        visited: Object.keys(cutExampleNodes),
+        current: null,
+        activeEdges: [],
+        componentMap: {"C": COLORS.amberSoft, "D": COLORS.amberSoft}
+      });
+    }
+    renderCutExample();
+    redraws.push(renderCutExample);
+
+    /* DFS-sequence question: exact six-vertex graph from slide 33 */
+    var dfsQuizCanvas = document.getElementById("dfs-quiz-canvas");
+    var dfsQuizNodes = {
+      "a":[.50,.08], "e":[.20,.38], "b":[.50,.38],
+      "f":[.80,.38], "h":[.50,.67], "g":[.50,.94]
+    };
+    var dfsQuizEdges = [
+      ["a","e"],["a","b"],["a","f"],["e","b"],["b","f"],
+      ["e","g"],["b","h"],["f","h"],["f","g"],["h","g"]
+    ];
+    var dfsQuizEdgeSet = new Set();
+    dfsQuizEdges.forEach(function (edge) {
+      dfsQuizEdgeSet.add(edgeKey(edge[0], edge[1]));
+      dfsQuizEdgeSet.add(edgeKey(edge[1], edge[0]));
+    });
+    var dfsQuizChoices = [
+      {id:"dfs-quiz-1", sequence:["a","b","e","g","h","f"]},
+      {id:"dfs-quiz-2", sequence:["a","b","f","e","h","g"]},
+      {id:"dfs-quiz-3", sequence:["a","b","f","h","g","e"]},
+      {id:"dfs-quiz-4", sequence:["a","f","g","h","b","e"]}
+    ];
+    var dfsQuizShown = [];
+    var dfsQuizTarget = [];
+    var dfsQuizRejected = null;
+    var dfsQuizTimer = null;
+    var dfsQuizDone = false;
+    var dfsQuizButton = null;
+
+    function stopDfsQuiz() {
+      if (dfsQuizTimer) window.clearInterval(dfsQuizTimer);
+      dfsQuizTimer = null;
+    }
+    function renderDfsQuiz() {
+      var activeEdges = [];
+      for (var i = 1; i < dfsQuizShown.length; i += 1) {
+        activeEdges.push(edgeKey(dfsQuizShown[i - 1], dfsQuizShown[i]));
+      }
+      var rejectedMap = {};
+      if (dfsQuizDone && dfsQuizRejected) rejectedMap[dfsQuizRejected] = COLORS.redSoft;
+      drawGraph(dfsQuizCanvas, dfsQuizNodes, dfsQuizEdges, {
+        directed: false,
+        visited: dfsQuizShown,
+        current: dfsQuizShown.length ? dfsQuizShown[dfsQuizShown.length - 1] : null,
+        activeEdges: activeEdges,
+        componentMap: rejectedMap
+      });
+      renderChips(document.getElementById("dfs-quiz-structure"), "Active DFS path", dfsQuizShown, dfsQuizShown.length - 1);
+      var status = document.getElementById("dfs-quiz-status");
+      var message = document.getElementById("dfs-quiz-message");
+      if (!dfsQuizShown.length) {
+        status.textContent = "choose an option";
+        message.textContent = "Choose one of the four proposed orders.";
+      } else if (!dfsQuizDone) {
+        status.textContent = "step " + dfsQuizShown.length + "/" + dfsQuizTarget.length;
+        message.textContent = "Continue from " + dfsQuizShown[dfsQuizShown.length - 1] + ".";
+      } else if (dfsQuizRejected) {
+        status.textContent = "not a DFS order";
+        message.textContent = "Cannot visit " + dfsQuizRejected + " next: f still has unvisited neighbors h and g.";
+      } else {
+        status.textContent = "valid DFS order";
+        message.textContent = "Valid: every next vertex can be reached by continuing the current DFS path.";
+      }
+    }
+    function finishDfsQuiz() {
+      stopDfsQuiz();
+      dfsQuizDone = true;
+      if (dfsQuizButton) dfsQuizButton.classList.add(dfsQuizRejected ? "incorrect" : "correct");
+      renderDfsQuiz();
+    }
+    function startDfsQuiz(choice) {
+      stopDfsQuiz();
+      dfsQuizChoices.forEach(function (item) {
+        var button = document.getElementById(item.id);
+        button.classList.remove("selected", "correct", "incorrect");
+        button.setAttribute("aria-pressed", "false");
+      });
+      dfsQuizButton = document.getElementById(choice.id);
+      dfsQuizButton.classList.add("selected");
+      dfsQuizButton.setAttribute("aria-pressed", "true");
+      dfsQuizTarget = [choice.sequence[0]];
+      dfsQuizRejected = null;
+      for (var i = 1; i < choice.sequence.length; i += 1) {
+        if (!dfsQuizEdgeSet.has(edgeKey(choice.sequence[i - 1], choice.sequence[i]))) {
+          dfsQuizRejected = choice.sequence[i];
+          break;
+        }
+        dfsQuizTarget.push(choice.sequence[i]);
+      }
+      dfsQuizShown = [dfsQuizTarget[0]];
+      dfsQuizDone = false;
+      renderDfsQuiz();
+      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) {
+        dfsQuizShown = dfsQuizTarget.slice();
+        finishDfsQuiz();
+        return;
+      }
+      dfsQuizTimer = window.setInterval(function () {
+        if (dfsQuizShown.length >= dfsQuizTarget.length) {
+          finishDfsQuiz();
+          return;
+        }
+        dfsQuizShown.push(dfsQuizTarget[dfsQuizShown.length]);
+        renderDfsQuiz();
+        if (dfsQuizShown.length >= dfsQuizTarget.length) finishDfsQuiz();
+      }, 380);
+    }
+    dfsQuizChoices.forEach(function (choice) {
+      document.getElementById(choice.id).addEventListener("click", function () { startDfsQuiz(choice); });
+    });
+    document.getElementById("dfs-quiz-reset").addEventListener("click", function () {
+      stopDfsQuiz();
+      dfsQuizShown = [];
+      dfsQuizTarget = [];
+      dfsQuizRejected = null;
+      dfsQuizDone = false;
+      dfsQuizButton = null;
+      dfsQuizChoices.forEach(function (choice) {
+        var button = document.getElementById(choice.id);
+        button.classList.remove("selected", "correct", "incorrect");
+        button.setAttribute("aria-pressed", "false");
+      });
+      renderDfsQuiz();
+    });
+    renderDfsQuiz();
+    redraws.push(renderDfsQuiz);
+
+    /* Maximum stack question: exact slide-34 graph and numbered active path */
+    var stackCanvas = document.getElementById("stack-canvas");
+    var stackNodes = {
+      "19":[.04,.10],"14":[.16,.10],"13":[.28,.10],
+      "18":[.04,.45],"15":[.16,.45],"12":[.28,.45],
+      "17":[.04,.80],"16":[.16,.80],"11":[.28,.80],
+      "x":[.40,.45],"10":[.40,.80],
+      "7":[.54,.10],"6":[.66,.10],"y":[.78,.10],
+      "8":[.54,.45],"5":[.66,.45],"2":[.78,.45],"1":[.92,.45],
+      "9":[.54,.80],"4":[.66,.80],"3":[.78,.80]
+    };
+    var stackEdges = [
+      ["19","14"],["14","13"],["19","18"],["18","17"],["14","15"],["15","16"],
+      ["13","12"],["12","11"],["18","15"],["15","12"],["17","16"],["16","11"],
+      ["11","10"],["10","x"],["10","9"],
+      ["7","6"],["6","y"],["7","8"],["8","9"],["6","5"],["5","4"],
+      ["y","2"],["2","3"],["8","5"],["5","2"],["2","1"],["9","4"],["4","3"]
+    ];
+    var stackPath = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19"];
+    var stackFrames = stackPath.map(function (vertex, index) {
+      var activeEdges = [];
+      for (var i = 1; i <= index; i += 1) activeEdges.push(edgeKey(stackPath[i - 1], stackPath[i]));
+      return {
+        directed: false,
+        dense: true,
+        labels: {"x":"","y":""},
+        visited: stackPath.slice(0, index + 1),
+        stack: stackPath.slice(0, index + 1),
+        current: vertex,
+        activeEdges: activeEdges,
+        message: "Visit vertex " + vertex + "; stack depth is " + (index + 1) + "."
+      };
+    });
+    createPlayer({
+      frames: stackFrames, play: "stack-play", step: "stack-step", reset: "stack-reset", interval: 430,
+      render: function (frame, index, total) {
+        drawGraph(stackCanvas, stackNodes, stackEdges, frame);
+        renderChips(document.getElementById("stack-structure"), "Recursion stack", frame.stack, frame.stack.length - 1);
+        document.getElementById("stack-message").textContent = frame.message;
+        document.getElementById("stack-status").textContent = "depth " + (index + 1) + "/" + total;
+      }
+    });
+
+    /* Table-of-contents tracking */
+    var tocLinks = Array.from(document.querySelectorAll(".toc a"));
+    var sections = tocLinks.map(function (link) { return document.querySelector(link.getAttribute("href")); }).filter(Boolean);
+    if ("IntersectionObserver" in window) {
+      var tocObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          tocLinks.forEach(function (link) {
+            link.classList.toggle("current", link.getAttribute("href") === "#" + entry.target.id);
+          });
+        });
+      }, {rootMargin: "-18% 0px -70% 0px", threshold: 0});
+      sections.forEach(function (section) { tocObserver.observe(section); });
+    }
+
+    var readingProgress = document.getElementById("reading-progress");
+    function updateReadingProgress() {
+      var root = document.documentElement;
+      var distance = Math.max(1, root.scrollHeight - window.innerHeight);
+      var position = window.scrollY || root.scrollTop || 0;
+      readingProgress.style.width = Math.min(100, Math.max(0, position / distance * 100)) + "%";
+    }
+    window.addEventListener("scroll", updateReadingProgress, {passive: true});
+    updateReadingProgress();
+
+    var resizeTimer = null;
+    window.addEventListener("resize", function () {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(function () { redraws.forEach(function (redraw) { redraw(); }); }, 120);
+    });
+  })();
+  </script>
+</body>
+</html>
