@@ -7,10 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
-/* ============================================================
-   NMCC509 — Advanced Data Structures & Algorithms
-   Shared stylesheet — used by every page of the site
-   ============================================================ */
 
 :root {
   --paper: #f7f9fc;
@@ -593,7 +589,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+        <span> IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -633,12 +629,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     <span class="chapter-kicker">Chapter 01</span>
     <h1>Introduction, Data Structures &amp; Arrays</h1>
     <p class="chapter-intro">
-      This chapter builds the first foundations of the course: what data and
-      information are, why we organise data with data structures, and a close look
-      at the simplest linear data structure, the array, including how array
-      elements are addressed in memory for both 1D and 2D arrays. (Course
-      logistics — syllabus, textbook, assessment, and timetable — are on the
-      <a href="index.html">home page</a>.)
+ This chapter introduces the basic concepts of data and information, explains why data is organized using data structures, and examines arrays as the simplest linear data structure. It also describes how elements of one-dimensional and two-dimensional arrays are stored and addressed in memory.
     </p>
 
     <!-- 1.2 -->
@@ -651,7 +642,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
       <div class="def-box">
         <span class="def-label">Definition · Information</span>
-        Processed data — data with meaning added to it.
+        Processed data i.e., data with meaning added to it.
         Example: "5 <strong>years</strong>" (the unit turns the raw number 5 into information).
       </div>
     </section>
@@ -675,7 +666,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <h2><span class="sec-no">1.4</span>What is a Data Structure?</h2>
       <p>
         Files can be very large, and we need to perform many operations on them
-        <em>efficiently</em>:
+        <strong class="kw"><em>efficiently</em></strong>:
       </p>
       <ul>
         <li>Insertion</li>
@@ -687,12 +678,12 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <li>Many more…</li>
       </ul>
       <p>
-        Doing these efficiently requires organising the data in computer memory in
+        Doing these efficiently requires organizing the data in computer memory in
         a deliberate way — that organisation is the <strong class="kw">data structure</strong>.
       </p>
       <div class="def-box">
         <span class="def-label">Definition · Data structure</span>
-        A data structure refers to the way of organising and storing data in
+        A data structure refers to the way of organizing and storing data in
         computer memory following some logical or mathematical model.
       </div>
       <h3>Classification</h3>
@@ -711,8 +702,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     <section class="chapter-section" id="sec-5">
       <h2><span class="sec-no">1.5</span>Why Data Structures Matter</h2>
       <p>
-        The choice of data structure decides how fast each operation can be. The
-        same four operations cost very differently across structures:
+        The choice of data structure determines how fast each operation can be performed. The same four operations cost very differently across structures:
       </p>
       <table class="tbl">
         <thead>
@@ -726,7 +716,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         </tbody>
       </table>
       <p>
-        No single structure wins everywhere — each trades speed in one operation
+        No single structure wins everywhere i.e., each trades speed in one operation
         for speed in another, which is why we study many of them.
       </p>
     </section>
@@ -738,7 +728,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <ul>
         <li>Stored in a <strong class="kw">contiguous block of memory</strong>,</li>
         <li>Made of elements of the <strong class="kw">same data type</strong>, and</li>
-        <li>Supports <strong class="kw">random access</strong> — any element can be reached directly by its index.</li>
+        <li>Supports <strong class="kw">random access</strong> i.e., any element can be reached directly by its index.</li>
       </ul>
       <pre class="code c-source">int arr[5] = {10, 20, 30, 40, 50};</pre>
       <figure class="fig memory-figure" id="memory-layout-figure">
