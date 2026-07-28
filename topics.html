@@ -7,7 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
   <style>
-
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
 
 :root {
   --paper: #f7f9fc;
@@ -322,7 +325,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 </style>
 <style>
     /* ---- Topics page upgrades ---- */
-    .topics-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 8px; } }
+    .topics-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 8px; }
 
     .topics-tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 18px 0 22px; }
     .topic-search {
@@ -357,7 +360,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>IIT (ISM) Dhanbad</span>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -369,14 +372,14 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   </nav>
 </header>
 
-<main class="page">
-
-  <div class="topics-head">
-    <div>
-      <h2 class="section-title">Topics</h2>
-    </div>
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">Topics</span>
+    <h1>Design and Analysis of Algorithms</h1>
   </div>
+</section>
 
+<main class="page">
   <div class="topics-tools">
     <input type="search" class="topic-search" id="topic-search" placeholder="Search chapters — e.g. merge sort, recursion, trees, heaps, greedy…" aria-label="Search chapters">
     <button class="filter-chip on" data-filter="all">All</button>
@@ -520,6 +523,21 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <span class="tag">Huffman coding</span>
         <span class="tag">job sequencing</span>
         <span class="tag">optimal merge</span>
+      </div>
+    </a>
+
+    <a class="chapter-card reveal" data-status="live" href="chapter11.html">
+      <span class="chapter-num">Chapter 11</span>
+      <h3>Graph Data Structure</h3>
+      <p>Graph terminology and representations, breadth-first and depth-first
+         search, topological sorting, cycle detection, articulation points,
+         and shortest paths.</p>
+      <div class="card-tags">
+        <span class="tag">graphs</span>
+        <span class="tag">BFS</span>
+        <span class="tag">DFS</span>
+        <span class="tag">topological sort</span>
+        <span class="tag">shortest paths</span>
       </div>
     </a>
 
