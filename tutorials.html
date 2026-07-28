@@ -3,378 +3,734 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tutorials · NMCC509</title>
+  <meta name="description" content="Tutorial topics and research objectives for Design and Analysis of Algorithms.">
+  <title>Tutorials · Design and Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <style>
-/* ============================================================
-   NMCC509 — Advanced Data Structures & Algorithms
-   Shared stylesheet — used by every page of the site
-   ============================================================ */
+    :root {
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --ink: #101c33;
+      --ink-soft: #46536b;
+      --line: #dbe4f0;
+      --grid: #e7edf6;
+      --accent: #0b7285;
+      --accent-dark: #085a68;
+      --accent-soft: #e0f1f4;
+      --amber: #b45309;
+      --amber-soft: #fdf1df;
+      --radius: 12px;
+      --maxw: 1180px;
+      --font-display: "Space Grotesk", sans-serif;
+      --font-body: "IBM Plex Sans", sans-serif;
+      --font-mono: "IBM Plex Mono", monospace;
+    }
 
-:root {
-  --paper: #f7f9fc;
-  --card: #ffffff;
-  --ink: #101c33;
-  --ink-soft: #46536b;
-  --line: #dbe4f0;
-  --grid: #e7edf6;
-  --accent: #0b7285;
-  --accent-dark: #085a68;
-  --accent-soft: #e0f1f4;
-  --amber: #b45309;
-  --amber-soft: #fdf1df;
-  --code-bg: #0f1a2e;
-  --code-text: #dbe7ff;
-  --radius: 10px;
-  --maxw: 1180px;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-body: "IBM Plex Sans", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 94px; }
+    body {
+      min-width: 320px; background: var(--paper); color: var(--ink);
+      font: 16.5px/1.65 var(--font-body);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-dark); }
+    :focus-visible { outline: 3px solid #f59e0b; outline-offset: 3px; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+    .skip-link {
+      position: fixed; top: 8px; left: 8px; z-index: 100;
+      padding: 8px 12px; border-radius: 7px; background: var(--ink); color: #fff;
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: none; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(9px);
+    }
+    .nav {
+      max-width: var(--maxw); margin: 0 auto; padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 9px; background: var(--ink); color: #fff;
+      font: 600 13px var(--font-mono);
+    }
+    .brand strong { font: 600 16px var(--font-display); }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a {
+      display: block; padding: 8px 14px; border-radius: 8px;
+      color: var(--ink-soft); font-weight: 500; font-size: 15px;
+    }
+    .nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
+    .nav-links a.active { background: var(--ink); color: #fff; }
+    .reading-progress {
+      position: absolute; left: 0; bottom: -1px; width: 0; height: 3px;
+      background: linear-gradient(90deg,var(--accent),#14b8a6);
+    }
 
-body {
-  font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.65;
-  font-size: 16.5px;
-}
+    .hero {
+      position: relative; isolation: isolate; overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg,rgba(247,249,252,0) 0%,var(--paper) 96%),
+        linear-gradient(var(--grid) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size: auto, 28px 28px, 28px 28px;
+    }
+    .hero-inner { max-width: var(--maxw); margin: 0 auto; padding: 72px 24px 64px; }
+    .eyebrow {
+      display: inline-block; margin-bottom: 18px; padding: 5px 12px;
+      border-radius: 999px; background: var(--accent-soft); color: var(--accent-dark);
+      font: 600 12.5px var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+    }
+    .hero h1 {
+      max-width: 780px; color: var(--ink);
+      font: 700 clamp(2rem,4.4vw,3.3rem)/1.2 var(--font-display);
+      letter-spacing: -.02em;
+    }
+    .hero-subtitle {
+      max-width: 640px; margin-top: 16px; color: var(--ink-soft);
+      font: 400 1.08rem/1.65 var(--font-body);
+    }
 
-h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
+    .page-layout {
+      max-width: var(--maxw); margin: 0 auto; padding: 42px 24px 88px;
+      display: grid; grid-template-columns: 225px minmax(0,1fr); gap: 44px;
+    }
+    .toc {
+      position: sticky; top: 88px; align-self: start;
+      max-height: calc(100vh - 112px); overflow-y: auto;
+    }
+    .toc h2 {
+      margin-bottom: 11px; color: var(--ink-soft);
+      font: 600 12px var(--font-mono); letter-spacing: .11em; text-transform: uppercase;
+    }
+    .toc ol { list-style: none; border-left: 2px solid var(--line); }
+    .toc a {
+      display: block; margin-left: -2px; padding: 8px 13px;
+      border-left: 2px solid transparent; color: var(--ink-soft);
+      font-size: 14px; line-height: 1.35;
+    }
+    .toc a:hover { color: var(--accent-dark); }
+    .toc a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
+    .toc a.toc-topic {
+      padding-top: 12px; padding-bottom: 10px;
+      color: var(--ink); font-family: var(--font-display); font-weight: 600;
+    }
+    .toc a.toc-objective { padding-left: 24px; font-size: 13px; }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { color: var(--accent-dark); }
+    .content { min-width: 0; }
+    .project-notice {
+      margin-bottom: 26px; overflow: hidden;
+      border: 1px solid #c7e1e6; border-radius: var(--radius);
+      background: var(--card); box-shadow: 0 9px 25px rgba(16,28,51,.055);
+    }
+    .project-notice-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 17px 20px; border-bottom: 1px solid #d5e8ec;
+      background: #f2f9fa;
+    }
+    .project-notice-header h2 {
+      color: var(--ink); font: 700 1.18rem var(--font-display);
+    }
+    .allocation-chip {
+      flex: 0 0 auto; padding: 6px 10px; border-radius: 999px;
+      background: #fff; border: 1px solid #b9dce2; color: var(--accent-dark);
+      font: 600 12px var(--font-mono);
+    }
+    .project-rules {
+      display: grid; gap: 0; margin: 0; padding: 8px 20px;
+      list-style: none; counter-reset: project-rule;
+    }
+    .project-rules li {
+      counter-increment: project-rule;
+      display: grid; grid-template-columns: 32px minmax(0,1fr);
+      align-items: center; gap: 12px; padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .project-rules li:last-child { border-bottom: 0; }
+    .project-rule-text { min-width: 0; }
+    .project-rules a {
+      display: inline; color: var(--accent-dark); font-weight: 600;
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+    .project-rules li::before {
+      content: counter(project-rule); display: grid; width: 28px; height: 28px;
+      place-items: center; border-radius: 8px; background: var(--accent-dark);
+      color: #fff; font: 600 12px var(--font-mono);
+    }
+    .deadline-summary {
+      display: grid; grid-template-columns: auto minmax(0,1fr) auto;
+      align-items: center; gap: 10px 16px; padding: 14px 20px;
+      border-top: 1px solid #f0ddbd; background: #fffcf6;
+    }
+    .deadline-label {
+      color: #9a4b08;
+      font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .deadline-summary strong { font: 600 15px var(--font-display); }
+    .deadline-zone {
+      padding: 4px 8px; border: 1px solid #ecd5ad; border-radius: 999px;
+      background: #fff; color: #7c3d08; font: 600 11px var(--font-mono);
+      white-space: nowrap;
+    }
+    .assessment-summary {
+      display: grid; grid-template-columns: auto minmax(0,1fr) auto;
+      align-items: center; gap: 10px 16px; padding: 14px 20px;
+      border-top: 1px solid #d5e8ec; background: #f8fbfc;
+    }
+    .assessment-label {
+      color: var(--accent-dark);
+      font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .assessment-summary strong { font: 600 15px var(--font-display); }
+    .assessment-category {
+      color: var(--ink-soft); font-size: 13.5px; white-space: nowrap;
+    }
+    .tutorial-index {
+      margin-bottom: 38px; padding: 26px;
+      border: 1px solid var(--line); border-radius: var(--radius);
+      background: var(--card); box-shadow: 0 8px 24px rgba(16,28,51,.045);
+      scroll-margin-top: 102px;
+    }
+    .tutorial-index > h2 {
+      margin-bottom: 18px; font: 700 1.55rem var(--font-display);
+    }
+    .topic-grid {
+      display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px;
+    }
+    .topic-card {
+      display: block; padding: 19px;
+      border: 1px solid var(--line); border-radius: 11px; background: #fbfcfe;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .topic-card:hover {
+      transform: translateY(-2px); border-color: #9cced7;
+      box-shadow: 0 9px 22px rgba(16,28,51,.07);
+    }
+    .topic-card .topic-number {
+      display: block; margin-bottom: 7px; color: var(--accent-dark);
+      font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .topic-card h3 {
+      margin-bottom: 7px; color: var(--ink);
+      font: 600 1.04rem/1.35 var(--font-display);
+    }
+    .topic-card h3 a { color: var(--ink); }
+    .topic-card h3 a:hover { color: var(--accent-dark); }
+    .topic-card p { color: var(--ink-soft); font-size: 14px; }
+    .topic-card p a { color: var(--accent-dark); font-weight: 600; }
+    .topic-card p a:hover { text-decoration: underline; }
+    .topic-heading {
+      position: relative; margin: 50px 0 22px; padding: 23px 24px;
+      overflow: hidden; border: 1px solid #b9dce2; border-radius: var(--radius);
+      background: linear-gradient(135deg,var(--accent-soft),#f8fcfd);
+      scroll-margin-top: 102px;
+    }
+    .topic-heading::after {
+      content: ""; position: absolute; width: 140px; height: 140px;
+      top: -84px; right: -48px; border: 24px solid rgba(11,114,133,.08);
+      border-radius: 50%;
+    }
+    .topic-heading .topic-number {
+      display: block; margin-bottom: 7px; color: var(--accent-dark);
+      font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .topic-heading h2 {
+      position: relative; z-index: 1; margin: 0;
+      font: 700 clamp(1.35rem,3vw,1.8rem)/1.25 var(--font-display);
+    }
+    .topic-heading p { position: relative; z-index: 1; margin-top: 7px; color: var(--ink-soft); }
+    .topic-heading .mentor-line {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 9px;
+      margin-top: 10px;
+    }
+    .mentor-line span {
+      color: var(--accent-dark);
+      font: 500 15px var(--font-body);
+    }
+    .mentor-line a {
+      position: relative; z-index: 2; color: var(--accent-dark);
+      font: 600 15px var(--font-display);
+    }
+    .mentor-line a:hover { text-decoration: underline; }
+    .research-block {
+      position: relative; margin: 0 0 28px; padding: 25px 26px;
+      border: 1px solid var(--line); border-radius: var(--radius);
+      background: var(--card); box-shadow: 0 8px 24px rgba(16,28,51,.045);
+      scroll-margin-top: 102px;
+    }
+    .research-block + .research-block { margin-top: 36px; }
+    .block-marker {
+      position: absolute; top: 0; right: 0; padding: 7px 11px;
+      border-radius: 0 var(--radius) 0 9px;
+      background: var(--accent-soft); color: var(--accent-dark);
+      font: 600 11px var(--font-mono); letter-spacing: .06em;
+    }
+    .source-list { margin: 0 0 22px 22px; }
+    .source-list li { padding-left: 4px; }
+    .source-list li::marker { color: var(--accent); font-size: 1.08em; }
+    .source-list p { max-width: 82ch; }
+    .content-label {
+      display: inline-block; margin-bottom: 12px;
+      color: var(--accent-dark);
+      font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+    }
+    .objective-group {
+      margin: 22px 0; padding: 19px;
+      border: 1px solid var(--line); border-radius: 11px; background: #fbfcfe;
+    }
+    .objective-group h3 {
+      margin-bottom: 11px; color: var(--ink);
+      font: 600 19px var(--font-display);
+    }
 
-code, pre { font-family: var(--font-mono); }
+    .reference-lines {
+      margin: 18px 0 24px; padding: 14px 16px;
+      border: 1px solid #c6e0e5; border-radius: 9px; background: #f4fbfc;
+      display: grid; gap: 8px; overflow-wrap: anywhere;
+      font: 13px/1.55 var(--font-mono);
+    }
+    .reference-lines a { color: var(--accent-dark); }
+    .reference-lines a:hover { text-decoration: underline; }
 
-/* ---------- Top navigation ---------- */
-.site-header {
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
-}
-.nav {
-  max-width: var(--maxw); margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 24px;
-}
-.brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
-.brand-mark {
-  width: 38px; height: 38px; border-radius: 9px;
-  background: var(--ink); color: #fff;
-  display: grid; place-items: center;
-  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
-}
-.brand-text { display: flex; flex-direction: column; }
-.brand-text strong { font-family: var(--font-display); font-size: 15px; letter-spacing: .01em; }
-.brand-text span { font-size: 12px; color: var(--ink-soft); }
-.nav-links { display: flex; gap: 4px; list-style: none; }
-.nav-links a {
-  display: block; padding: 8px 14px; border-radius: 8px;
-  color: var(--ink-soft); font-weight: 500; font-size: 15px;
-}
-.nav-links a:hover { background: var(--accent-soft); color: var(--accent-dark); }
-.nav-links a.active { background: var(--ink); color: #fff; }
+    .objective {
+      margin: 0 0 14px; padding: 18px 20px;
+      border: 1px solid #dcebef; border-left: 5px solid #79b5bf;
+      border-radius: 10px; background: #f9fcfd;
+      font-weight: 600;
+    }
+    .objective:last-child { margin-bottom: 0; }
+    .aim {
+      padding: 16px 18px; border: 1px solid #bcded4; border-radius: 10px;
+      background: #eefaf6;
+    }
+    .aim .content-label { margin-bottom: 6px; color: #0f766e; }
+    .aim p { color: var(--ink); }
+    .aim p + p { margin-top: 7px; color: var(--ink-soft); font-size: 14px; }
 
-/* ---------- Hero (graph-paper motif) ---------- */
-.hero {
-  background:
-    linear-gradient(180deg, rgba(247,249,252,0) 0%, var(--paper) 96%),
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: auto, 28px 28px, 28px 28px;
-  border-bottom: 1px solid var(--line);
-}
-.hero-inner {
-  max-width: var(--maxw); margin: 0 auto;
-  padding: 72px 24px 64px;
-}
-.eyebrow {
-  display: inline-block;
-  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--accent-dark);
-  background: var(--accent-soft);
-  padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
-}
-.hero h1 {
-  font-size: clamp(2rem, 4.4vw, 3.3rem);
-  letter-spacing: -0.02em; max-width: 780px;
-}
-.hero p.lede { margin-top: 16px; max-width: 640px; color: var(--ink-soft); font-size: 1.08rem; }
-.hero-meta { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
-.meta-chip {
-  font-size: 13.5px; color: var(--ink-soft);
-  background: var(--card); border: 1px solid var(--line);
-  padding: 7px 14px; border-radius: 999px;
-}
-.hero-actions { margin-top: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
-.btn {
-  display: inline-block; padding: 11px 22px; border-radius: 9px;
-  font-weight: 600; font-size: 15px; font-family: var(--font-display);
-}
-.btn-primary { background: var(--ink); color: #fff; }
-.btn-primary:hover { background: #1c2c4d; color: #fff; }
-.btn-ghost { border: 1.5px solid var(--line); color: var(--ink); background: var(--card); }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent-dark); }
+    .site-footer { border-top: 1px solid var(--line); background: #fff; }
+    .footer-inner {
+      max-width: var(--maxw); margin: 0 auto; padding: 25px 24px;
+      display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+      color: var(--ink-soft); font-size: 14px;
+    }
 
-/* ---------- Generic page section ---------- */
-.page { max-width: var(--maxw); margin: 0 auto; padding: 48px 24px 80px; }
-.section-title { font-size: 1.6rem; margin-bottom: 6px; }
-.section-sub { color: var(--ink-soft); margin-bottom: 28px; }
-
-/* ---------- Chapter cards (Topics page) ---------- */
-.chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-.chapter-card {
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 22px; display: flex; flex-direction: column; gap: 10px;
-  transition: box-shadow .18s ease, transform .18s ease;
-}
-a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: translateY(-2px); }
-.chapter-num {
-  font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-dark);
-  letter-spacing: .1em; text-transform: uppercase;
-}
-.chapter-card h3 { font-size: 1.15rem; color: var(--ink); }
-.chapter-card p { font-size: 14.5px; color: var(--ink-soft); flex: 1; }
-.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag {
-  font-family: var(--font-mono); font-size: 11.5px;
-  background: var(--accent-soft); color: var(--accent-dark);
-  padding: 3px 9px; border-radius: 6px;
-}
-.chapter-card.locked { opacity: .62; background: #fbfcfe; }
-.chapter-card.locked h3 { color: var(--ink-soft); }
-.badge-soon {
-  align-self: flex-start; font-size: 11.5px; font-family: var(--font-mono);
-  color: var(--ink-soft); border: 1px dashed var(--line);
-  padding: 3px 9px; border-radius: 6px;
-}
-
-/* ---------- Chapter page layout ---------- */
-.chapter-layout {
-  max-width: var(--maxw); margin: 0 auto;
-  display: grid; grid-template-columns: 250px minmax(0, 1fr);
-  gap: 44px; padding: 40px 24px 90px;
-}
-.toc {
-  position: sticky; top: 86px; align-self: start;
-  max-height: calc(100vh - 110px); overflow-y: auto;
-  padding-right: 6px;
-}
-.toc h4 {
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px;
-}
-.toc ol { list-style: none; border-left: 2px solid var(--line); }
-.toc li a {
-  display: block; padding: 6px 14px; font-size: 13.8px; color: var(--ink-soft);
-  border-left: 2px solid transparent; margin-left: -2px; line-height: 1.4;
-}
-.toc li a:hover { color: var(--accent-dark); }
-.toc li a.current { border-left-color: var(--accent); color: var(--accent-dark); font-weight: 600; }
-
-.chapter-body { min-width: 0; }
-.chapter-kicker {
-  font-family: var(--font-mono); font-size: 13px; color: var(--accent-dark);
-  letter-spacing: .1em; text-transform: uppercase;
-}
-.chapter-body > h1 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); letter-spacing: -0.02em; margin: 8px 0 10px; }
-.chapter-intro { color: var(--ink-soft); max-width: 720px; margin-bottom: 8px; }
-
-.chapter-section { margin-top: 54px; }
-.chapter-section > h2 {
-  font-size: 1.5rem; padding-bottom: 10px; margin-bottom: 18px;
-  border-bottom: 1px solid var(--line);
-}
-.chapter-section h3 { font-size: 1.13rem; margin: 26px 0 10px; }
-.chapter-section p { margin-bottom: 14px; max-width: 76ch; }
-.chapter-section ul, .chapter-section ol { margin: 0 0 16px 22px; }
-.chapter-section li { margin-bottom: 7px; max-width: 72ch; }
-.sec-no { color: var(--accent); font-family: var(--font-mono); font-size: 1.05rem; margin-right: 10px; }
-
-/* ---------- Content blocks ---------- */
-.def-box {
-  background: var(--accent-soft); border: 1px solid #bfdee5;
-  border-radius: var(--radius); padding: 18px 20px; margin: 18px 0;
-}
-.def-box .def-label {
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--accent-dark); display: block; margin-bottom: 6px;
-}
-.note-box {
-  background: var(--amber-soft); border: 1px solid #f3ddb4;
-  border-radius: var(--radius); padding: 16px 20px; margin: 18px 0;
-}
-.note-box .def-label {
-  font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
-}
-
-pre.code {
-  background: var(--code-bg); color: var(--code-text);
-  border-radius: var(--radius); padding: 18px 20px;
-  overflow-x: auto; font-size: 14px; line-height: 1.6; margin: 14px 0 18px;
-}
-code.inline {
-  background: #eaeff7; color: #24344f;
-  padding: 2px 7px; border-radius: 5px; font-size: .88em;
-}
-.o-chip {
-  display: inline-block; font-family: var(--font-mono); font-size: .82em;
-  background: var(--amber-soft); color: var(--amber);
-  border: 1px solid #f0d9ac; padding: 2px 9px; border-radius: 999px;
-  font-weight: 600; white-space: nowrap;
-}
-
-table.tbl {
-  width: 100%; border-collapse: collapse; margin: 16px 0 20px;
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--radius); overflow: hidden; font-size: 15px;
-}
-table.tbl th, table.tbl td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--line); }
-table.tbl th {
-  background: var(--ink); color: #fff; font-family: var(--font-display);
-  font-weight: 600; font-size: 14px;
-}
-table.tbl tr:last-child td { border-bottom: none; }
-table.tbl tr:nth-child(even) td { background: #fbfcfe; }
-
-.example-card {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 18px 20px; margin: 14px 0;
-}
-.example-card .ex-head {
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 12px; flex-wrap: wrap; margin-bottom: 8px;
-}
-.example-card .ex-title { font-family: var(--font-display); font-weight: 600; font-size: 15px; }
-.example-card pre.code { margin-bottom: 8px; }
-.example-card .ex-why { font-size: 14.3px; color: var(--ink-soft); margin: 0; }
-
-/* ---------- Bubble sort visualizer ---------- */
-.viz {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 22px; margin: 20px 0;
-}
-.viz-title { font-family: var(--font-display); font-weight: 600; margin-bottom: 4px; }
-.viz-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
-.viz-bars {
-  display: flex; align-items: flex-end; gap: 10px;
-  height: 170px; padding: 6px 2px 0;
-}
-.viz-bar {
-  flex: 1; max-width: 76px; border-radius: 7px 7px 3px 3px;
-  background: #c6d4e8; position: relative;
-  display: flex; align-items: flex-end; justify-content: center;
-  transition: height .25s ease, background .18s ease;
-}
-.viz-bar span {
-  color: #fff; font-family: var(--font-mono); font-size: 13px;
-  font-weight: 600; padding-bottom: 6px;
-}
-.viz-bar.compare { background: var(--amber); }
-.viz-bar.swap { background: #c2410c; }
-.viz-bar.sorted { background: var(--accent); }
-.viz-controls { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
-.viz-controls button {
-  font-family: var(--font-display); font-weight: 600; font-size: 14px;
-  padding: 9px 18px; border-radius: 8px; cursor: pointer;
-  border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
-}
-.viz-controls button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
-.viz-controls button:disabled { opacity: .45; cursor: not-allowed; }
-.viz-status { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
-
-/* ---------- Chapter prev/next footer ---------- */
-.chapter-nav {
-  margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line);
-  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-}
-.chapter-nav a, .chapter-nav span.disabled {
-  font-family: var(--font-display); font-weight: 600; font-size: 15px;
-}
-.chapter-nav span.disabled { color: #9aa7bd; }
-
-/* ---------- Footer ---------- */
-.site-footer { border-top: 1px solid var(--line); background: var(--card); }
-.footer-inner {
-  max-width: var(--maxw); margin: 0 auto; padding: 26px 24px;
-  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-  font-size: 14px; color: var(--ink-soft);
-}
-
-/* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .chapter-layout { grid-template-columns: 1fr; gap: 8px; }
-  .toc { position: static; max-height: none; border: 1px solid var(--line);
-         border-radius: var(--radius); padding: 16px; background: var(--card); margin-bottom: 22px; }
-  .nav { flex-direction: column; gap: 10px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  * { transition: none !important; }
-}
-
-</style>
+    @media (max-width: 920px) {
+      .page-layout { grid-template-columns: 1fr; gap: 16px; }
+      .toc {
+        position: static; max-height: none; padding: 15px;
+        border: 1px solid var(--line); border-radius: var(--radius); background: #fff;
+      }
+      .toc ol { columns: 2; }
+    }
+    @media (max-width: 720px) {
+      html { scroll-padding-top: 132px; }
+      .nav { min-height: 112px; flex-direction: column; justify-content: center; gap: 8px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
+      .nav-links a { padding: 6px 10px; font-size: 14px; }
+      .hero-inner { padding: 50px 17px 46px; }
+      .page-layout { padding: 28px 16px 64px; }
+      .toc ol { columns: 1; }
+      .research-block { padding: 22px 18px; }
+      .project-notice-header { align-items: flex-start; flex-direction: column; }
+      .project-rules { padding-right: 16px; padding-left: 16px; }
+      .deadline-summary { grid-template-columns: 1fr; gap: 4px; padding-right: 16px; padding-left: 16px; }
+      .deadline-zone { justify-self: start; margin-top: 3px; }
+      .assessment-summary { grid-template-columns: 1fr; gap: 4px; padding-right: 16px; padding-left: 16px; }
+      .assessment-category { white-space: normal; }
+      .tutorial-index { padding: 21px 18px; }
+      .topic-grid { grid-template-columns: 1fr; }
+      .topic-heading { margin-top: 38px; padding: 20px 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to tutorial content</a>
 
-<header class="site-header">
-  <nav class="nav">
-    <a class="brand" href="index.html">
-      <div class="brand-mark">O(n)</div>
-      <div class="brand-text">
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">O(n)</span>
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>NMCC202 &amp NMCC526 · IIT (ISM) Dhanbad</span>
-      </div>
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="topics.html">Topics</a></li>
-      <li><a href="practical.html">Practical</a></li>
-      <li><a href="tutorials.html" class="active">Tutorials</a></li>
-    </ul>
-  </nav>
-</header>
-
-<main class="page">
-  <h2 class="section-title">Tutorials</h2>
-  <p class="section-sub">Tutorial sheets and practice problems for each chapter. Sheets are released after the corresponding topic is covered in class.</p>
-
-  <div class="chapter-grid">
-    <div class="chapter-card locked">
-      <span class="chapter-num">Tutorial 01</span>
-      <h3>Basics of Algorithms — Practice Set</h3>
-      <p>Loop-counting exercises, bubble sort trace questions, and complexity
-         estimation problems based on Chapter 2.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
-    <div class="chapter-card locked">
-      <span class="chapter-num">Tutorial 02</span>
-      <h3>Asymptotic Notation — Practice Set</h3>
-      <p>Problems on Big-O, Big-Ω, and Big-Θ.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
-  </div>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-inner">
-    <span>Design and Analysis of Algorithms</span>
-    <span>© 2026
-      <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
-        Dr. Alakesh Kalita
       </a>
-      · Mathematics and Computing · IIT (ISM) Dhanbad</span>
-  </div>
-</footer>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="topics.html">Topics</a></li>
+        <li><a href="practical.html">Practical</a></li>
+        <li><a class="active" href="tutorials.html" aria-current="page">Tutorials</a></li>
+      </ul>
+    </nav>
+    <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+  </header>
 
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">Tutorials</span>
+      <h1>Design and Analysis of Algorithms</h1>
+    </div>
+  </section>
+
+  <div class="page-layout" id="main-content">
+    <aside class="toc" aria-label="Tutorial contents">
+      <h2>Tutorial Topics</h2>
+      <ol>
+        <li><a class="toc-topic" href="#task-offloading">Task Offloading and Resource Allocation</a></li>
+        <li><a class="toc-objective" href="#task-objective-1">Objective 1</a></li>
+        <li><a class="toc-objective" href="#task-objective-2">Objective 2</a></li>
+        <li><a class="toc-objective" href="#task-objective-3">Objective 3</a></li>
+        <li><a class="toc-objective" href="#task-objective-4">Objective 4</a></li>
+        <li><a class="toc-objective" href="#task-objective-5">Objective 5</a></li>
+        <li><a class="toc-topic" href="#tacfpext">TaCFPext: DSME MAC Extension</a></li>
+        <li><a class="toc-objective" href="#tacfp-objective-1">Objective 1</a></li>
+        <li><a class="toc-objective" href="#tacfp-objective-2">Objective 2</a></li>
+        <li><a class="toc-objective" href="#tacfp-objective-3">Objective 3</a></li>
+        <li><a class="toc-objective" href="#tacfp-objective-4">Objective 4</a></li>
+      </ol>
+    </aside>
+
+    <main class="content">
+      <section class="project-notice" aria-labelledby="project-rules-title">
+        <div class="project-notice-header">
+          <h2 id="project-rules-title">Project Selection Rules</h2>
+          <span class="allocation-chip">FCFS allocation</span>
+        </div>
+        <ol class="project-rules">
+          <li><span class="project-rule-text">Make a group of four students.</span></li>
+          <li><span class="project-rule-text">Choose all nine tutorial topics in order of priority.</span></li>
+          <li><span class="project-rule-text">Fill in the <a href="https://forms.gle/pdVVykeb7UQj5yA8A" target="_blank" rel="noopener noreferrer">online Google Sheet</a> with your group member details and topic priorities.</span></li>
+          <li><span class="project-rule-text">Projects will be assigned on a first-come, first-served (FCFS) basis.</span></li>
+        </ol>
+        <div class="deadline-summary" role="note" aria-label="Submission deadline">
+          <span class="deadline-label">Submission deadline</span>
+          <strong>August 02, 2026 at 11:59 PM</strong>
+          <span class="deadline-zone">GMT+5:30</span>
+        </div>
+        <div class="assessment-summary" role="note" aria-label="Assessment information">
+          <span class="assessment-label">Assessment</span>
+          <strong>Maximum marks: 20% of the final grading</strong>
+          <span class="assessment-category">Quiz/Class Participation</span>
+        </div>
+      </section>
+
+      <section class="tutorial-index" id="tutorial-topics" aria-labelledby="tutorial-topics-title">
+        <h2 id="tutorial-topics-title">Tutorial Topics</h2>
+        <div class="topic-grid">
+          <div class="topic-card">
+            <span class="topic-number">Topic 01</span>
+            <h3><a href="#task-offloading">Task Offloading and Resource Allocation</a></h3>
+            <p>Mentor: <a href="mailto:25dr0059@iitism.ac.in">Rakesh Pradhan</a></p>
+          </div>
+          <div class="topic-card">
+            <span class="topic-number">Topic 02</span>
+            <h3><a href="#tacfpext">TaCFPext: DSME MAC Extension</a></h3>
+            <p>Mentor: <a href="mailto:25dr0106@iitism.ac.in">Ashish Kumar</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="topic-heading" id="task-offloading">
+        <span class="topic-number">Tutorial Topic 01</span>
+        <h2>Task Offloading and Resource Allocation</h2>
+        <p class="mentor-line">
+          <span>Mentor:</span>
+          <a href="mailto:25dr0059@iitism.ac.in">Rakesh Pradhan</a>
+        </p>
+      </section>
+
+      <section class="research-block" id="task-objective-1">
+        <span class="block-marker" aria-hidden="true">01</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>The Internet of Vehicles (IoV) has emerged as a key enabling technology for intelligent transportation systems by supporting a wide range of latency-sensitive and computation-intensive applications, such as autonomous driving, real-time traffic management, cooperative perception, and intelligent navigation. To meet the stringent delay and computational requirements of these applications, Mobile Edge Computing (MEC) has become a fundamental paradigm by bringing computational resources closer to vehicles. Instead of transmitting all computation-intensive tasks to distant cloud servers, edge computing enables tasks to be processed at nearby edge servers, thereby reducing communication latency, improving response time, and alleviating network congestion. Consequently, efficient task offloading and resource allocation have become critical research challenges in IoV-enabled edge computing. The primary objective is to determine where each task should be executed and how limited computational and communication resources should be allocated to maximize overall system performance. As a result, a large body of research has focused on developing joint task offloading and resource allocation algorithms that optimize metrics such as task completion delay, energy consumption, resource utilization, and operational cost.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 1</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 1 : Develop a joint task offloading and resource allocation framework that maximizes service reliability while simultaneously minimizing task completion delay and energy consumption under dynamic vehicle mobility, limited edge resources, and uncertain server failures. For the simulation integrate SUMO simulator.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Maximize service reliability while minimizing task completion delay and energy consumption under dynamic vehicle mobility, limited edge resources, and uncertain server failures.</p>
+            <p>Simulation: Integrate the SUMO simulator.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11002512" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11002512</a></div>
+          <div><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10930689" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10930689</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="task-objective-2">
+        <span class="block-marker" aria-hidden="true">02</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>The Internet of Vehicles (IoV) has emerged as a key enabling technology for intelligent transportation systems by supporting a wide range of latency-sensitive and computation-intensive applications, such as autonomous driving, real-time traffic management, cooperative perception, and intelligent navigation. To meet the stringent delay and computational requirements of these applications, Mobile Edge Computing (MEC) has become a fundamental paradigm by bringing computational resources closer to vehicles. Instead of transmitting all computation-intensive tasks to distant cloud servers, edge computing enables tasks to be processed at nearby edge servers, thereby reducing communication latency, improving response time, and alleviating network congestion. Consequently, efficient task offloading and resource allocation have become critical research challenges in IoV-enabled edge computing. The primary objective is to determine where each task should be executed and how limited computational and communication resources should be allocated to maximize overall system performance. As a result, a large body of research has focused on developing joint task offloading and resource allocation algorithms that optimize metrics such as task completion delay, energy consumption, resource utilization, and operational cost.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 2</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 2 : Design a queue-aware online DAG scheduling and task offloading framework that minimizes end-to-end application completion time by jointly optimizing task scheduling, edge server selection, and resource allocation under dynamic queue congestion, heterogeneous resources, and task dependency constraints. For the simulation integrate SUMO simulator.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Minimize end-to-end application completion time by jointly optimizing task scheduling, edge server selection, and resource allocation under dynamic queue congestion, heterogeneous resources, and task dependency constraints.</p>
+            <p>Simulation: Integrate the SUMO simulator.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11002512" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11002512</a></div>
+          <div><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10930689" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10930689</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="task-objective-3">
+        <span class="block-marker" aria-hidden="true">03</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>Mobile Edge Computing (MEC) has become a key paradigm for supporting latency-sensitive and computation-intensive applications by bringing computational resources closer to end users. Efficient task offloading and resource allocation are fundamental to improving application performance and resource utilization in such environments. Existing studies have proposed various optimization strategies that allocate computational and communication resources based on the current system state, aiming to reduce task completion delay, energy consumption, or operational cost. While these approaches achieve good short-term performance, they generally focus on immediate scheduling decisions and do not explicitly consider how current resource allocation affects future resource availability, queue evolution, and overall system performance over time.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 3</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 3 : Jointly optimize task offloading and resource allocation to minimize the long-term cumulative cost by considering both execution performance and the impact of current decisions on future system states. Hint : Use DRL mechanisms for the evaluation and performance measure.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Minimize the long-term cumulative cost by considering execution performance and the impact of current decisions on future system states.</p>
+            <p>Evaluation direction: Use DRL mechanisms for evaluation and performance measurement.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10330757" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10330757</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="task-objective-4">
+        <span class="block-marker" aria-hidden="true">04</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>Resource allocation is one of the most fundamental challenges in edge computing, cloud computing, and distributed systems, where limited computational and communication resources must be efficiently allocated to dynamically arriving tasks. Existing resource allocation strategies primarily aim to optimize performance metrics such as task completion delay, energy consumption, throughput, or overall resource utilization. These approaches have significantly improved system efficiency by allocating resources according to task requirements and system conditions. However, most existing methods implicitly assume that all tasks contribute equally to the overall system performance, focusing primarily on efficient resource usage rather than the actual benefit generated by executing different tasks. In many practical applications, tasks often have varying levels of significance, making resource allocation based solely on traditional performance metrics insufficient for achieving optimal system effectiveness.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 4</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 4 : Maximize the total computational impact achieved by resource allocation while satisfying latency, energy, and QoS constraints. Hint : Use Online algorithm or DRL to solve the problem.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Maximize total computational impact while satisfying latency, energy, and QoS constraints.</p>
+            <p>Solution direction: Use an online algorithm or DRL.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11044609" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=11044609</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="task-objective-5">
+        <span class="block-marker" aria-hidden="true">05</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>Task placement and resource allocation play a critical role in improving the performance of distributed edge computing systems by determining where tasks should be executed and how computational resources should be assigned. Existing approaches typically estimate task resource requirements and make scheduling decisions based on current system conditions or predicted workload characteristics. These methods have demonstrated significant improvements in reducing application completion time and improving resource utilization. However, most existing algorithms assume that task execution characteristics remain relatively stable throughout execution and rarely adjust scheduling decisions according to actual runtime behavior. In dynamic computing environments, execution performance can vary due to changing workloads, resource contention, and system interference, causing static resource allocation decisions to become suboptimal. Consequently, there is a need for resource management strategies that continuously adapt task placement and resource allocation based on real-time execution feedback to maintain efficient system performance.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 5</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 5 : Minimize long-term application completion time by jointly optimizing task placement and continuously adapting resource allocation using online execution feedback. Hint : Use Federated Learning to solve the problem.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Minimize long-term application completion time by jointly optimizing task placement and continuously adapting resource allocation using online execution feedback.</p>
+            <p>Solution direction: Use Federated Learning.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10229031" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=10229031</a></div>
+        </div>
+      </section>
+
+      <section class="topic-heading" id="tacfpext">
+        <span class="topic-number">Tutorial Topic 02</span>
+        <h2>TaCFPext: DSME MAC Extension</h2>
+        <p class="mentor-line">
+          <span>Mentor:</span>
+          <a href="mailto:25dr0106@iitism.ac.in">Ashish Kumar</a>
+        </p>
+      </section>
+
+      <section class="research-block" id="tacfp-objective-1">
+        <span class="block-marker" aria-hidden="true">01</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>In an IEEE 802.15.4 DSME network, a coordinator that needs more transmission capacity can turn a nearby Contention Access Period (CAP) into an extended Contention-Free Period (extCFP), giving itself extra Guaranteed Time Slots. TaCFPext makes this decision in a purely local way &mdash; a node only checks its own one-hop neighbors before converting a CAP. That works fine in a small, single-cluster network, but real industrial deployments are rarely that simple. They span multiple hops, multiple coordinators, and sometimes multiple PANs, all sharing the same limited pool of CAPs and channels. If two coordinators that are two hops apart both decide, independently and at the same time, to convert the same CAP into an extCFP, their schedules collide &mdash; exactly the kind of failure TaCFPext was designed to prevent. This is the multi-hop coordination gap Objective 1 addresses.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 1</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 1 : Extend TaCFPext's changeable-CAP-selection procedure to two-hop, multi-coordinator awareness, so that coordinators broadcast a short conversion intent before converting a CAP to extCFP, preventing independent, conflicting extCFP conversions across multi-hop and multi-PAN industrial deployments.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Prevent two coordinators two hops apart from independently converting the same CAP into conflicting extCFPs, extending TaCFPext beyond its original one-hop-only evaluation.</p>
+            <p>Simulation: Contiki-NG / Cooja &mdash; multi-hop cluster-tree topology with coordinators two hops apart, simultaneous-burst conflict test, conflict-rate and packet-drop logging.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783</a></div>
+          <div><a href="https://www.sciencedirect.com/science/article/pii/S0140366416301980" target="_blank" rel="noopener noreferrer">https://www.sciencedirect.com/science/article/pii/S0140366416301980</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="tacfp-objective-2">
+        <span class="block-marker" aria-hidden="true">02</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>TaCFPext only starts converting a CAP into an extended CFP after a node has already failed to allocate a GTS three consecutive times. That means the mechanism is purely reactive &mdash; by the time it kicks in, some packets have already been delayed or dropped, and the extGTS negotiation itself takes time to complete. In a genuinely bursty environment, a few superframes of &ldquo;catching up&rdquo; after every burst onset is exactly the window where TaCFPext&rsquo;s own reported gains get eaten away. This objective replaces that fixed, after-the-fact trigger with a predictive one, so the node starts reserving extra capacity before the failure happens rather than after it.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 2</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 2 : Replace TaCFPext's fixed 3-consecutive-failure trigger with a predictive, EWMA-based traffic estimator that starts changeable-CAP selection before a burst causes GTS-allocation failures, hiding extGTS negotiation latency behind the ramp-up of the burst.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Reduce the delay and packet-drop spike that occurs at the start of a traffic burst by triggering extCFP conversion proactively instead of reactively.</p>
+            <p>Simulation: Contiki-NG / Cooja &mdash; alternating low/burst traffic generator, onset-to-allocation delay logging compared against the original reactive 3-fail trigger.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783</a></div>
+          <div><a href="https://www.sciencedirect.com/science/article/pii/S0140366416301980" target="_blank" rel="noopener noreferrer">https://www.sciencedirect.com/science/article/pii/S0140366416301980</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="tacfp-objective-3">
+        <span class="block-marker" aria-hidden="true">03</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>TaCFPext borrows a nearby CAP whenever a single node&rsquo;s traffic suddenly bursts, but it never questions the skeleton it is operating inside. The three parameters that define that skeleton &mdash; macSuperframeOrder (SO), macMultiSuperframeOrder (MO), and macBeaconOrder (BO) &mdash; are fixed once at network start-up (3, 5, and 6 in the original paper&rsquo;s simulation) and never revisited for the rest of the network&rsquo;s life. TaCFPext&rsquo;s extCFP mechanism only ever works within that fixed structure. This is fine for short-lived, node-level bursts, but it says nothing about what happens when the entire network&rsquo;s traffic shifts for good &mdash; for example, when more sensors join, or a process line moves from idle monitoring into continuous production. In that case, TaCFPext just keeps patching individual bursts node by node, even though the real problem is that the baseline CAP/CFP split itself has become the wrong size for the network.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 3</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 3 : Add a network-wide, periodic SO/MO/BO re-evaluation loop above TaCFPext's existing per-node extCFP mechanism, so the coordinator restructures the baseline multi-superframe when average load shifts permanently, while extCFP continues to absorb short-term bursts.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Let the network handle sustained, network-wide load changes at the structural (SO/MO/BO) level and transient, node-level bursts via TaCFPext's existing extCFP mechanism, so each mechanism only does the job it is suited for.</p>
+            <p>Simulation: Contiki-NG / Cooja &mdash; sustained load-increase scenario, MO-transition and extCFP-trigger-frequency logging, treated as an extension of the existing CAP-reduction implementation phase.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9469783</a></div>
+          <div><a href="https://www.sciencedirect.com/science/article/pii/S0140366416301980" target="_blank" rel="noopener noreferrer">https://www.sciencedirect.com/science/article/pii/S0140366416301980</a></div>
+        </div>
+      </section>
+
+      <section class="research-block" id="tacfp-objective-4">
+        <span class="block-marker" aria-hidden="true">04</span>
+        <span class="content-label">Problem overview</span>
+        <ul class="source-list">
+          <li>
+            <p>STREAM-E ranks GTS requests by traffic class and a packet-rate/buffer-occupancy score, so a Critical-traffic sensor generally gets served before a Normal one. But priority ranking only solves contention &mdash; it reorders who gets a slot first, it doesn&rsquo;t create a slot that doesn&rsquo;t exist. If the CFP is genuinely full, a Critical or Delay-driven request can still be dropped no matter how high its priority is, because there&rsquo;s simply nowhere left to put it. STREAM-E has no answer for this situation; it assumes reordering the queue is always enough. This objective gives the coordinator a way to respond when priority alone isn&rsquo;t sufficient, using only DSME&rsquo;s own standard, already-defined parameters &mdash; not anything borrowed from outside STREAM-E&rsquo;s own design.</p>
+          </li>
+        </ul>
+
+        <div class="objective-group">
+          <h3>Objective 4</h3>
+          <span class="content-label">Objective</span>
+          <p class="objective"><strong>Objective 4 : Give the STREAM-E coordinator a way to grow CFP capacity using DSME's own standard multi-superframe parameters (macMultiSuperframeOrder) when Critical/Delay-driven traffic is repeatedly dropped despite priority ranking, keeping the fix entirely inside STREAM-E's own priority/GTS-scheduling logic and the standard's own tunable parameters.</strong></p>
+          <div class="aim">
+            <span class="content-label">Aim</span>
+            <p>Prevent Critical/Delay-driven traffic from being silently dropped once priority ranking has done all it can, by increasing macMultiSuperframeOrder (MO) when overflow is sustained and broadcasting the updated structure via the next enhanced beacon.</p>
+            <p>Simulation: Contiki-NG / Cooja.</p>
+          </div>
+        </div>
+
+        <div class="reference-lines">
+          <div>Reference : <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=11152312" target="_blank" rel="noopener noreferrer">https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=11152312</a></div>
+          <div><a href="https://www.sciencedirect.com/science/article/pii/S0140366416301980" target="_blank" rel="noopener noreferrer">https://www.sciencedirect.com/science/article/pii/S0140366416301980</a></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Design and Analysis of Algorithms</span>
+      <span>© 2026
+        <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
+          Dr. Alakesh Kalita
+        </a>
+        · Mathematics and Computing · IIT (ISM) Dhanbad
+      </span>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var tocLinks = Array.from(document.querySelectorAll(".toc a"));
+    var sections = tocLinks
+      .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+      .filter(Boolean);
+    if ("IntersectionObserver" in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          tocLinks.forEach(function (link) {
+            link.classList.toggle("current", link.getAttribute("href") === "#" + entry.target.id);
+          });
+        });
+      }, {rootMargin: "-18% 0px -72% 0px", threshold: 0});
+      sections.forEach(function (section) { observer.observe(section); });
+    }
+
+    var progress = document.getElementById("reading-progress");
+    function updateProgress() {
+      var root = document.documentElement;
+      var distance = Math.max(1, root.scrollHeight - window.innerHeight);
+      var position = window.scrollY || root.scrollTop || 0;
+      progress.style.width = Math.min(100, Math.max(0, position / distance * 100)) + "%";
+    }
+    window.addEventListener("scroll", updateProgress, {passive: true});
+    updateProgress();
+  })();
+  </script>
 </body>
 </html>
