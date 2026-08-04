@@ -333,6 +333,118 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   }
 }
 
+
+
+/* ---------- Collapsible lab sheets ---------- */
+.collapsible-lab {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.lab-sheet-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 26px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.lab-sheet-summary::-webkit-details-marker { display: none; }
+.lab-sheet-summary::marker { content: ""; }
+
+.lab-sheet-heading {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lab-sheet-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.28rem;
+}
+
+.lab-toggle {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid #bfdee5;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-family: var(--font-display);
+  font-size: 27px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.lab-toggle::before { content: "+"; }
+.collapsible-lab[open] .lab-toggle::before { content: "−"; }
+
+.lab-sheet-summary:hover .lab-toggle,
+.lab-sheet-summary:focus-visible .lab-toggle {
+  background: var(--accent);
+  color: #fff;
+}
+
+.lab-sheet-summary:focus-visible {
+  outline: 3px solid rgba(11, 114, 133, .22);
+  outline-offset: -3px;
+}
+
+.lab-sheet-content {
+  padding: 0 26px 26px;
+  border-top: 1px solid var(--line);
+}
+
+.collapsible-lab[open] .lab-sheet-content {
+  animation: reveal-lab .18s ease-out;
+}
+
+@keyframes reveal-lab {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.collapsible-lab.locked .lab-toggle {
+  background: #edf1f6;
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+
+.lab-placeholder {
+  padding-top: 20px;
+}
+
+.lab-placeholder p {
+  margin: 0 0 10px;
+}
+
+@media (max-width: 600px) {
+  .lab-sheet-summary {
+    padding: 18px 20px;
+  }
+
+  .lab-sheet-content {
+    padding: 0 20px 20px;
+  }
+
+  .lab-toggle {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 24px;
+  }
+}
+
 /* ---------- Chapter page layout ---------- */
 .chapter-layout {
   max-width: var(--maxw); margin: 0 auto;
@@ -640,175 +752,189 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   <h3 style="font-family: var(--font-display); margin: 34px 0 14px;">Lab sheets</h3>
   <div class="chapter-grid">
 
-    <section class="chapter-card lab-sheet-card" aria-labelledby="lab-01-title">
-      <span class="chapter-num">Lab 01</span>
-      <h3 id="lab-01-title">Programming Questions</h3>
-      <ol class="program-list">
-        <li>Write a program to reverse the digits of a number (e.g., 123 → 321).</li>
-        <li>Remove duplicates from a sorted array and print the new length.</li>
-        <li>Find the K-th smallest element in an unsorted array using sorting.</li>
-        <li>Check if a given string is a palindrome. (e.g. NITIN; yes palindrome)</li>
-        <li>Reverse a string without using built-in functions.</li>
-        <li>Check if an integer is a palindrome.</li>
-        <li>Find the second largest number in an array without using sorting.</li>
-        <li>Given a string, capitalize the first letter of every word.</li>
-        <li>Count the frequency of each character in a string.</li>
-        <li>Merge two sorted arrays into a single sorted array.</li>
-      </ol>
-    </section>
+    <details class="chapter-card lab-sheet-card collapsible-lab">
+      <summary class="lab-sheet-summary" aria-labelledby="lab-01-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 01</span>
+          <h3 id="lab-01-title">Programming Questions</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
 
-   <section class="chapter-card lab-sheet-card" aria-labelledby="lab-02-title">
-      <span class="chapter-num">Lab 02</span>
-      <h3 id="lab-02-title">Sorting and Searching</h3>
+      <div class="lab-sheet-content">
+        <ol class="program-list">
+          <li>Write a program to reverse the digits of a number (e.g., 123 → 321).</li>
+          <li>Remove duplicates from a sorted array and print the new length.</li>
+          <li>Find the K-th smallest element in an unsorted array using sorting.</li>
+          <li>Check if a given string is a palindrome. (e.g. NITIN; yes palindrome)</li>
+          <li>Reverse a string without using built-in functions.</li>
+          <li>Check if an integer is a palindrome.</li>
+          <li>Find the second largest number in an array without using sorting.</li>
+          <li>Given a string, capitalize the first letter of every word.</li>
+          <li>Count the frequency of each character in a string.</li>
+          <li>Merge two sorted arrays into a single sorted array.</li>
+        </ol>
+      </div>
+    </details>
 
-      <ol class="detailed-program-list">
-        <li>
-          <h4 class="lab-question-title">Insertion Sort with Operation Counting</h4>
-          <p class="lab-question-text">
-            Implement insertion sort. Count the number of element comparisons and right shifts.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>6
+    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-02-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 02</span>
+          <h3 id="lab-02-title">Sorting and Searching</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+
+      <div class="lab-sheet-content">
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Insertion Sort with Operation Counting</h4>
+            <p class="lab-question-text">
+              Implement insertion sort. Count the number of element comparisons and right shifts.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>6
 5 2 4 6 1 3</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>Sorted array: 1 2 3 4 5 6
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>Sorted array: 1 2 3 4 5 6
 Comparisons: 12
 Shifts: 9</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Stable Multi-Key Insertion Sort</h4>
-          <p class="lab-question-text">
-            Each student record contains roll number, name, marks, and submission time. Using insertion sort, arrange the records by:
-          </p>
-          <ul class="lab-question-points">
-            <li>Higher marks first.</li>
-            <li>Earlier submission time first.</li>
-            <li>Original order for complete ties.</li>
-          </ul>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>4
+          <li>
+            <h4 class="lab-question-title">Stable Multi-Key Insertion Sort</h4>
+            <p class="lab-question-text">
+              Each student record contains roll number, name, marks, and submission time. Using insertion sort, arrange the records by:
+            </p>
+            <ul class="lab-question-points">
+              <li>Higher marks first.</li>
+              <li>Earlier submission time first.</li>
+              <li>Original order for complete ties.</li>
+            </ul>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>4
 101 Asha 85 10:05
 102 Ravi 90 10:10
 103 Neha 85 10:05
 104 Isha 85 09:55</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>102 Ravi 90 10:10
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>102 Ravi 90 10:10
 104 Isha 85 09:55
 101 Asha 85 10:05
 103 Neha 85 10:05</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Stable Binary Insertion Sort</h4>
-          <p class="lab-question-text">
-            Implement binary insertion sort. Use binary search to insert a key after existing equal elements so that the algorithm remains stable. Compare its comparisons and shifts with ordinary insertion sort.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>4
+          <li>
+            <h4 class="lab-question-title">Stable Binary Insertion Sort</h4>
+            <p class="lab-question-text">
+              Implement binary insertion sort. Use binary search to insert a key after existing equal elements so that the algorithm remains stable. Compare its comparisons and shifts with ordinary insertion sort.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>4
 4 2 4 1</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>Sorted array: 1 2 4 4
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>Sorted array: 1 2 4 4
 Binary insertion sort comparisons: 4
 Binary insertion sort shifts: 4
 Ordinary insertion sort comparisons: 5
 Ordinary insertion sort shifts: 4</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Find the K Smallest Elements</h4>
-          <p class="lab-question-text">
-            Using insertion-style shifting, maintain the <em>k</em> smallest elements in sorted order at the beginning of the array. Do not fully sort the remaining elements, and use only O(1) additional space. When a new value enters the first <em>k</em> positions, place the displaced value at the current position.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>6
+          <li>
+            <h4 class="lab-question-title">Find the K Smallest Elements</h4>
+            <p class="lab-question-text">
+              Using insertion-style shifting, maintain the <em>k</em> smallest elements in sorted order at the beginning of the array. Do not fully sort the remaining elements, and use only O(1) additional space. When a new value enters the first <em>k</em> positions, place the displaced value at the current position.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>6
 7 2 5 1 6 3
 3</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>First 3 smallest elements: 1 2 3
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>First 3 smallest elements: 1 2 3
 Final array: 1 2 3 7 6 5</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Bubble Sort and Inversion Count</h4>
-          <p class="lab-question-text">
-            Implement bubble sort. Print the array after every pass and verify that the total number of adjacent swaps equals the inversion count of the original array.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>3
+          <li>
+            <h4 class="lab-question-title">Bubble Sort and Inversion Count</h4>
+            <p class="lab-question-text">
+              Implement bubble sort. Print the array after every pass and verify that the total number of adjacent swaps equals the inversion count of the original array.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>3
 3 1 2</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>Pass 1: 1 2 3
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>Pass 1: 1 2 3
 Pass 2: 1 2 3
 Comparisons: 3
 Swaps: 2
 Inversions: 2</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Ternary Search on a Sorted Array</h4>
-          <p class="lab-question-text">
-            Instead of dividing a sorted array into two parts as in binary search, divide it into three nearly equal parts using two middle indices, <code>mid1</code> and <code>mid2</code>.
-          </p>
-          <p class="lab-question-text">In each iteration:</p>
-          <ul class="lab-question-points">
-            <li>Compare the target with <code>A[mid1]</code>.</li>
-            <li>Compare the target with <code>A[mid2]</code>.</li>
-            <li>Continue searching in the left, middle, or right third.</li>
-          </ul>
-          <p class="lab-question-text">
-            Implement iterative ternary search without using built-in searching functions. Return the target index, or <code>-1</code> if it is absent. Print the number of target-to-array-element comparisons and analyse its time complexity.
-          </p>
-        </li>
+          <li>
+            <h4 class="lab-question-title">Ternary Search on a Sorted Array</h4>
+            <p class="lab-question-text">
+              Instead of dividing a sorted array into two parts as in binary search, divide it into three nearly equal parts using two middle indices, <code>mid1</code> and <code>mid2</code>.
+            </p>
+            <p class="lab-question-text">In each iteration:</p>
+            <ul class="lab-question-points">
+              <li>Compare the target with <code>A[mid1]</code>.</li>
+              <li>Compare the target with <code>A[mid2]</code>.</li>
+              <li>Continue searching in the left, middle, or right third.</li>
+            </ul>
+            <p class="lab-question-text">
+              Implement iterative ternary search without using built-in searching functions. Return the target index, or <code>-1</code> if it is absent. Print the number of target-to-array-element comparisons and analyse its time complexity.
+            </p>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Compare Three Bubble-Sort Versions</h4>
-          <p class="lab-question-text">Implement and compare:</p>
-          <ul class="lab-question-points">
-            <li>Standard bubble sort.</li>
-            <li>Bubble sort with a swapped flag.</li>
-            <li>Bubble sort using the last-swap position.</li>
-          </ul>
-          <p class="lab-question-text">Report the number of passes, comparisons, and swaps.</p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>5
+          <li>
+            <h4 class="lab-question-title">Compare Three Bubble-Sort Versions</h4>
+            <p class="lab-question-text">Implement and compare:</p>
+            <ul class="lab-question-points">
+              <li>Standard bubble sort.</li>
+              <li>Bubble sort with a swapped flag.</li>
+              <li>Bubble sort using the last-swap position.</li>
+            </ul>
+            <p class="lab-question-text">Report the number of passes, comparisons, and swaps.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>5
 2 1 3 4 5</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>Sorted array: 1 2 3 4 5
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>Sorted array: 1 2 3 4 5
 
 Standard:
 Passes: 4
@@ -824,91 +950,99 @@ Last-swap optimization:
 Passes: 1
 Comparisons: 4
 Swaps: 1</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Bidirectional Optimized Bubble Sort</h4>
-          <p class="lab-question-text">
-            Implement a stable bidirectional bubble sort. Move the largest element rightward during the forward pass and the smallest element leftward during the backward pass. Reduce the active range after each directional pass.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>6
+          <li>
+            <h4 class="lab-question-title">Bidirectional Optimized Bubble Sort</h4>
+            <p class="lab-question-text">
+              Implement a stable bidirectional bubble sort. Move the largest element rightward during the forward pass and the smallest element leftward during the backward pass. Reduce the active range after each directional pass.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>6
 2 3 4 5 6 1</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>After forward pass: 2 3 4 5 1 6
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>After forward pass: 2 3 4 5 1 6
 After backward pass: 1 2 3 4 5 6
 Sorted array: 1 2 3 4 5 6
 
 Bidirectional comparisons: 12
 Bidirectional swaps: 5
 Optimized bubble-sort comparisons: 15</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">One-Pass Linear Search Statistics</h4>
-          <p class="lab-question-text">Using only one left-to-right traversal, find:</p>
-          <ul class="lab-question-points">
-            <li>First and last occurrence of the target.</li>
-            <li>Frequency of the target.</li>
-            <li>Longest consecutive run.</li>
-            <li>Starting index of the longest run.</li>
-          </ul>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>8
+          <li>
+            <h4 class="lab-question-title">One-Pass Linear Search Statistics</h4>
+            <p class="lab-question-text">Using only one left-to-right traversal, find:</p>
+            <ul class="lab-question-points">
+              <li>First and last occurrence of the target.</li>
+              <li>Frequency of the target.</li>
+              <li>Longest consecutive run.</li>
+              <li>Starting index of the longest run.</li>
+            </ul>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>8
 2 5 5 1 5 5 5 3
 5</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>First occurrence: 1
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>First occurrence: 1
 Last occurrence: 6
 Frequency: 5
 Longest consecutive run: 3
 Run starting index: 4
 Comparisons: 8</pre>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li>
-          <h4 class="lab-question-title">Simple Binary Search</h4>
-          <p class="lab-question-text">
-            Implement iterative binary search on a sorted array. Print the target index and the number of comparisons. Return <code>-1</code> when the target is absent.
-          </p>
-          <div class="lab-samples">
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Input</span>
-              <pre>5
+          <li>
+            <h4 class="lab-question-title">Simple Binary Search</h4>
+            <p class="lab-question-text">
+              Implement iterative binary search on a sorted array. Print the target index and the number of comparisons. Return <code>-1</code> when the target is absent.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Input</span>
+                <pre>5
 2 4 6 8 10
 8</pre>
-            </div>
-            <div class="lab-sample">
-              <span class="lab-sample-label">Sample Output</span>
-              <pre>Target found at index: 3
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sample Output</span>
+                <pre>Target found at index: 3
 Comparisons: 2</pre>
+              </div>
             </div>
-          </div>
-        </li>
-      </ol>
-    </section>
+          </li>
+        </ol>
+      </div>
+    </details>
 
+    <details class="chapter-card lab-sheet-card collapsible-lab locked">
+      <summary class="lab-sheet-summary" aria-labelledby="lab-03-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 03</span>
+          <h3 id="lab-03-title">To be announced</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
 
-    <div class="chapter-card locked">
-      <span class="chapter-num">Lab 03</span>
-      <h3>To be announced</h3>
-      <p>Posted after the corresponding lecture.</p>
-      <span class="badge-soon">coming soon</span>
-    </div>
+      <div class="lab-sheet-content lab-placeholder">
+        <p>Posted after the corresponding lecture.</p>
+        <span class="badge-soon">coming soon</span>
+      </div>
+    </details>
 
   </div>
 </main>
