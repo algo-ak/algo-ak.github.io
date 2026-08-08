@@ -318,6 +318,51 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   font-size: .9em;
 }
 
+.recurrence-box {
+  display: inline-grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  margin: 4px 0 2px;
+  padding: 14px 18px;
+  border: 1px solid #bfdee5;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.recurrence-left {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.recurrence-brace {
+  color: var(--accent-dark);
+  font-family: Georgia, serif;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: .9;
+}
+
+.recurrence-cases {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+@media (max-width: 520px) {
+  .recurrence-box {
+    grid-template-columns: auto auto 1fr;
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+  }
+  .recurrence-brace { font-size: 46px; }
+}
+
 @media (max-width: 760px) {
   .detailed-program-list > li {
     padding: 68px 16px 18px;
@@ -777,7 +822,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab">
       <summary class="lab-sheet-summary" aria-labelledby="lab-02-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 02</span>
@@ -1029,18 +1074,95 @@ Comparisons: 2</pre>
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab locked">
+    <details class="chapter-card lab-sheet-card collapsible-lab" open>
       <summary class="lab-sheet-summary" aria-labelledby="lab-03-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 03</span>
-          <h3 id="lab-03-title">To be announced</h3>
+          <h3 id="lab-03-title">Recursion</h3>
         </span>
         <span class="lab-toggle" aria-hidden="true"></span>
       </summary>
 
-      <div class="lab-sheet-content lab-placeholder">
-        <p>Posted after the corresponding lecture.</p>
-        <span class="badge-soon">coming soon</span>
+      <div class="lab-sheet-content">
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Exponentiation Using Recursion</h4>
+            <p class="lab-question-text">
+              Find the exponential <em>x</em><sup>n</sup> of a number using recursion. Use the following recurrence:
+            </p>
+            <div class="recurrence-box" aria-label="Recursive formula for x to the power n">
+              <span class="recurrence-left"><em>x</em><sup>n</sup> =</span>
+              <span class="recurrence-brace">{</span>
+              <span class="recurrence-cases">
+                <span>(<em>x</em><sup>n/2</sup>)<sup>2</sup>, &nbsp;if <em>n</em> is even</span>
+                <span><em>x</em> · (<em>x</em><sup>⌊n/2⌋</sup>)<sup>2</sup>, &nbsp;if <em>n</em> is odd</span>
+              </span>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Fibonacci Sequence Using Recursion</h4>
+            <p class="lab-question-text">
+              Write a program to generate the Fibonacci sequence up to <em>n</em> terms using recursion.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Reverse a String Using Recursion</h4>
+            <p class="lab-question-text">
+              Write a program to reverse a string using recursion.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Palindrome Check Using Recursion</h4>
+            <p class="lab-question-text">
+              Write a program to check whether a string is a palindrome using recursion.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Tower of Hanoi</h4>
+            <p class="lab-question-text">
+              Write a program to solve the Tower of Hanoi problem using recursion for <em>n</em> disks.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Generate All Permutations</h4>
+            <p class="lab-question-text">
+              Write a program to generate all permutations of a given string or array using recursion.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Factorial of a Large Number</h4>
+            <p class="lab-question-text">
+              Write a program to compute the factorial of a large number using recursion and display the result.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Recursive Binary Search</h4>
+            <p class="lab-question-text">
+              Write a program to perform recursive binary search on a sorted array to find a given element.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Recursive Binary-Tree Traversals</h4>
+            <p class="lab-question-text">
+              Write a program to implement recursive tree traversal algorithms—Inorder, Preorder, and Postorder—for a binary tree.
+            </p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Generate All Subsets</h4>
+            <p class="lab-question-text">
+              Write a program to generate all subsets (the power set) of a given array using recursion.
+            </p>
+          </li>
+        </ol>
       </div>
     </details>
 
