@@ -681,6 +681,28 @@
     .expression-tree.animation-ready .tree-node[data-tree-step].is-current {
       box-shadow: 0 0 0 3px rgba(11, 114, 133, .2);
     }
+    .expression-tree .tree-node[data-return-value]::after {
+      content: "";
+      display: block;
+      min-height: 16px;
+      margin-top: 2px;
+      color: #0f766e;
+      font-size: 10.5px;
+      font-weight: 700;
+      line-height: 16px;
+      opacity: 0;
+      transition: opacity .28s ease, color .28s ease;
+    }
+    .expression-tree .tree-node[data-return-value].is-returned::after {
+      content: "returns " attr(data-return-value);
+      opacity: 1;
+    }
+    .expression-tree .tree-node[data-return-value].is-returning {
+      border-color: #72b5a7;
+      background: #e5f6f0;
+      color: #0b655b;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, .16);
+    }
     .expression-tree.animation-ready li::before,
     .expression-tree.animation-ready li::after,
     .expression-tree.animation-ready ul ul::before {
@@ -1115,33 +1137,33 @@
           <strong>Exact expression tree for fact(5)</strong>
           <span class="tree-heading-actions">
             <code>fact(n) = n × fact(n−1)</code>
-            <button class="tree-replay" id="factor-tree-replay" type="button">Animate tree</button>
+            <button class="tree-replay" id="factor-tree-replay" type="button">Animate calls &amp; returns</button>
           </span>
         </figcaption>
         <div class="rec-tree expression-tree" role="img" aria-label="Factorial five expression tree. Each factorial call expands into the current number, a multiplication sign, and the next factorial call, ending with fact one returning one.">
           <ul>
             <li>
-              <span class="tree-node root" data-tree-step="0">fact(5)</span>
+              <span class="tree-node root" data-tree-step="0" data-return-rank="4" data-return-value="120">fact(5)</span>
               <ul>
                 <li><span class="tree-node" data-tree-step="1">5</span></li>
                 <li><span class="tree-node operator" data-tree-step="1">×</span></li>
                 <li>
-                  <span class="tree-node" data-tree-step="1">fact(4)</span>
+                  <span class="tree-node" data-tree-step="1" data-return-rank="3" data-return-value="24">fact(4)</span>
                   <ul>
                     <li><span class="tree-node" data-tree-step="2">4</span></li>
                     <li><span class="tree-node operator" data-tree-step="2">×</span></li>
                     <li>
-                      <span class="tree-node" data-tree-step="2">fact(3)</span>
+                      <span class="tree-node" data-tree-step="2" data-return-rank="2" data-return-value="6">fact(3)</span>
                       <ul>
                         <li><span class="tree-node" data-tree-step="3">3</span></li>
                         <li><span class="tree-node operator" data-tree-step="3">×</span></li>
                         <li>
-                          <span class="tree-node" data-tree-step="3">fact(2)</span>
+                          <span class="tree-node" data-tree-step="3" data-return-rank="1" data-return-value="2">fact(2)</span>
                           <ul>
                             <li><span class="tree-node" data-tree-step="4">2</span></li>
                             <li><span class="tree-node operator" data-tree-step="4">×</span></li>
                             <li>
-                              <span class="tree-node" data-tree-step="4">fact(1)</span>
+                              <span class="tree-node" data-tree-step="4" data-return-rank="0" data-return-value="1">fact(1)</span>
                               <ul>
                                 <li><span class="tree-node" data-tree-step="5">1</span></li>
                               </ul>
@@ -2256,6 +2278,11 @@
   if (!tree || !replayButton || !status) return;
 
   var nodes = Array.prototype.slice.call(tree.querySelectorAll("[data-tree-step]"));
+  var returnNodes = Array.prototype.slice.call(tree.querySelectorAll("[data-return-rank]"))
+    .sort(function (a, b) {
+      return parseInt(a.getAttribute("data-return-rank"), 10) -
+        parseInt(b.getAttribute("data-return-rank"), 10);
+    });
   var steps = nodes.reduce(function (largest, node) {
     return Math.max(largest, parseInt(node.getAttribute("data-tree-step"), 10));
   }, 0);
@@ -2266,6 +2293,13 @@
     "Expand fact(3) into 3 × fact(2).",
     "Expand fact(2) into 2 × fact(1).",
     "Base case reached: fact(1) returns 1."
+  ];
+  var returnMessages = [
+    "Return 1 from fact(1) to fact(2).",
+    "fact(2) receives 1: 2 × 1 = 2. Return 2 to fact(3).",
+    "fact(3) receives 2: 3 × 2 = 6. Return 6 to fact(4).",
+    "fact(4) receives 6: 4 × 6 = 24. Return 24 to fact(5).",
+    "fact(5) receives 24: 5 × 24 = 120. Return 120 to main()."
   ];
   var timers = [];
   var hasPlayed = false;
@@ -2291,7 +2325,7 @@
     clearTimers();
     tree.classList.add("animation-ready");
     nodes.forEach(function (node) {
-      node.classList.remove("is-visible", "is-current");
+      node.classList.remove("is-visible", "is-current", "is-returned", "is-returning");
     });
     tree.querySelectorAll("li").forEach(function (branch) {
       branch.classList.remove("branch-visible");
@@ -2308,9 +2342,13 @@
       revealNode(node);
       node.classList.remove("is-current");
     });
-    status.textContent = "Tree complete: 5 × 4 × 3 × 2 × 1 = 120.";
+    returnNodes.forEach(function (node) {
+      node.classList.add("is-returned");
+      node.classList.remove("is-returning");
+    });
+    status.textContent = "Complete: fact(5) returns 120 to main().";
     replayButton.disabled = false;
-    replayButton.textContent = "Replay animation";
+    replayButton.textContent = "Replay calls & returns";
   }
 
   function playTree() {
@@ -2336,12 +2374,22 @@
           });
           status.textContent = messages[currentStep];
 
-          if (currentStep === steps) {
-            timers.push(window.setTimeout(showCompleteTree, 650));
-          }
         }, currentStep * 720));
       })(step);
     }
+
+    var unwindStart = (steps + 1) * 720;
+    returnNodes.forEach(function (returnNode, returnIndex) {
+      timers.push(window.setTimeout(function () {
+        nodes.forEach(function (node) {
+          node.classList.remove("is-current", "is-returning");
+        });
+        returnNode.classList.add("is-visible", "is-returned", "is-returning");
+        status.textContent = returnMessages[returnIndex];
+      }, unwindStart + returnIndex * 820));
+    });
+    timers.push(window.setTimeout(showCompleteTree,
+      unwindStart + returnNodes.length * 820));
   }
 
   replayButton.addEventListener("click", playTree);
