@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
+/* ============================================================
+   NMCC509 — Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
 
 :root {
   --paper: #f7f9fc;
@@ -306,6 +310,58 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 }
 .chapter-nav span.disabled { color: #9aa7bd; }
 
+/* ---------- Lecture download ---------- */
+.download-card {
+  margin: 28px 0 8px; padding: 18px 20px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center; gap: 18px;
+  border: 1px solid #bfdde3; border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f2fafb 100%);
+  box-shadow: 0 10px 28px rgba(16, 28, 51, .07);
+}
+.download-file-icon {
+  position: relative; width: 54px; height: 62px;
+  display: grid; place-items: center;
+  border: 1px solid #9fcbd3; border-radius: 10px;
+  background: var(--card); color: var(--accent-dark);
+  font: 700 11px var(--font-mono); letter-spacing: .04em;
+}
+.download-file-icon::after {
+  content: ""; position: absolute; top: -1px; right: -1px;
+  width: 15px; height: 15px;
+  border-left: 1px solid #9fcbd3; border-bottom: 1px solid #9fcbd3;
+  border-radius: 0 9px 0 5px; background: var(--accent-soft);
+}
+.download-copy { min-width: 0; }
+.download-copy .resource-label {
+  display: block; margin-bottom: 3px; color: var(--accent-dark);
+  font: 600 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase;
+}
+.download-copy h3 {
+  margin: 0 0 3px; color: var(--ink);
+  font: 600 19px/1.3 var(--font-display);
+}
+.download-copy p { margin: 0; color: var(--ink-soft); font-size: 14.5px; }
+.download-action {
+  min-height: 46px; padding: 10px 17px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  border: 1px solid var(--accent); border-radius: 9px;
+  background: var(--accent); color: #fff;
+  font: 600 14px var(--font-display); white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(11, 114, 133, .18);
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.download-action::before {
+  content: "↓"; width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border-radius: 50%; background: rgba(255,255,255,.16);
+  font: 600 16px var(--font-mono);
+}
+.download-action:hover {
+  color: #fff; background: var(--accent-dark);
+  transform: translateY(-2px); box-shadow: 0 9px 18px rgba(11, 114, 133, .24);
+}
+
 /* ---------- Footer ---------- */
 .site-footer { border-top: 1px solid var(--line); background: var(--card); }
 .footer-inner {
@@ -320,6 +376,10 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   .toc { position: static; max-height: none; border: 1px solid var(--line);
          border-radius: var(--radius); padding: 16px; background: var(--card); margin-bottom: 22px; }
   .nav { flex-direction: column; gap: 10px; }
+}
+@media (max-width: 620px) {
+  .download-card { grid-template-columns: auto minmax(0,1fr); padding: 16px; gap: 14px; }
+  .download-action { grid-column: 1 / -1; width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -580,6 +640,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     details.ans[open] summary::before { content: "\2212"; }
     details.ans .ans-body { margin-top: 10px; }
   </style>
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
 </head>
 <body>
 
@@ -589,7 +650,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span> IIT (ISM) Dhanbad</span>
+        <span>NMCC509 · IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -629,7 +690,12 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     <span class="chapter-kicker">Chapter 01</span>
     <h1>Introduction, Data Structures &amp; Arrays</h1>
     <p class="chapter-intro">
- This chapter introduces the basic concepts of data and information, explains why data is organized using data structures, and examines arrays as the simplest linear data structure. It also describes how elements of one-dimensional and two-dimensional arrays are stored and addressed in memory.
+      This chapter builds the first foundations of the course: what data and
+      information are, why we organise data with data structures, and a close look
+      at the simplest linear data structure, the array, including how array
+      elements are addressed in memory for both 1D and 2D arrays. (Course
+      logistics — syllabus, textbook, assessment, and timetable — are on the
+      <a href="index.html">home page</a>.)
     </p>
 
     <!-- 1.2 -->
@@ -642,7 +708,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
       <div class="def-box">
         <span class="def-label">Definition · Information</span>
-        Processed data i.e., data with meaning added to it.
+        Processed data — data with meaning added to it.
         Example: "5 <strong>years</strong>" (the unit turns the raw number 5 into information).
       </div>
     </section>
@@ -666,7 +732,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <h2><span class="sec-no">1.4</span>What is a Data Structure?</h2>
       <p>
         Files can be very large, and we need to perform many operations on them
-        <strong class="kw"><em>efficiently</em></strong>:
+        <em>efficiently</em>:
       </p>
       <ul>
         <li>Insertion</li>
@@ -678,12 +744,12 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <li>Many more…</li>
       </ul>
       <p>
-        Doing these efficiently requires organizing the data in computer memory in
+        Doing these efficiently requires organising the data in computer memory in
         a deliberate way — that organisation is the <strong class="kw">data structure</strong>.
       </p>
       <div class="def-box">
         <span class="def-label">Definition · Data structure</span>
-        A data structure refers to the way of organizing and storing data in
+        A data structure refers to the way of organising and storing data in
         computer memory following some logical or mathematical model.
       </div>
       <h3>Classification</h3>
@@ -702,7 +768,8 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     <section class="chapter-section" id="sec-5">
       <h2><span class="sec-no">1.5</span>Why Data Structures Matter</h2>
       <p>
-        The choice of data structure determines how fast each operation can be performed. The same four operations cost very differently across structures:
+        The choice of data structure decides how fast each operation can be. The
+        same four operations cost very differently across structures:
       </p>
       <table class="tbl">
         <thead>
@@ -716,7 +783,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         </tbody>
       </table>
       <p>
-        No single structure wins everywhere i.e., each trades speed in one operation
+        No single structure wins everywhere — each trades speed in one operation
         for speed in another, which is why we study many of them.
       </p>
     </section>
@@ -728,7 +795,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <ul>
         <li>Stored in a <strong class="kw">contiguous block of memory</strong>,</li>
         <li>Made of elements of the <strong class="kw">same data type</strong>, and</li>
-        <li>Supports <strong class="kw">random access</strong> i.e., any element can be reached directly by its index.</li>
+        <li>Supports <strong class="kw">random access</strong> — any element can be reached directly by its index.</li>
       </ul>
       <pre class="code c-source">int arr[5] = {10, 20, 30, 40, 50};</pre>
       <figure class="fig memory-figure" id="memory-layout-figure">
@@ -1160,106 +1227,17 @@ int main(void) {
         every element occupies exactly the same number of bytes, so the position of
         element i is pure arithmetic.
       </div>
-
-      <aside
-        style="
-          margin:28px 0;
-          padding:18px 20px;
-          display:flex;
-          align-items:center;
-          gap:18px;
-          flex-wrap:wrap;
-          border:1px solid #bfdde3;
-          border-radius:14px;
-          background:linear-gradient(135deg,#ffffff,#f2fafb);
-          box-shadow:0 10px 28px rgba(16,28,51,.07);
-        "
-      >
-        <div
-          aria-hidden="true"
-          style="
-            width:54px;
-            height:62px;
-            flex:0 0 54px;
-            display:grid;
-            place-items:center;
-            border:1px solid #9fcbd3;
-            border-radius:10px;
-            background:#ffffff;
-            color:#085a68;
-            font:700 11px 'IBM Plex Mono',monospace;
-            letter-spacing:.04em;
-          "
-        >
-          PPTX
-        </div>
-      
-        <div style="flex:1 1 260px;min-width:0;">
-          <span
-            style="
-              display:block;
-              margin-bottom:3px;
-              color:#085a68;
-              font:600 11px 'IBM Plex Mono',monospace;
-              letter-spacing:.1em;
-              text-transform:uppercase;
-            "
-          >
-            Lecture resource
-          </span>
-      
-          <h3
-            style="
-              margin:0 0 3px;
-              color:#101c33;
-              font:600 19px/1.3 'Space Grotesk',sans-serif;
-            "
-          >
-            Chapter 1 PowerPoint
-          </h3>
-      
-        </div>
-      
-        <a
-          href="ppt/DAA_01_26.pptx"
-          download="DAA_01_26.pptx"
-          aria-label="Download the Chapter 1 PowerPoint presentation"
-          style="
-            min-height:46px;
-            padding:10px 17px;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:9px;
-            border:1px solid #0b7285;
-            border-radius:9px;
-            background:#0b7285;
-            color:#ffffff;
-            font:600 14px 'Space Grotesk',sans-serif;
-            text-decoration:none;
-            white-space:nowrap;
-            box-shadow:0 6px 14px rgba(11,114,133,.18);
-          "
-        >
-          <span
-            aria-hidden="true"
-            style="
-              width:24px;
-              height:24px;
-              display:grid;
-              place-items:center;
-              border-radius:50%;
-              background:rgba(255,255,255,.16);
-              font-size:16px;
-            "
-          >
-            ↓
-          </span>
-      
-          Download PPTX
-        </a>
-      </aside>
     </section>
+
+    <aside aria-labelledby="chapter1-download-title" style="margin:28px 0;padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid #bfdde3;border-radius:14px;background:linear-gradient(135deg,#ffffff,#f2fafb);box-shadow:0 10px 28px rgba(16,28,51,.07);">
+      <div aria-hidden="true" style="width:54px;height:62px;flex:0 0 54px;display:grid;place-items:center;border:1px solid #9fcbd3;border-radius:10px;background:#ffffff;color:#085a68;font:700 11px 'IBM Plex Mono',monospace;letter-spacing:.04em;">PPTX</div>
+      <div style="flex:1 1 260px;min-width:0;">
+        <span style="display:block;margin-bottom:3px;color:#085a68;font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Lecture resource</span>
+        <h3 id="chapter1-download-title" style="margin:0 0 3px;color:#101c33;font:600 19px/1.3 'Space Grotesk',sans-serif;">Chapter 1 PowerPoint</h3>
+        <p style="margin:0;color:#46536b;font-size:14.5px;">Download the original presentation for offline study and revision.</p>
+      </div>
+      <a href="ppt/DAA_01_26.pptx" download="DAA_01_26.pptx" aria-label="Download the Chapter 1 PowerPoint presentation" style="min-height:46px;padding:10px 17px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid #0b7285;border-radius:9px;background:#0b7285;color:#ffffff;font:600 14px 'Space Grotesk',sans-serif;text-decoration:none;white-space:nowrap;box-shadow:0 6px 14px rgba(11,114,133,.18);"><span aria-hidden="true" style="width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.16);font-size:16px;">↓</span>Download PPTX</a>
+    </aside>
 
     <nav class="chapter-nav">
       <a href="topics.html">All topics</a>
@@ -1271,7 +1249,7 @@ int main(void) {
 <footer class="site-footer">
   <div class="footer-inner">
     <span>Design and Analysis of Algorithms</span>
-    <span>©
+    <span>© 2026
       <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">
         Dr. Alakesh Kalita
       </a>
@@ -1963,5 +1941,6 @@ int main(void) {
   els.forEach(function (el) { obs.observe(el); });
 })();
 </script>
+<script src="./chapter-quality.js?v=20260815" defer></script>
 </body>
 </html>

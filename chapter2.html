@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Patrick+Hand&display=swap" rel="stylesheet">
   <style>
 /* ============================================================
-   NMCC509 — Advanced Data Structures & Algorithms
+   Advanced Data Structures & Algorithms
    Shared stylesheet — used by every page of the site
    ============================================================ */
 
@@ -413,6 +413,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     }
 
   </style>
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
 </head>
 <body>
 
@@ -422,7 +423,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span>NMCC202 &amp; NMCC526 · IIT (ISM) Dhanbad</span>
+        <span>IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -462,7 +463,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 
   <!-- ================= Chapter body ================= -->
   <main class="chapter-body">
-    <span class="chapter-kicker">Chapter 02 · NMCC509</span>
+    <span class="chapter-kicker">Chapter 02</span>
     <h1>Basics of Algorithms</h1>
     <p class="chapter-intro">
       This chapter introduces what an algorithm is, uses bubble sort (and its
@@ -623,9 +624,9 @@ print("The area of the circle with radius", radius, "is:", area)</pre>
         <div class="viz-idx" id="viz-idx"></div>
         <div class="viz-label" id="viz-label">Press Play or Step to start.</div>
         <div class="viz-controls">
-          <button class="primary" id="viz-play">Play</button>
-          <button id="viz-step">Step</button>
-          <button id="viz-reset">Reset</button>
+          <button type="button" class="primary" id="viz-play">Play</button>
+          <button type="button" id="viz-step">Step</button>
+          <button type="button" id="viz-reset">Reset</button>
           <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">
             speed
             <select id="viz-speed">
@@ -697,10 +698,8 @@ while (swap):
     Inner loop: j = 1 to m
         if A[j−1] > A[j]:
             temp = A[j−1]; A[j−1] = A[j]; A[j] = temp
-            last_swap = j              # last swap position
-            swap = true
-    m = last_swap - 1    
-      </pre>
+            m = j − 1              # last swap position
+            swap = true</pre>
       <p>
         Example — input <code class="inline">3, 2, 1, 7, 8</code>: the first pass sorts the front and the
         last swap occurs early, so the total drops to <strong>4 + 1 = 5 comparisons</strong>.
@@ -728,9 +727,9 @@ while (swap):
               <option value="opt3">3 &#8212; last-swap position m</option>
             </select>
           </label>
-          <button class="primary" id="opt-play">Play</button>
-          <button id="opt-step">Step</button>
-          <button id="opt-reset">Reset</button>
+          <button type="button" class="primary" id="opt-play">Play</button>
+          <button type="button" id="opt-step">Step</button>
+          <button type="button" id="opt-reset">Reset</button>
           <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">
             speed
             <select id="opt-speed">
@@ -1693,5 +1692,6 @@ for (int j = 1; j < p; j = j * 2) {
   els.forEach(function (el) { obs.observe(el); });
 })();
 </script>
+<script src="./chapter-quality.js?v=20260815" defer></script>
 </body>
 </html>

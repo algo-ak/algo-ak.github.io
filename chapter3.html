@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 3 </title>
+  <title>Chapter 3 · Analyzing Algorithms · Design and Analysis of Algorithms</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
   <style>
-
+/* ============================================================
+   Advanced Data Structures & Algorithms
+   Shared stylesheet — used by every page of the site
+   ============================================================ */
 
 :root {
   --paper: #f7f9fc;
@@ -538,6 +541,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       .playing-card.key-card, .viz-bar.key { animation: none; }
     }
   </style>
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
 </head>
 <body>
 
@@ -547,7 +551,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       <div class="brand-mark">O(n)</div>
       <div class="brand-text">
         <strong>Design &amp; Analysis of Algorithms</strong>
-        <span> IIT (ISM) Dhanbad</span>
+        <span>IIT (ISM) Dhanbad</span>
       </div>
     </a>
     <ul class="nav-links">
@@ -660,9 +664,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <div class="viz-idx" id="ins-idx"></div>
         <div class="viz-label" id="ins-label">Press Play or Step to start.</div>
         <div class="viz-controls">
-          <button class="primary" id="ins-play">Play</button>
-          <button id="ins-step">Step</button>
-          <button id="ins-reset">Reset</button>
+          <button type="button" class="primary" id="ins-play">Play</button>
+          <button type="button" id="ins-step">Step</button>
+          <button type="button" id="ins-reset">Reset</button>
           <label class="control-label">
             speed
             <select id="ins-speed">
@@ -938,9 +942,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         </div>
         <div class="viz-label" id="ls-label">Ready to inspect the first element.</div>
         <div class="viz-controls">
-          <button class="primary" id="ls-play">Play</button>
-          <button id="ls-step">Step</button>
-          <button id="ls-reset">Reset</button>
+          <button type="button" class="primary" id="ls-play">Play</button>
+          <button type="button" id="ls-step">Step</button>
+          <button type="button" id="ls-reset">Reset</button>
           <label class="control-label">
             key
             <select id="ls-key">
@@ -1071,9 +1075,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         <div class="bs-cells" id="bs-cells"></div>
         <div class="bs-pointers" id="bs-pointers"></div>
         <div class="viz-controls">
-          <button class="primary" id="bs-play">Play</button>
-          <button id="bs-step">Step</button>
-          <button id="bs-reset">Reset</button>
+          <button type="button" class="primary" id="bs-play">Play</button>
+          <button type="button" id="bs-step">Step</button>
+          <button type="button" id="bs-reset">Reset</button>
           <label class="control-label">
             speed
             <select id="bs-speed">
@@ -1181,9 +1185,9 @@ where n/2ᵏ = 1, so k = log n</pre>
         </div>
         <div class="viz-label" id="sel-label">Ready to find the minimum of the unsorted array.</div>
         <div class="viz-controls">
-          <button class="primary" id="sel-play">Play</button>
-          <button id="sel-step">Step</button>
-          <button id="sel-reset">Reset</button>
+          <button type="button" class="primary" id="sel-play">Play</button>
+          <button type="button" id="sel-step">Step</button>
+          <button type="button" id="sel-reset">Reset</button>
           <label class="control-label">
             speed
             <select id="sel-speed">
@@ -1786,5 +1790,6 @@ where n/2ᵏ = 1, so k = log n</pre>
   reset();
 })();
 </script>
+<script src="./chapter-quality.js?v=20260815" defer></script>
 </body>
 </html>
