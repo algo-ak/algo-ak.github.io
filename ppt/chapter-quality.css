@@ -1,0 +1,86 @@
+/* Shared, non-invasive quality layer for Chapters 1–17. */
+html { scroll-padding-top: 92px; }
+body { text-rendering: optimizeLegibility; }
+main, .chapter-body, .chapter { min-width: 0; }
+.chapter-section, .section, [id^="sec-"] { scroll-margin-top: 104px; }
+img, svg, canvas { max-width: 100%; }
+pre, code { tab-size: 4; }
+pre { max-width: 100%; overflow-x: auto; }
+table { font-variant-numeric: tabular-nums; }
+th { text-align: left; }
+p, li, td, figcaption { overflow-wrap: break-word; }
+::selection { background: rgba(11,114,133,.2); color: #101c33; }
+.quality-skip {
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  z-index: 2000;
+  padding: 9px 13px;
+  border-radius: 8px;
+  background: #101c33;
+  color: #fff !important;
+  font: 600 14px "Space Grotesk", sans-serif;
+  transform: translateY(-150%);
+  transition: transform .18s ease;
+}
+.quality-skip:focus { transform: translateY(0); }
+.quality-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1200;
+  height: 4px;
+  pointer-events: none;
+}
+.quality-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #0b7285, #b45309);
+  box-shadow: 0 0 10px rgba(11,114,133,.25);
+}
+.quality-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 9px 13px;
+  border: 1px solid #bfdde3;
+  border-radius: 999px;
+  background: rgba(255,255,255,.96);
+  color: #075968;
+  box-shadow: 0 10px 26px rgba(16,28,51,.13);
+  cursor: pointer;
+  font: 600 13px "Space Grotesk", sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.quality-top.show { opacity: 1; pointer-events: auto; transform: none; }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(11,114,133,.28);
+  outline-offset: 3px;
+}
+.chapter-nav { align-items: center; gap: 14px; }
+.chapter-nav a { text-underline-offset: 4px; }
+.site-footer a, footer a { text-underline-offset: 3px; }
+@media (max-width: 620px) {
+  .quality-top { right: 12px; bottom: 12px; }
+  .quality-top span { display: none; }
+  .chapter-nav { align-items: stretch; flex-direction: column; }
+  .chapter-nav a, .chapter-nav span { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quality-skip, .quality-progress span, .quality-top { transition: none; }
+}
+@media print {
+  .quality-progress, .quality-top, .quality-skip, .back-top, .top,
+  .controls, .viz-controls { display: none !important; }
+  .toc { position: static !important; max-height: none !important; }
+  .section, .chapter-section { break-inside: avoid; }
+  a { color: inherit !important; text-decoration: none !important; }
+  body { background: #fff !important; }
+}
