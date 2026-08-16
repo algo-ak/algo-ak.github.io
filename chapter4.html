@@ -485,9 +485,9 @@ details.ans .ans-body { margin-top: 10px; }
   .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
 }
   </style>
-  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
 </head>
-<body>
+<body class="chapter-interaction-polish">
 
 <header class="site-header">
   <nav class="nav">
@@ -598,7 +598,7 @@ details.ans .ans-body { margin-top: 10px; }
         </div>
         <div class="plot-shell">
           <canvas class="bound-canvas" data-bound="O" width="720" height="390"
-                  aria-label="Animated Big-O upper-bound graph"></canvas>
+                  aria-label="Interactive Big-O upper-bound graph"></canvas>
           <button class="plot-replay" type="button">Replay</button>
         </div>
         <figcaption><b>Fig 4.1</b> &#183; Big-O visually: past n&#8320; (shaded region), the curve f(n) stays at or below C&#183;g(n) forever. Before n&#8320;, anything may happen &#8212; asymptotics only cares about large n.</figcaption>
@@ -701,7 +701,7 @@ Divide both sides by n²:
         </div>
         <div class="plot-shell">
           <canvas class="bound-canvas" data-bound="Omega" width="720" height="390"
-                  aria-label="Animated Omega lower-bound graph"></canvas>
+                  aria-label="Interactive Omega lower-bound graph"></canvas>
           <button class="plot-replay" type="button">Replay</button>
         </div>
         <figcaption><b>Fig 4.2</b> &#183; Omega visually: past n&#8320;, f(n) stays at or above C&#183;g(n) &#8212; g(n) props f(n) up from below.</figcaption>
@@ -739,7 +739,7 @@ Divide both sides by n²:
         </div>
         <div class="plot-shell">
           <canvas class="bound-canvas" data-bound="Theta" width="720" height="390"
-                  aria-label="Animated Theta tight-bound graph"></canvas>
+                  aria-label="Interactive Theta tight-bound graph"></canvas>
           <button class="plot-replay" type="button">Replay</button>
         </div>
         <figcaption><b>Fig 4.3</b> &#183; Theta visually: beyond n&#8320;, f(n) lives between C&#8321;&#183;g(n) and C&#8322;&#183;g(n) &#8212; same growth rate, different constants.</figcaption>
@@ -1374,6 +1374,6 @@ Divide both sides by n²:
   render();
 })();
 </script>
-<script src="./chapter-quality.js?v=20260815" defer></script>
+<script src="./chapter-quality.js?v=20260816" defer></script>
 </body>
 </html>

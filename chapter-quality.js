@@ -54,6 +54,19 @@
     document.querySelectorAll(".nav a.active").forEach(function (link) {
       link.setAttribute("aria-current", "page");
     });
+    document.querySelectorAll("a[download]").forEach(function (link) {
+      if (!link.getAttribute("aria-label")) {
+        link.setAttribute("aria-label", "Download the chapter presentation");
+      }
+    });
+    document.querySelectorAll("details").forEach(function (details) {
+      var summary = details.querySelector(":scope > summary");
+      if (!summary) return;
+      summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+      details.addEventListener("toggle", function () {
+        summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+      });
+    });
     document.querySelectorAll("a[target='_blank']").forEach(function (link) {
       var rel = new Set((link.getAttribute("rel") || "").split(/\s+/).filter(Boolean));
       rel.add("noopener"); rel.add("noreferrer");

@@ -640,9 +640,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     details.ans[open] summary::before { content: "\2212"; }
     details.ans .ans-body { margin-top: 10px; }
   </style>
-  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
 </head>
-<body>
+<body class="chapter-interaction-polish">
 
 <header class="site-header">
   <nav class="nav">
@@ -1093,7 +1093,7 @@ int main(void) {
               <option value="4">int &#8212; 4 bytes</option>
             </select>
           </label>
-          <button class="primary" id="ad-animate" type="button">Animate address</button>
+          <button class="primary" id="ad-animate" type="button">Trace address</button>
           <button id="ad-reset" type="button">Reset</button>
           <span class="viz-status">base address = 100</span>
         </div>
@@ -1814,7 +1814,7 @@ int main(void) {
     timers.forEach(function (timer) { window.clearTimeout(timer); });
     timers = [];
     animateButton.disabled = false;
-    animateButton.textContent = "Animate address";
+    animateButton.textContent = "Trace address";
   }
 
   function render(shouldAnimate) {
@@ -1941,6 +1941,6 @@ int main(void) {
   els.forEach(function (el) { obs.observe(el); });
 })();
 </script>
-<script src="./chapter-quality.js?v=20260815" defer></script>
+<script src="./chapter-quality.js?v=20260816" defer></script>
 </body>
 </html>

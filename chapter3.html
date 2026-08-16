@@ -350,13 +350,14 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 
     /* Playing-card metaphor */
     .card-table {
-      min-height: 205px; display: grid; place-items: center; overflow: hidden;
+      min-height: 238px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; overflow: hidden;
       border: 1px solid #cae2dc; border-radius: 10px;
       background:
         radial-gradient(circle at 50% 20%, rgba(255,255,255,.11), transparent 34%),
         linear-gradient(145deg, #12664f, #084536);
     }
-    .card-hand { display: flex; align-items: flex-end; justify-content: center; padding: 36px 30px 24px; }
+    .card-hand { display: flex; align-items: flex-end; justify-content: center; padding: 42px 30px 18px; }
     .playing-card {
       width: 74px; height: 112px; margin-left: -18px;
       display: flex; flex-direction: column; justify-content: space-between;
@@ -364,19 +365,52 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       box-shadow: 0 8px 18px rgba(0,0,0,.2);
       font: 700 22px/1 var(--font-display);
       transform-origin: 50% 110%; transition: transform .45s ease, margin .45s ease;
+      will-change: transform;
     }
     .playing-card:first-child { margin-left: 0; transform: rotate(-7deg); }
     .playing-card:nth-child(2) { transform: rotate(-3deg); }
     .playing-card:nth-child(3) { transform: rotate(1deg); }
     .playing-card:nth-child(4) { transform: rotate(5deg); }
+    .playing-card.shift-four { animation: cardShiftFour 5.4s ease-in-out infinite; }
+    .playing-card.shift-five { animation: cardShiftFive 5.4s ease-in-out infinite; }
+    .playing-card.shift-six { animation: cardShiftSix 5.4s ease-in-out infinite; }
+    .playing-card:nth-child(2).shift-card { --card-angle: -3deg; }
+    .playing-card:nth-child(3).shift-card { --card-angle: 1deg; }
+    .playing-card:nth-child(4).shift-card { --card-angle: 5deg; }
     .playing-card.key-card {
-      color: #b42318; transform: translateY(-32px) rotate(9deg);
-      animation: cardInsert 3.2s ease-in-out infinite;
+      position: relative; z-index: 2; color: #b42318;
+      transform: translateY(-34px) rotate(9deg);
+      animation: cardInsert 5.4s ease-in-out infinite;
     }
     .playing-card small { align-self: flex-end; font-size: 18px; transform: rotate(180deg); }
+    .card-steps {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 7px;
+      padding: 0 16px 16px; color: rgba(255,255,255,.92);
+      font: 600 11.5px/1.3 var(--font-mono);
+    }
+    .card-steps span {
+      padding: 5px 8px; border: 1px solid rgba(255,255,255,.24);
+      border-radius: 999px; background: rgba(0,0,0,.16);
+    }
+    .card-steps b { color: #fcd34d; }
+    @keyframes cardShiftSix {
+      0%, 15% { transform: translateX(0) rotate(var(--card-angle)); }
+      28%, 100% { transform: translateX(56px) rotate(var(--card-angle)); }
+    }
+    @keyframes cardShiftFive {
+      0%, 28% { transform: translateX(0) rotate(var(--card-angle)); }
+      40%, 100% { transform: translateX(56px) rotate(var(--card-angle)); }
+    }
+    @keyframes cardShiftFour {
+      0%, 40% { transform: translateX(0) rotate(var(--card-angle)); }
+      52%, 100% { transform: translateX(56px) rotate(var(--card-angle)); }
+    }
     @keyframes cardInsert {
-      0%, 24% { transform: translate(28px,-34px) rotate(9deg); }
-      62%, 100% { transform: translate(-108px,0) rotate(-1deg); }
+      0%, 52% { transform: translate(0,-38px) rotate(9deg); }
+      60% { transform: translate(-56px,-50px) rotate(6deg); }
+      68% { transform: translate(-112px,-50px) rotate(1deg); }
+      76% { transform: translate(-168px,-38px) rotate(-3deg); }
+      84%, 100% { transform: translate(-168px,0) rotate(-3deg); }
     }
 
     /* Array-based algorithm programs */
@@ -537,13 +571,15 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     }
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; }
-      .chapter-kicker, .chapter-body > h1, .chapter-intro,
-      .playing-card.key-card, .viz-bar.key { animation: none; }
+      .chapter-kicker, .chapter-body > h1, .chapter-intro { animation: none; }
+      .playing-card.shift-card { animation: none; transform: translateX(56px) rotate(var(--card-angle)); }
+      .playing-card.key-card { animation: none; transform: translate(-168px,0) rotate(-3deg); }
+      .viz-bar.key { animation: none; }
     }
   </style>
-  <link rel="stylesheet" href="./chapter-quality.css?v=20260815">
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
 </head>
-<body>
+<body class="chapter-interaction-polish">
 
 <header class="site-header">
   <nav class="nav">
@@ -613,13 +649,19 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
           <strong>Insertion sort as a hand of cards</strong>
           <span>sorted hand + next card</span>
         </div>
-        <div class="card-table" aria-label="A card slides into its sorted position">
+        <div class="card-table" aria-label="The selected card 3 slides before card 4 in the sorted hand">
           <div class="card-hand">
             <div class="playing-card">2♣<small>2♣</small></div>
-            <div class="playing-card">4♠<small>4♠</small></div>
-            <div class="playing-card">5♥<small>5♥</small></div>
-            <div class="playing-card">6♦<small>6♦</small></div>
+            <div class="playing-card shift-card shift-four">4♠<small>4♠</small></div>
+            <div class="playing-card shift-card shift-five">5♥<small>5♥</small></div>
+            <div class="playing-card shift-card shift-six">6♦<small>6♦</small></div>
             <div class="playing-card key-card">3♥<small>3♥</small></div>
+          </div>
+          <div class="card-steps" aria-hidden="true">
+            <span><b>1</b> Shift 6 →</span>
+            <span><b>2</b> Shift 5 →</span>
+            <span><b>3</b> Shift 4 →</span>
+            <span><b>4</b> Insert 3</span>
           </div>
         </div>
         <figcaption><b>Fig 3.1</b> &#183; Sorting a hand of playing cards: the cards already in hand stay sorted, and each new card is slid into its correct place &#8212; exactly what insertion sort does.</figcaption>
@@ -1790,6 +1832,6 @@ where n/2ᵏ = 1, so k = log n</pre>
   reset();
 })();
 </script>
-<script src="./chapter-quality.js?v=20260815" defer></script>
+<script src="./chapter-quality.js?v=20260816" defer></script>
 </body>
 </html>

@@ -926,9 +926,9 @@
       .stack-frame.active { animation: none !important; }
     }
   </style>
-<link rel="stylesheet" href="./chapter-quality.css?v=20260815">
+<link rel="stylesheet" href="./chapter-quality.css?v=20260816">
 </head>
-<body>
+<body class="chapter-interaction-polish">
 
 <header class="site-header">
   <nav class="nav">
@@ -1051,7 +1051,7 @@
       <div class="factorial-memory" aria-labelledby="factorial-memory-title">
         <div class="factorial-memory-heading">
           <h3 id="factorial-memory-title">How recursive calls use memory</h3>
-          <button class="tree-replay" id="factorial-memory-replay" type="button">Replay animation</button>
+          <button class="tree-replay" id="factorial-memory-replay" type="button">Replay sequence</button>
         </div>
         <p>
           Every active function call has a stack frame containing its local data
@@ -1138,7 +1138,7 @@
           <strong>Exact expression tree for fact(5)</strong>
           <span class="tree-heading-actions">
             <code>fact(n) = n × fact(n−1)</code>
-            <button class="tree-replay" id="factor-tree-replay" type="button">Animate calls &amp; returns</button>
+            <button class="tree-replay" id="factor-tree-replay" type="button">Trace calls &amp; returns</button>
           </span>
         </figcaption>
         <div class="rec-tree expression-tree" role="img" aria-label="Factorial five expression tree. Each factorial call expands into the current number, a multiplication sign, and the next factorial call, ending with fact one returning one.">
@@ -2242,7 +2242,7 @@
     replayButton.textContent = "Animating…";
     finishTimer = window.setTimeout(function () {
       replayButton.disabled = false;
-      replayButton.textContent = "Replay animation";
+      replayButton.textContent = "Replay sequence";
     }, 2750);
   }
 
@@ -2503,7 +2503,7 @@
       });
       status.textContent = "Tree complete.";
       replayButton.disabled = false;
-      replayButton.textContent = "Replay animation";
+      replayButton.textContent = "Replay sequence";
     }
 
     function playTree() {
@@ -2688,6 +2688,6 @@
   reset();
 })();
 </script>
-<script src="./chapter-quality.js?v=20260815"></script>
+<script src="./chapter-quality.js?v=20260816"></script>
 </body>
 </html>
