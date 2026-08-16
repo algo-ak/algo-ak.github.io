@@ -496,6 +496,8 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     .viz-bar.settled { background: #bcd6da !important; }
     .ptr-row { display: flex; gap: 4px; margin-top: 4px; min-height: 18px; }
     .ptr-row b { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--accent-dark); }
+    #qg-ptr { justify-content: flex-start; gap: 10px; padding: 0 2px; }
+    #qg-ptr b { max-width: 76px; }
 
     /* Full Quick Sort execution trace */
     .qs-runtime-grid {
@@ -531,6 +533,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       .qs-runtime-grid { grid-template-columns: 1fr; }
       .qs-call-panel { height: 390px; }
     }
+    @media (max-width: 520px) { #qg-ptr { gap: 5px; } }
 
     /* Merge-sort runtime call stack */
     .ms-runtime-grid {
@@ -1481,6 +1484,37 @@ def merge_gap(arr1, arr2):
         swap(A[i], A[j])
     swap(A[low], A[j])
     return j</pre>
+
+      <div class="viz" id="qg">
+        <div class="viz-title">General Quick Sort Example: A = [6, 3, 8, 5, 2, 7, 4, 1]</div>
+        <div class="viz-sub">First understand the overall algorithm without the runtime stack. Each step identifies the active subarray, selects its first value as pivot, partitions the values, fixes the pivot, and continues on the two resulting parts.</div>
+        <div class="qs-array-panel">
+          <div class="viz-bars range-mode" id="qg-bars" style="position:relative;">
+            <div class="range-bracket" id="qg-bracket"></div>
+          </div>
+          <div class="ptr-row" id="qg-ptr"></div>
+          <div class="viz-label" id="qg-label">Press Play or Step to begin.</div>
+          <div class="qs-legend" aria-label="Quick Sort colour legend">
+            <span><i style="background:#b45309"></i>pivot</span>
+            <span><i style="background:#7c3aed"></i>i / j pointer</span>
+            <span><i style="background:#c2410c"></i>swap</span>
+            <span><i style="background:#0f766e"></i>final position</span>
+          </div>
+        </div>
+        <div class="viz-controls">
+          <button type="button" class="primary" id="qg-play">Play</button>
+          <button type="button" id="qg-step">Step</button>
+          <button type="button" id="qg-reset">Reset</button>
+          <label style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-soft);">speed
+            <select id="qg-speed">
+              <option value="1400">slow</option>
+              <option value="900" selected>normal</option>
+              <option value="500">fast</option>
+            </select>
+          </label>
+          <span class="viz-status" id="qg-status"></span>
+        </div>
+      </div>
 
       <div class="viz" id="qp">
         <div class="viz-title">Full Quick Sort: A = [4, 5, 7, 2, 3, 6, 1, 8]</div>
@@ -2595,6 +2629,167 @@ a^n  =  ⎨
   stepBtn.addEventListener("click", step);
   resetBtn.addEventListener("click", reset);
   speedEl.addEventListener("change", function () { if (timer) { pause(); play(); } });
+  reset();
+})();
+
+</script>
+<script>
+
+/* ---------- General Quick Sort example (shown before the unchanged stack trace) ---------- */
+(function () {
+  var root = document.getElementById("qg");
+  var barsEl = document.getElementById("qg-bars");
+  if (!barsEl) return;
+  var INPUT = [6, 3, 8, 5, 2, 7, 4, 1];
+  var N = INPUT.length, frames = [], fixed = [];
+
+  (function build() {
+    var a = INPUT.slice();
+    function addFixed(index) {
+      if (fixed.indexOf(index) === -1) fixed.push(index);
+    }
+    function snap(label, extra) {
+      var frame = { a: a.slice(), label: label, fixed: fixed.slice(), lo: 0, hi: N - 1 };
+      Object.keys(extra || {}).forEach(function (key) { frame[key] = extra[key]; });
+      frames.push(frame);
+    }
+    function partition(low, high) {
+      var pivot = a[low], i = low + 1, j = high;
+      snap("Select pivot " + pivot + " from the active subarray A[" + low + ".." + high + "].", {
+        lo: low, hi: high, pivotIndex: low
+      });
+      while (true) {
+        while (i <= high && a[i] <= pivot) i += 1;
+        while (j > low && a[j] > pivot) j -= 1;
+        snap(i < j
+          ? "The pointers stop at misplaced values " + a[i] + " and " + a[j] + "."
+          : "The pointers meet or cross, so scanning for this partition stops.", {
+          lo: low, hi: high, pivotIndex: low, i: i, j: j
+        });
+        if (i >= j) break;
+        var value = a[i]; a[i] = a[j]; a[j] = value;
+        snap("Swap " + a[j] + " and " + a[i] + " so they move to the correct sides of the pivot.", {
+          lo: low, hi: high, pivotIndex: low, i: i, j: j, swapped: [i, j]
+        });
+      }
+      var first = a[low]; a[low] = a[j]; a[j] = first;
+      addFixed(j);
+      snap("Place pivot " + pivot + " at index " + j + ". This position is now final.", {
+        lo: low, hi: high, pivotIndex: j, pivotPlaced: true
+      });
+      return j;
+    }
+    function quickSort(low, high) {
+      if (low > high) return;
+      if (low === high) {
+        addFixed(low);
+        snap("The one-element subarray A[" + low + ".." + high + "] is already sorted.", {
+          lo: low, hi: high, baseCase: true
+        });
+        return;
+      }
+      var pivotIndex = partition(low, high);
+      if (low <= pivotIndex - 1) {
+        snap("Continue with the left subarray A[" + low + ".." + (pivotIndex - 1) + "].", {
+          lo: low, hi: pivotIndex - 1
+        });
+      }
+      quickSort(low, pivotIndex - 1);
+      if (pivotIndex + 1 <= high) {
+        snap("Continue with the right subarray A[" + (pivotIndex + 1) + ".." + high + "].", {
+          lo: pivotIndex + 1, hi: high
+        });
+      }
+      quickSort(pivotIndex + 1, high);
+    }
+
+    snap("Start with A = [" + a.join(", ") + "].", { lo: 0, hi: N - 1 });
+    quickSort(0, N - 1);
+    for (var index = 0; index < N; index += 1) addFixed(index);
+    snap("Quick Sort is complete: [" + a.join(", ") + "].", { lo: 0, hi: N - 1, done: true });
+  })();
+
+  var pos = 0, timer = null;
+  var playBtn = document.getElementById("qg-play"), stepBtn = document.getElementById("qg-step"),
+      resetBtn = document.getElementById("qg-reset"), speedEl = document.getElementById("qg-speed"),
+      labelEl = document.getElementById("qg-label"), statusEl = document.getElementById("qg-status"),
+      ptrRow = document.getElementById("qg-ptr"), bracketEl = document.getElementById("qg-bracket");
+  var MAX = Math.max.apply(null, INPUT);
+
+  function positionBracket(frame) {
+    if (frame.done) {
+      bracketEl.style.display = "none";
+      return;
+    }
+    var bars = barsEl.querySelectorAll(".viz-bar");
+    var firstBar = bars[frame.lo], lastBar = bars[frame.hi];
+    if (!firstBar || !lastBar) return;
+    bracketEl.style.display = "block";
+    bracketEl.style.left = firstBar.offsetLeft + "px";
+    bracketEl.style.width = (lastBar.offsetLeft + lastBar.offsetWidth - firstBar.offsetLeft) + "px";
+  }
+
+  function render() {
+    var frame = frames[pos];
+    barsEl.querySelectorAll(".viz-bar").forEach(function (bar) { bar.remove(); });
+    ptrRow.innerHTML = "";
+    frame.a.forEach(function (value, index) {
+      var bar = document.createElement("div");
+      bar.className = "viz-bar";
+      bar.style.height = Math.max(18, value / MAX * 100) + "%";
+      if (!frame.done && (index < frame.lo || index > frame.hi)) bar.classList.add("qs-outside");
+      if (index === frame.pivotIndex && !frame.pivotPlaced) bar.classList.add("qs-pivot");
+      if (frame.i === index || frame.j === index) bar.classList.add("qs-pointer");
+      if (frame.swapped && frame.swapped.indexOf(index) !== -1) bar.classList.add("qs-swap");
+      if (frame.fixed.indexOf(index) !== -1) bar.classList.add("qs-fixed");
+      var valueLabel = document.createElement("span");
+      valueLabel.textContent = value;
+      bar.appendChild(valueLabel);
+      barsEl.appendChild(bar);
+
+      var pointer = document.createElement("b"), marks = [];
+      if (frame.i === index) marks.push("i");
+      if (frame.j === index) marks.push("j");
+      if (index === frame.pivotIndex) marks.push(frame.pivotPlaced ? "fixed" : "pivot");
+      pointer.textContent = marks.join("/");
+      ptrRow.appendChild(pointer);
+    });
+    positionBracket(frame);
+    labelEl.textContent = frame.label;
+    statusEl.textContent = frame.done
+      ? "Complete · " + frames.length + " steps"
+      : "Step " + (pos + 1) + " of " + frames.length;
+    var end = pos >= frames.length - 1;
+    stepBtn.disabled = end;
+    if (end && timer) { clearInterval(timer); timer = null; }
+    playBtn.textContent = timer ? "Pause" : (end ? "Replay" : "Play");
+  }
+  function step() { if (pos < frames.length - 1) { pos += 1; render(); } }
+  function play() {
+    if (pos >= frames.length - 1) pos = 0;
+    timer = setInterval(step, parseInt(speedEl.value, 10));
+    render();
+  }
+  function pause() { clearInterval(timer); timer = null; render(); }
+  function reset() { if (timer) clearInterval(timer); timer = null; pos = 0; render(); }
+  playBtn.addEventListener("click", function () { timer ? pause() : play(); });
+  stepBtn.addEventListener("click", step);
+  resetBtn.addEventListener("click", reset);
+  speedEl.addEventListener("change", function () { if (timer) { pause(); play(); } });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && timer) pause();
+  });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting && timer) pause();
+    }, { threshold: 0.15 }).observe(root);
+  }
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(function () { positionBracket(frames[pos]); }).observe(barsEl);
+  }
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) reset();
+  });
   reset();
 })();
 
