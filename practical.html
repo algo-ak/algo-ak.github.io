@@ -1166,7 +1166,7 @@ Comparisons: 2</pre>
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab">
       <summary class="lab-sheet-summary" aria-labelledby="lab-04-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 04</span>
@@ -1216,6 +1216,204 @@ Comparisons: 2</pre>
           <li>
             <h4 class="lab-question-title">Hybrid Merge Sort with Insertion Sort</h4>
             <p class="lab-question-text">Write a program to implement a hybrid Merge Sort. When the number of elements in the current subarray is less than or equal to a chosen threshold, sort that subarray using Insertion Sort instead of dividing it further. Otherwise, continue with Merge Sort.</p>
+          </li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-05-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 05</span>
+          <h3 id="lab-05-title">Linked Lists and Stacks</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+
+      <div class="lab-sheet-content">
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Reverse a Singly Linked List Using Recursion</h4>
+            <p class="lab-question-text">Write a program to reverse a singly linked list using recursion.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>1 2 3 4 5</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>5 4 3 2 1</pre>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find the Nth Node from the End</h4>
+            <p class="lab-question-text">Write a program to find the nth node from the end of a singly linked list.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>List: 10 20 30 40 50
+n = 2</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>40</pre>
+              </div>
+            </div>
+            <p class="lab-question-text"><strong>Hint:</strong> Use two pointers separated by <em>n</em> nodes so that only one traversal is required.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Detect a Loop in a Singly Linked List</h4>
+            <p class="lab-question-text">Write a program to detect a loop in a singly linked list.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>1 → 2 → 3 → 4 → 5
+Make node 5 point to node 3.</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>Loop detected</pre>
+              </div>
+            </div>
+            <p class="lab-question-text"><strong>Hint:</strong> Use two pointers moving at different speeds. If a loop exists, they will eventually meet.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find the Middle Element</h4>
+            <p class="lab-question-text">Write a program to find the middle element of a singly linked list.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>10 20 30 40 50</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>30</pre>
+              </div>
+            </div>
+            <p class="lab-question-text"><strong>Hint:</strong> Use one pointer moving one node at a time and another moving two nodes at a time.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Add Two Numbers Represented by Linked Lists</h4>
+            <p class="lab-question-text">Write a program to add two numbers represented by two linked lists. Each node stores one digit, with digits stored in reverse order.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>List 1: 2 → 4 → 3
+List 2: 5 → 6 → 4</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>7 → 0 → 8</pre>
+              </div>
+            </div>
+            <p class="lab-question-text">Because <code>342 + 465 = 807</code>.</p>
+            <p class="lab-question-text"><strong>Hint:</strong> Traverse both lists simultaneously and maintain a <code>carry</code>. If one list finishes earlier, treat the missing digit as <code>0</code>.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Check Whether a Singly Linked List Is a Palindrome</h4>
+            <p class="lab-question-text">Write a program to check whether a singly linked list is a palindrome. Try to solve it using O(1) extra space.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>1 → 2 → 3 → 2 → 1</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>Palindrome</pre>
+              </div>
+            </div>
+            <p class="lab-question-text"><strong>Hint:</strong> Find the middle using slow and fast pointers, reverse the second half of the list, and compare it with the first half. Do not copy the elements into an array or stack.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Balanced Parentheses Using an Array Stack</h4>
+            <p class="lab-question-text">Write a program to check if a string has balanced parentheses using a stack implemented using an array.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>{[(a+b) * (c-d)]}</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>Balanced</pre>
+              </div>
+            </div>
+            <p class="lab-question-text"><strong>Hint:</strong> Push opening brackets onto the stack. For every closing bracket, check whether it matches the most recent opening bracket.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Evaluate a Postfix Expression Using an Array Stack</h4>
+            <p class="lab-question-text">Write a program to evaluate a postfix expression using a stack implemented using an array.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>5 6 2 + * 12 4 / -</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>37</pre>
+              </div>
+            </div>
+            <p class="lab-question-text">Because <code>5(6 + 2) − 12/4 = 37</code>.</p>
+            <p class="lab-question-text"><strong>Hint:</strong> Push operands onto the stack. When an operator appears, pop the top two operands, apply the operator in the correct order, and push the result back.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find the Intersection Node of Two Singly Linked Lists</h4>
+            <p class="lab-question-text">Write a program to find the intersection node of two singly linked lists. Construct the lists by creating a common tail and linking both lists to the same first node of the common tail. The intersection must be determined by node reference/address, not by comparing node values.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>Unique part of List A: 1 → 2 → 3
+Unique part of List B: 4 → 5
+Common tail: 7 → 8 → 9</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>Intersection node: 7</pre>
+              </div>
+            </div>
+            <div class="lab-sample" style="margin-top: 14px;">
+              <span class="lab-sample-label">Construct</span>
+              <pre>1 → 2 → 3 ──┐
+             ↓
+             7 → 8 → 9
+             ↑
+4 → 5 ───────┘</pre>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Reverse Nodes in Groups of K</h4>
+            <p class="lab-question-text">Reverse nodes of a singly linked list in groups of <em>k</em>. Do not change the values stored in the nodes; modify only the links.</p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>List: 1 → 2 → 3 → 4 → 5 → 6
+k = 3</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>3 → 2 → 1 → 6 → 5 → 4</pre>
+              </div>
+            </div>
+            <div class="lab-samples" style="margin-top: 14px;">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Additional Input</span>
+                <pre>List: 1 → 2 → 3 → 4 → 5
+k = 2</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Additional Output</span>
+                <pre>2 → 1 → 4 → 3 → 5</pre>
+              </div>
+            </div>
           </li>
         </ol>
       </div>
