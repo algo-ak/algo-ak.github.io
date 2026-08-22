@@ -125,6 +125,37 @@
     .toc a.toc-objective { padding-left: 24px; font-size: 13px; }
 
     .content { min-width: 0; }
+    .evaluation-notice {
+      margin-bottom: 22px; padding: 19px 21px;
+      display: grid; grid-template-columns: auto minmax(0,1fr) auto;
+      align-items: center; gap: 15px 18px;
+      border: 1px solid #d8b5c1; border-left: 5px solid #7a1f3d;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg,#fff7fa 0%,#ffffff 72%);
+      box-shadow: 0 9px 24px rgba(73,20,40,.07);
+      scroll-margin-top: 102px;
+    }
+    .evaluation-mark {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border-radius: 12px; background: #7a1f3d; color: #fff;
+      font: 700 16px var(--font-mono); box-shadow: 0 6px 14px rgba(122,31,61,.2);
+    }
+    .evaluation-copy { min-width: 0; }
+    .evaluation-label {
+      display: block; margin-bottom: 3px; color: #7a1f3d;
+      font: 600 11px var(--font-mono); letter-spacing: .11em; text-transform: uppercase;
+    }
+    .evaluation-copy h2 {
+      margin: 0 0 4px; color: var(--ink);
+      font: 700 1.28rem/1.25 var(--font-display);
+    }
+    .evaluation-copy p { margin: 0; color: var(--ink-soft); }
+    .evaluation-dates { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .evaluation-dates time {
+      padding: 7px 10px; border: 1px solid #d8b5c1; border-radius: 999px;
+      background: #fff; color: #65172f; white-space: nowrap;
+      font: 600 12px var(--font-mono);
+    }
     .assignment-notice {
       margin-bottom: 26px; padding: 22px;
       display: grid; grid-template-columns: minmax(0,1fr) auto;
@@ -396,6 +427,8 @@
       .page-layout { padding: 28px 16px 64px; }
       .toc ol { columns: 1; }
       .research-block { padding: 22px 18px; }
+      .evaluation-notice { grid-template-columns: auto minmax(0,1fr); padding: 17px; }
+      .evaluation-dates { grid-column: 1 / -1; justify-content: flex-start; }
       .assignment-notice { grid-template-columns: 1fr; padding: 18px; }
       .assignment-actions { grid-column: 1 / -1; }
       .assignment-action { flex: 1 1 150px; }
@@ -445,7 +478,8 @@
     <aside class="toc" aria-label="Tutorial contents">
       <h2>Tutorial Topics</h2>
       <ol>
-        <li><a class="toc-topic current" href="https://algo-ak.github.io/tutorials.html#project-assignments">Project Topic Assignments</a></li>
+        <li><a class="toc-topic current" href="https://algo-ak.github.io/tutorials.html#mid-evaluation">Mid-Project Evaluation</a></li>
+        <li><a class="toc-topic" href="https://algo-ak.github.io/tutorials.html#project-assignments">Project Topic Assignments</a></li>
         <li><a class="toc-topic" href="https://algo-ak.github.io/tutorials.html#task-offloading">Task Offloading and Resource Allocation</a></li>
         <li><a class="toc-objective" href="https://algo-ak.github.io/tutorials.html#task-objective-1">Objective 1</a></li>
         <li><a class="toc-objective" href="https://algo-ak.github.io/tutorials.html#task-objective-2">Objective 2</a></li>
@@ -461,6 +495,19 @@
     </aside>
 
     <main class="content">
+      <section class="evaluation-notice" id="mid-evaluation" role="note" aria-labelledby="evaluation-title">
+        <div class="evaluation-mark" aria-hidden="true">ME</div>
+        <div class="evaluation-copy">
+          <span class="evaluation-label">Important announcement</span>
+          <h2 id="evaluation-title">Project Mid-Evaluation Schedule</h2>
+          <p>The mid-project evaluations are scheduled for the following dates.</p>
+        </div>
+        <div class="evaluation-dates" aria-label="Mid-project evaluation dates">
+          <time datetime="2026-09-01">1 September 2026</time>
+          <time datetime="2026-09-08">8 September 2026</time>
+        </div>
+      </section>
+
       <section class="assignment-notice" id="project-assignments" aria-labelledby="assignment-title">
         <div class="assignment-copy">
           <span class="assignment-label">Project announcement</span>
