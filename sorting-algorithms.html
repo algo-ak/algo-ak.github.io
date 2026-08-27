@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive step-by-step visualizations of comparison and non-comparison sorting algorithms.">
+  <title>Sorting Algorithms · Design and Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f9fc;
+      --card: #ffffff;
+      --ink: #101c33;
+      --ink-soft: #4a5871;
+      --line: #d9e3f0;
+      --grid: #e8eef7;
+      --teal: #0b7285;
+      --teal-dark: #075b69;
+      --teal-soft: #e2f3f5;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --purple: #7c3aed;
+      --purple-soft: #f1eafe;
+      --amber: #d97706;
+      --amber-soft: #fff2dd;
+      --red: #dc2626;
+      --red-soft: #ffeaec;
+      --green: #0f766e;
+      --green-soft: #ddf7f2;
+      --radius: 14px;
+      --maxw: 1220px;
+      --display: "Space Grotesk", sans-serif;
+      --body: "IBM Plex Sans", sans-serif;
+      --mono: "IBM Plex Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    button, input, select { font: inherit; }
+    button { touch-action: manipulation; }
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { color: var(--teal-dark); }
+    h1, h2, h3, h4 { margin-top: 0; font-family: var(--display); line-height: 1.2; }
+    code, pre { font-family: var(--mono); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .94);
+      backdrop-filter: blur(10px);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 13px 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+    .brand-text strong { font-family: var(--display); font-size: 15px; }
+    .brand-text span { color: var(--ink-soft); font-size: 12px; }
+    .nav-links { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+    .nav-links a {
+      display: block;
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: var(--ink-soft);
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .nav-links a:hover, .nav-links a.active { background: var(--teal-soft); color: var(--teal-dark); }
+
+    .hero {
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(247, 249, 252, 0) 0%, var(--paper) 98%),
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: auto, 28px 28px, 28px 28px;
+    }
+    .hero-inner { max-width: var(--maxw); margin: 0 auto; padding: 66px 24px 58px; }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--teal-dark);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .hero h1 { max-width: 850px; margin-bottom: 14px; font-size: clamp(2.2rem, 5vw, 4rem); letter-spacing: -.04em; }
+    .hero p { max-width: 760px; margin: 0; color: var(--ink-soft); font-size: 1.08rem; }
+    .hero-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+    .hero-chip {
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 12.5px;
+    }
+
+    .page { max-width: var(--maxw); margin: 0 auto; padding: 44px 24px 82px; }
+    .concept-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding: 17px 19px;
+      border: 1px solid #bddde3;
+      border-radius: 12px;
+      background: var(--teal-soft);
+      color: #244659;
+    }
+    .concept-note strong { color: var(--teal-dark); }
+    .note-icon {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-family: var(--mono);
+      font-weight: 600;
+    }
+
+    .visualizer {
+      overflow: hidden;
+      border: 1px solid #cfdbea;
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: 0 18px 46px rgba(16, 28, 51, .08);
+    }
+    .visualizer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 25px 26px 21px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, #fff, #f2f7fb);
+    }
+    .visualizer-head h2 { margin-bottom: 6px; font-size: 1.48rem; }
+    .visualizer-head p { max-width: 760px; margin: 0; color: var(--ink-soft); }
+    .type-badge {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      border: 1px solid #bddde3;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--teal-dark);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .type-badge.noncomparison { border-color: #d5c4f4; background: var(--purple-soft); color: #6525b9; }
+
+    .algorithm-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      padding: 18px 26px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    .algorithm-tab {
+      min-height: 52px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink-soft);
+      cursor: pointer;
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 600;
+      transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease;
+    }
+    .algorithm-tab span { display: block; margin-top: 2px; font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+    .algorithm-tab:hover { border-color: #9bcbd4; color: var(--teal-dark); transform: translateY(-1px); }
+    .algorithm-tab.active { border-color: var(--teal); background: var(--teal); color: white; box-shadow: 0 7px 14px rgba(11,114,133,.18); }
+    .algorithm-tab.active.noncomparison { border-color: var(--purple); background: var(--purple); }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto auto;
+      gap: 10px;
+      padding: 18px 26px;
+      border-bottom: 1px solid var(--line);
+    }
+    .input-field { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .input-field label { flex: 0 0 auto; font-family: var(--mono); color: var(--ink-soft); font-size: 12px; font-weight: 600; }
+    .input-field input {
+      width: 100%;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid #c9d6e6;
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+    .input-field input:focus, select:focus { outline: 3px solid rgba(11,114,133,.16); border-color: var(--teal); }
+    .button {
+      padding: 10px 16px;
+      border: 1px solid #c9d6e6;
+      border-radius: 9px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--display);
+      font-weight: 600;
+    }
+    .button:hover { border-color: var(--teal); color: var(--teal-dark); }
+    .button.primary { border-color: var(--teal); background: var(--teal); color: white; }
+    .button.primary:hover { background: var(--teal-dark); }
+    .button:disabled { cursor: not-allowed; opacity: .48; }
+
+    .workbench { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, .75fr); }
+    .stage-column { min-width: 0; padding: 24px 26px; border-right: 1px solid var(--line); }
+    .stage {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(8px, 1.35vw, 16px);
+      min-height: 330px;
+      padding: 45px 20px 34px;
+      overflow: hidden;
+      border: 1px solid #d8e4f1;
+      border-radius: 14px;
+      background:
+        linear-gradient(rgba(37,99,235,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,.05) 1px, transparent 1px),
+        linear-gradient(180deg, #ffffff, #f7faff);
+      background-size: 26px 26px, 26px 26px, auto;
+    }
+    .stage::after {
+      position: absolute;
+      right: 18px;
+      bottom: 10px;
+      left: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: #cbd7e6;
+      content: "";
+    }
+    .bar-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex: 0 1 52px;
+      width: 52px;
+      max-width: 52px;
+      min-width: 18px;
+      align-items: flex-end;
+      justify-content: center;
+      align-self: flex-end;
+    }
+    .bar {
+      position: relative;
+      display: flex;
+      width: 100%;
+      min-height: 38px;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 7px;
+      border: 1px solid #7893b7;
+      border-radius: 9px 9px 4px 4px;
+      background: linear-gradient(180deg, #a8c1e7, #7293c0);
+      color: #0c2447;
+      box-shadow: 0 7px 14px rgba(16,28,51,.12), inset 0 1px rgba(255,255,255,.65);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      transition: height .24s ease, background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    .bar-value { position: relative; z-index: 1; }
+    .bar-role {
+      position: absolute;
+      top: -29px;
+      left: 50%;
+      padding: 3px 6px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      background: white;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+      transform: translateX(-50%);
+      box-shadow: 0 3px 8px rgba(16,28,51,.10);
+    }
+    .bar.compare { border-color: var(--amber); background: linear-gradient(180deg, #ffd795, #eea83e); color: #5e3000; transform: translateY(-6px); }
+    .bar.swap { border-color: var(--red); background: linear-gradient(180deg, #ff9da7, #e54c5b); color: #5f0b13; transform: translateY(-9px); }
+    .bar.candidate { border-color: var(--purple); background: linear-gradient(180deg, #c9adf7, #9463df); color: #2f0c66; }
+    .bar.pivot { border-color: #b45309; background: linear-gradient(180deg, #ffc775, #e78816); color: #5b2b00; box-shadow: 0 8px 18px rgba(217,119,6,.24); }
+    .bar.sorted { border-color: var(--green); background: linear-gradient(180deg, #79d5c5, #23a38e); color: #073f38; }
+    .stage.complete .bar.sorted { animation: sorted-settle .52s cubic-bezier(.2,.8,.3,1) both; }
+    .bar.outside { opacity: .34; filter: saturate(.65); }
+    .index-label { position: absolute; bottom: -24px; color: #718096; font-family: var(--mono); font-size: 10px; }
+    .stage-context {
+      position: absolute;
+      top: 13px;
+      left: 14px;
+      z-index: 3;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-width: calc(100% - 28px);
+      pointer-events: none;
+    }
+    .context-chip {
+      padding: 4px 8px;
+      border: 1px solid #c7d6e8;
+      border-radius: 999px;
+      background: rgba(255,255,255,.94);
+      color: #40516c;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      box-shadow: 0 3px 8px rgba(16,28,51,.06);
+    }
+
+    .status-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 76px;
+      margin-top: 14px;
+      padding: 13px 15px;
+      border: 1px solid #cbd9eb;
+      border-left: 5px solid var(--blue);
+      border-radius: 11px;
+      background: var(--blue-soft);
+    }
+    .status-step { color: var(--blue); font-family: var(--mono); font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .status-message { color: #243a5a; font-size: 14.5px; font-weight: 500; }
+    .status-progress { color: var(--ink-soft); font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+    .status-card.complete { border-color: #9ad7ca; border-left-color: var(--green); background: var(--green-soft); }
+    .status-card.complete .status-step { color: var(--green); }
+    .status-card.input-error { border-color: #f0b8bd; border-left-color: var(--red); background: var(--red-soft); }
+    .status-card.input-error .status-step { color: var(--red); }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 12px; color: var(--ink-soft); font-size: 12.5px; }
+    .legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .swatch { width: 11px; height: 11px; border-radius: 3px; }
+    .swatch.compare { background: var(--amber); }
+    .swatch.swap { background: var(--red); }
+    .swatch.candidate { background: var(--purple); }
+    .swatch.sorted { background: var(--green); }
+
+    .aux-panel {
+      min-height: 158px;
+      margin-top: 16px;
+      padding: 14px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfcfe;
+    }
+    .aux-title { margin-bottom: 10px; color: var(--ink-soft); font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+    .aux-placeholder { display: grid; min-height: 92px; place-items: center; color: #8491a6; font-size: 13px; text-align: center; }
+    .cell-row { display: flex; gap: 6px; min-width: max-content; }
+    .aux-cell { min-width: 42px; overflow: hidden; border: 1px solid #cbd8e8; border-radius: 7px; background: white; text-align: center; }
+    .aux-cell b, .aux-cell span { display: block; padding: 4px 6px; font-family: var(--mono); font-size: 11px; }
+    .aux-cell b { background: #e9eff8; color: var(--ink-soft); }
+    .aux-cell span { color: var(--ink); font-size: 13px; }
+    .aux-cell.hot { border-color: var(--purple); box-shadow: 0 0 0 2px rgba(124,58,237,.10); }
+    .aux-cell.hot span { background: var(--purple-soft); color: #6525b9; font-weight: 600; }
+    .bucket-grid { display: grid; grid-template-columns: repeat(10, minmax(56px, 1fr)); gap: 6px; min-width: 650px; }
+    .bucket { min-height: 88px; border: 1px solid #d6d1ea; border-radius: 8px; background: white; }
+    .bucket-label { padding: 4px; border-bottom: 1px solid #e6e1f1; background: var(--purple-soft); color: #6525b9; font-family: var(--mono); font-size: 10px; font-weight: 600; text-align: center; }
+    .bucket-values { padding: 6px; color: var(--ink); font-family: var(--mono); font-size: 11px; line-height: 1.65; text-align: center; }
+    .bucket.hot { border-color: var(--purple); box-shadow: 0 0 0 2px rgba(124,58,237,.10); }
+    .aux-note { padding: 12px; border-left: 4px solid var(--purple); border-radius: 8px; background: var(--purple-soft); color: #4b2978; font-size: 13.5px; }
+
+    .side-panel { min-width: 0; padding: 24px 22px; background: #fbfcfe; }
+    .algorithm-name { margin-bottom: 4px; font-size: 1.35rem; }
+    .algorithm-summary { min-height: 72px; margin: 0 0 14px; color: var(--ink-soft); font-size: 14px; }
+    .algorithm-invariant {
+      margin: 0 0 16px;
+      padding: 11px 12px;
+      border: 1px solid #bddde3;
+      border-left: 4px solid var(--teal);
+      border-radius: 9px;
+      background: var(--teal-soft);
+    }
+    .algorithm-invariant span { display: block; margin-bottom: 3px; color: var(--teal-dark); font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: .08em; }
+    .algorithm-invariant p { margin: 0; color: #315568; font-size: 12.5px; line-height: 1.45; }
+    .complexity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
+    .complexity-card { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: white; }
+    .complexity-card span { display: block; color: var(--ink-soft); font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+    .complexity-card strong { color: var(--teal-dark); font-family: var(--mono); font-size: 13px; }
+    .code-title { margin: 0 0 8px; color: var(--ink-soft); font-family: var(--mono); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; }
+    .pseudocode { min-height: 250px; margin: 0; padding: 12px 0; overflow: auto; border-radius: 11px; background: #101b31; color: #dce7fb; font-size: 11.5px; line-height: 1.7; }
+    .code-line { display: block; padding: 1px 13px; white-space: pre; }
+    .code-line.active { background: rgba(62, 207, 180, .18); color: #82f1d8; box-shadow: inset 3px 0 #39c6ab; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+    .metric { padding: 9px 6px; border: 1px solid var(--line); border-top: 3px solid var(--teal); border-radius: 8px; background: white; text-align: center; }
+    .metric:nth-child(2) { border-top-color: var(--red); }
+    .metric:nth-child(3) { border-top-color: var(--purple); }
+    .metric strong { display: block; font-family: var(--mono); font-size: 17px; }
+    .metric span { color: var(--ink-soft); font-size: 10px; text-transform: uppercase; }
+    .metric-note { margin: 9px 2px 0; color: #6a7890; font-size: 10.5px; line-height: 1.45; }
+
+    @keyframes sorted-settle {
+      0% { transform: translateY(-10px); box-shadow: 0 12px 20px rgba(15,118,110,.22); }
+      65% { transform: translateY(2px); }
+      100% { transform: translateY(0); }
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 9px;
+      padding: 18px 26px 22px;
+      border-top: 1px solid var(--line);
+      background: white;
+    }
+    .controls .button { min-width: 92px; }
+    .speed-control { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; color: var(--ink-soft); font-family: var(--mono); font-size: 12px; }
+    .speed-control select { padding: 8px 28px 8px 10px; border: 1px solid #c9d6e6; border-radius: 8px; background: white; color: var(--ink); }
+    .timeline-wrap { display: grid; flex-basis: 100%; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+    .timeline-label, .control-hint { color: var(--ink-soft); font-family: var(--mono); font-size: 10px; white-space: nowrap; }
+    .timeline {
+      width: 100%;
+      height: 6px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: var(--teal);
+    }
+    .timeline:focus-visible { outline: 3px solid rgba(11,114,133,.18); outline-offset: 5px; }
+
+    .comparison-section { margin-top: 54px; }
+    .section-kicker { display: block; margin-bottom: 7px; color: var(--teal-dark); font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+    .comparison-section h2 { margin-bottom: 8px; font-size: 1.75rem; }
+    .section-lede { max-width: 760px; margin: 0 0 22px; color: var(--ink-soft); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; background: white; }
+    table { width: 100%; min-width: 920px; border-collapse: collapse; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+    th { background: #eef4f9; color: #3b4d68; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    td { color: var(--ink-soft); font-size: 13.5px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #f9fbfd; }
+    td:first-child { color: var(--ink); font-family: var(--display); font-weight: 600; }
+    .yes { color: var(--green); font-weight: 600; }
+    .no { color: #9f3e1a; font-weight: 600; }
+    .family-tag { display: inline-block; padding: 3px 7px; border-radius: 5px; background: var(--teal-soft); color: var(--teal-dark); font-family: var(--mono); font-size: 10px; }
+    .family-tag.noncomparison { background: var(--purple-soft); color: #6525b9; }
+
+    .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 22px; }
+    .learning-card { padding: 19px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    .learning-card h3 { margin-bottom: 8px; font-size: 1rem; }
+    .learning-card p { margin: 0; color: var(--ink-soft); font-size: 13.5px; }
+    .learning-number { display: grid; width: 29px; height: 29px; margin-bottom: 12px; place-items: center; border-radius: 8px; background: var(--ink); color: white; font-family: var(--mono); font-size: 12px; }
+
+    .site-footer { border-top: 1px solid var(--line); background: white; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; max-width: var(--maxw); margin: 0 auto; padding: 25px 24px; color: var(--ink-soft); font-size: 13px; }
+    .back-to-top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 40;
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 1px solid #aecdd3;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      box-shadow: 0 9px 20px rgba(11,114,133,.24);
+      font-family: var(--mono);
+      font-size: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    @media (max-width: 980px) {
+      .workbench { grid-template-columns: 1fr; }
+      .stage-column { border-right: 0; border-bottom: 1px solid var(--line); }
+      .algorithm-tabs { grid-template-columns: repeat(3, 1fr); }
+      .side-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .side-copy { min-width: 0; }
+      .pseudocode { min-height: 230px; }
+    }
+    @media (max-width: 720px) {
+      .brand-text span { display: none; }
+      .nav { align-items: flex-start; }
+      .nav-links { gap: 0; }
+      .nav-links a { padding: 8px 7px; font-size: 12px; }
+      .hero-inner { padding: 48px 20px 44px; }
+      .page { padding: 30px 14px 64px; }
+      .visualizer-head { flex-direction: column; padding: 20px 17px; }
+      .algorithm-tabs { grid-template-columns: repeat(2, 1fr); padding: 14px 17px; }
+      .input-row { grid-template-columns: 1fr 1fr; padding: 15px 17px; }
+      .input-field { grid-column: 1 / -1; flex-direction: column; align-items: flex-start; }
+      .stage-column { padding: 17px; }
+      .stage { min-height: 285px; padding-right: 10px; padding-left: 10px; }
+      .bar-wrap { min-width: 18px; }
+      .bar { font-size: 10px; }
+      .status-card { grid-template-columns: 1fr auto; }
+      .status-message { grid-column: 1 / -1; grid-row: 2; }
+      .side-panel { display: block; padding: 19px 17px; }
+      .pseudocode { margin-top: 18px; min-height: 0; }
+      .controls { padding: 16px 17px 19px; }
+      .speed-control { width: 100%; margin: 4px 0 0; justify-content: space-between; }
+      .timeline-wrap { grid-template-columns: auto minmax(0, 1fr); }
+      .control-hint { display: none; }
+      .learning-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; padding-right: 70px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">O(n)</span>
+        <span class="brand-text">
+          <strong>Design &amp; Analysis of Algorithms</strong>
+          <span>IIT (ISM) Dhanbad</span>
+        </span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a class="active" href="topics.html">Topics</a></li>
+        <li><a href="practical.html">Practical</a></li>
+        <li><a href="tutorials.html">Tutorials</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">Interactive sorting laboratory</span>
+      <h1>Sorting Algorithms, Step by Step</h1>
+      <p>Compare how ten fundamental sorting methods inspect, move, divide, distribute, and finally order the same data. Every step explains the active operation and updates the cost counters.</p>
+      <div class="hero-chips" aria-label="Page features">
+        <span class="hero-chip">7 comparison sorts</span>
+        <span class="hero-chip">3 distribution sorts</span>
+        <span class="hero-chip">custom input</span>
+        <span class="hero-chip">operation counters</span>
+        <span class="hero-chip">live pseudocode</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="page">
+    <aside class="concept-note">
+      <span class="note-icon" aria-hidden="true">i</span>
+      <div><strong>Important classification:</strong> Bubble, Selection, Insertion, Merge, Quick, Heap, and Shell Sort compare keys. Counting, Radix, and Bucket Sort distribute keys without directly comparing every pair, so they are shown as non-comparison methods.</div>
+    </aside>
+
+    <section class="visualizer" aria-labelledby="visualizer-title">
+      <div class="visualizer-head">
+        <div>
+          <h2 id="visualizer-title">Explore one algorithm at a time</h2>
+          <p>Select a method, enter up to 12 non-negative integers, and use the controls to study every meaningful operation.</p>
+        </div>
+        <span class="type-badge" id="type-badge">Comparison sort</span>
+      </div>
+
+      <div class="algorithm-tabs" id="algorithm-tabs" role="tablist" aria-label="Sorting algorithms"></div>
+
+      <div class="input-row">
+        <div class="input-field">
+          <label for="array-input">ARRAY</label>
+          <input id="array-input" type="text" value="29, 10, 14, 37, 13, 5, 22, 18" inputmode="numeric" aria-describedby="input-help">
+        </div>
+        <button class="button" id="apply-button" type="button">Use array</button>
+        <button class="button" id="random-button" type="button">New array</button>
+      </div>
+
+      <div class="workbench">
+        <div class="stage-column">
+          <div class="stage" id="stage" role="img" aria-label="Array represented by vertical bars"></div>
+
+          <div class="status-card" id="status-card" aria-live="polite">
+            <span class="status-step" id="status-step">READY</span>
+            <span class="status-message" id="status-message">Choose an algorithm, then press Play or Step.</span>
+            <span class="status-progress" id="status-progress">0 / 0</span>
+          </div>
+
+          <div class="legend" aria-label="Color legend">
+            <span><i class="swatch compare"></i>compare / inspect</span>
+            <span><i class="swatch swap"></i>move / swap</span>
+            <span><i class="swatch candidate"></i>candidate / auxiliary</span>
+            <span><i class="swatch sorted"></i>sorted / fixed</span>
+          </div>
+
+          <div class="aux-panel" id="aux-panel" aria-live="polite">
+            <div class="aux-title">Auxiliary state</div>
+            <div id="aux-content" class="aux-placeholder">This area will show temporary arrays, gaps, heap boundaries, counts, digits, or buckets when the selected method needs them.</div>
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <div class="side-copy">
+            <h3 class="algorithm-name" id="algorithm-name">Bubble Sort</h3>
+            <p class="algorithm-summary" id="algorithm-summary"></p>
+            <div class="algorithm-invariant">
+              <span>WHAT STAYS TRUE</span>
+              <p id="algorithm-invariant"></p>
+            </div>
+            <div class="complexity-grid">
+              <div class="complexity-card"><span>Best time</span><strong id="best-time"></strong></div>
+              <div class="complexity-card"><span>Average time</span><strong id="average-time"></strong></div>
+              <div class="complexity-card"><span>Worst time</span><strong id="worst-time"></strong></div>
+              <div class="complexity-card"><span>Extra space</span><strong id="space-cost"></strong></div>
+            </div>
+          </div>
+          <div>
+            <h4 class="code-title">Current logic</h4>
+            <pre class="pseudocode" id="pseudocode" aria-label="Pseudocode for the selected algorithm"></pre>
+            <div class="metrics" aria-label="Operation counters">
+              <div class="metric"><strong id="comparison-count">0</strong><span>comparisons</span></div>
+              <div class="metric"><strong id="swap-count">0</strong><span>swaps</span></div>
+              <div class="metric"><strong id="write-count">0</strong><span>array writes</span></div>
+            </div>
+            <p class="metric-note">Counters record key comparisons, actual exchanges, and assignments to the displayed array A. Temporary counts, buckets, and merge buffers are shown but excluded from “array writes.”</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="controls">
+        <button class="button primary" id="play-button" type="button">Play</button>
+        <button class="button" id="previous-button" type="button">Previous</button>
+        <button class="button" id="step-button" type="button">Step</button>
+        <button class="button" id="reset-button" type="button">Reset</button>
+        <label class="speed-control" for="speed-select">speed
+          <select id="speed-select">
+            <option value="1200">slow</option>
+            <option value="700" selected>normal</option>
+            <option value="330">fast</option>
+          </select>
+        </label>
+        <label class="timeline-wrap" for="timeline">
+          <span class="timeline-label">timeline</span>
+          <input class="timeline" id="timeline" type="range" min="0" max="1" value="0" step="1" aria-label="Go to any sorting step">
+          <span class="control-hint">←/→ step · Space play/pause</span>
+        </label>
+      </div>
+      <p id="input-help" hidden>Enter between 2 and 12 integers from 0 to 99, separated by spaces or commas.</p>
+    </section>
+
+    <section class="comparison-section" aria-labelledby="comparison-title">
+      <span class="section-kicker">At a glance</span>
+      <h2 id="comparison-title">Choose the right sorting method</h2>
+      <p class="section-lede">The table states the standard textbook bounds. Actual performance also depends on input order, implementation details, cache behavior, pivot choice, and gap sequence.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Algorithm</th><th>Family</th><th>Best</th><th>Average</th><th>Worst</th><th>Extra space</th><th>Stable?</th><th>In place?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Bubble Sort</td><td><span class="family-tag">comparison</span></td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+            <tr><td>Selection Sort</td><td><span class="family-tag">comparison</span></td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+            <tr><td>Insertion Sort</td><td><span class="family-tag">comparison</span></td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+            <tr><td>Merge Sort</td><td><span class="family-tag">comparison</span></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+            <tr><td>Quick Sort</td><td><span class="family-tag">comparison</span></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n) average stack</td><td class="no">No</td><td class="yes">Yes</td></tr>
+            <tr><td>Heap Sort</td><td><span class="family-tag">comparison</span></td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+            <tr><td>Shell Sort</td><td><span class="family-tag">comparison</span></td><td>Depends on gaps</td><td>Depends on gaps</td><td>O(n²)</td><td>O(1)</td><td class="no">No</td><td class="yes">Yes</td></tr>
+            <tr><td>Counting Sort</td><td><span class="family-tag noncomparison">distribution</span></td><td>O(n + k)</td><td>O(n + k)</td><td>O(n + k)</td><td>O(n + k)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+            <tr><td>Radix Sort</td><td><span class="family-tag noncomparison">distribution</span></td><td>O(d(n + b))</td><td>O(d(n + b))</td><td>O(d(n + b))</td><td>O(n + b)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+            <tr><td>Bucket Sort</td><td><span class="family-tag noncomparison">distribution</span></td><td>O(n + k)</td><td>O(n + k)</td><td>O(n²)</td><td>O(n + k)</td><td class="yes">Can be</td><td class="no">No</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="learning-grid">
+        <article class="learning-card"><span class="learning-number">1</span><h3>Watch the invariant</h3><p>Green values satisfy the algorithm’s current guarantee: a sorted suffix, sorted prefix, fixed pivot, completed merge, or finished output position.</p></article>
+        <article class="learning-card"><span class="learning-number">2</span><h3>Read the auxiliary state</h3><p>Merge uses temporary storage; Shell exposes its gap; Heap shows the active heap; Counting, Radix, and Bucket Sort reveal their distribution structures.</p></article>
+        <article class="learning-card"><span class="learning-number">3</span><h3>Compare the counters</h3><p>Run the same array through different methods. The counters make comparisons, swaps, and writes concrete without pretending that every operation has identical machine cost.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>Design and Analysis of Algorithms</span>
+      <span>© 2026 <a href="https://alakesh-kalita.github.io/" target="_blank" rel="noopener noreferrer">Dr. Alakesh Kalita</a> · Mathematics and Computing · IIT (ISM) Dhanbad</span>
+    </div>
+  </footer>
+
+  <a class="back-to-top" id="back-to-top" href="#" aria-label="Back to top">↑</a>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var DEFAULT_ARRAY = [29, 10, 14, 37, 13, 5, 22, 18];
+      var state = {
+        algorithm: "bubble",
+        source: DEFAULT_ARRAY.slice(),
+        steps: [],
+        index: 0,
+        playing: false,
+        timer: null
+      };
+
+      var elements = {
+        tabs: document.getElementById("algorithm-tabs"),
+        input: document.getElementById("array-input"),
+        apply: document.getElementById("apply-button"),
+        random: document.getElementById("random-button"),
+        stage: document.getElementById("stage"),
+        statusCard: document.getElementById("status-card"),
+        typeBadge: document.getElementById("type-badge"),
+        statusStep: document.getElementById("status-step"),
+        statusMessage: document.getElementById("status-message"),
+        statusProgress: document.getElementById("status-progress"),
+        auxContent: document.getElementById("aux-content"),
+        name: document.getElementById("algorithm-name"),
+        summary: document.getElementById("algorithm-summary"),
+        invariant: document.getElementById("algorithm-invariant"),
+        best: document.getElementById("best-time"),
+        average: document.getElementById("average-time"),
+        worst: document.getElementById("worst-time"),
+        space: document.getElementById("space-cost"),
+        pseudocode: document.getElementById("pseudocode"),
+        comparisons: document.getElementById("comparison-count"),
+        swaps: document.getElementById("swap-count"),
+        writes: document.getElementById("write-count"),
+        play: document.getElementById("play-button"),
+        previous: document.getElementById("previous-button"),
+        step: document.getElementById("step-button"),
+        reset: document.getElementById("reset-button"),
+        speed: document.getElementById("speed-select"),
+        timeline: document.getElementById("timeline"),
+        backToTop: document.getElementById("back-to-top")
+      };
+
+      var algorithms = {
+        bubble: {
+          name: "Bubble Sort", short: "Bubble", family: "Comparison sort",
+          summary: "Repeatedly compare adjacent values. After each pass, the largest remaining value has bubbled into its final position.",
+          best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)",
+          code: ["for end = n−1 down to 1", "  swapped = false", "  for i = 0 to end−1", "    compare A[i], A[i+1]", "    if A[i] > A[i+1]", "      swap A[i], A[i+1]", "      swapped = true", "  if not swapped: stop"],
+          generate: generateBubble
+        },
+        selection: {
+          name: "Selection Sort", short: "Selection", family: "Comparison sort",
+          summary: "Find the minimum value in the unsorted suffix and exchange it with the first position of that suffix.",
+          best: "O(n²)", average: "O(n²)", worst: "O(n²)", space: "O(1)",
+          code: ["for i = 0 to n−2", "  minIndex = i", "  for j = i+1 to n−1", "    compare A[j], A[minIndex]", "    if A[j] < A[minIndex]", "      minIndex = j", "  swap A[i], A[minIndex]"],
+          generate: generateSelection
+        },
+        insertion: {
+          name: "Insertion Sort", short: "Insertion", family: "Comparison sort",
+          summary: "Grow a sorted prefix. Shift larger values rightward to create the exact position for the selected key.",
+          best: "O(n)", average: "O(n²)", worst: "O(n²)", space: "O(1)",
+          code: ["for i = 1 to n−1", "  key = A[i]", "  j = i−1", "  while j ≥ 0 and A[j] > key", "    A[j+1] = A[j]", "    j = j−1", "  A[j+1] = key"],
+          generate: generateInsertion
+        },
+        merge: {
+          name: "Merge Sort", short: "Merge", family: "Comparison sort",
+          summary: "Recursively split the array, then merge two sorted halves into one sorted range using temporary storage.",
+          best: "O(n log n)", average: "O(n log n)", worst: "O(n log n)", space: "O(n)",
+          code: ["mergeSort(A, left, right)", "  if left ≥ right: return", "  mid = (left + right) / 2", "  mergeSort(A, left, mid)", "  mergeSort(A, mid+1, right)", "  merge the two sorted halves", "  copy temporary values to A"],
+          generate: generateMerge
+        },
+        quick: {
+          name: "Quick Sort", short: "Quick", family: "Comparison sort",
+          summary: "Choose the last value as pivot, partition smaller values to its left, fix the pivot, and recursively sort both sides.",
+          best: "O(n log n)", average: "O(n log n)", worst: "O(n²)", space: "O(log n) avg.",
+          code: ["quickSort(A, low, high)", "  pivot = A[high]", "  i = low−1", "  for j = low to high−1", "    if A[j] ≤ pivot", "      i = i+1", "      swap A[i], A[j]", "  swap A[i+1], A[high]", "  recurse on both sides"],
+          generate: generateQuick
+        },
+        heap: {
+          name: "Heap Sort", short: "Heap", family: "Comparison sort",
+          summary: "Build a max heap, exchange its root with the last active value, shrink the heap, and restore the heap property.",
+          best: "O(n log n)", average: "O(n log n)", worst: "O(n log n)", space: "O(1)",
+          code: ["build a max heap", "for end = n−1 down to 1", "  swap A[0], A[end]", "  reduce heap size", "  heapify from the root", "    compare parent and children", "    swap with the larger child"],
+          generate: generateHeap
+        },
+        shell: {
+          name: "Shell Sort", short: "Shell", family: "Comparison sort",
+          summary: "Perform insertion sort on elements separated by a decreasing gap. The final gap of 1 completes an ordinary insertion pass.",
+          best: "Gap-dependent", average: "Gap-dependent", worst: "O(n²)", space: "O(1)",
+          code: ["gap = floor(n / 2)", "while gap > 0", "  for i = gap to n−1", "    temp = A[i]", "    shift larger gap-neighbours", "    place temp", "  gap = floor(gap / 2)"],
+          generate: generateShell
+        },
+        counting: {
+          name: "Counting Sort", short: "Counting", family: "Non-comparison sort",
+          summary: "Count each key, convert counts into positions, and place values into a stable output array before copying them back.",
+          best: "O(n + k)", average: "O(n + k)", worst: "O(n + k)", space: "O(n + k)",
+          code: ["count[0…k] = 0", "for value in A: count[value]++", "make count cumulative", "for i = n−1 down to 0", "  output[count[A[i]]−1] = A[i]", "  count[A[i]]−−", "copy output to A"],
+          generate: generateCounting
+        },
+        radix: {
+          name: "Radix Sort", short: "Radix", family: "Non-comparison sort",
+          summary: "Process digits from least significant to most significant, using a stable bucket distribution for each decimal place.",
+          best: "O(d(n + 10))", average: "O(d(n + 10))", worst: "O(d(n + 10))", space: "O(n + 10)",
+          code: ["exp = 1", "while max(A) / exp > 0", "  create buckets 0…9", "  distribute by (value/exp) % 10", "  collect buckets stably", "  exp = exp × 10"],
+          generate: generateRadix
+        },
+        bucket: {
+          name: "Bucket Sort", short: "Bucket", family: "Non-comparison sort",
+          summary: "Distribute values across ordered ranges, sort each small bucket, and concatenate the buckets in range order.",
+          best: "O(n + k)", average: "O(n + k)", worst: "O(n²)", space: "O(n + k)",
+          code: ["create k ordered buckets", "for value in A", "  choose its range bucket", "sort each bucket", "concatenate buckets into A"],
+          generate: generateBucket
+        }
+      };
+
+      var invariants = {
+        bubble: "After each complete pass, the sorted suffix grows by one value; nothing to its right needs to be compared again.",
+        selection: "Before iteration i begins, indices 0 through i−1 contain the globally smallest values in final order.",
+        insertion: "Before selecting the next key, the prefix to its left is already sorted; shifting preserves every value in that prefix.",
+        merge: "A merge begins only after its left and right halves are individually sorted; the temporary output is always sorted.",
+        quick: "After partitioning, every value left of the pivot is no larger, every value right is larger, and the pivot never moves again.",
+        heap: "The active prefix satisfies the max-heap property, while the green suffix contains the largest values in final order.",
+        shell: "After a pass with gap g, every subsequence formed by indices g positions apart is sorted.",
+        counting: "Counts represent key frequencies first, then cumulative counts identify each key’s last legal output position.",
+        radix: "After each digit pass, the array is stably sorted by all digits processed so far.",
+        bucket: "Every value in an earlier range bucket is no greater than every value in a later range bucket."
+      };
+
+      function copyMetrics(metrics) {
+        return { comparisons: metrics.comparisons, swaps: metrics.swaps, writes: metrics.writes };
+      }
+
+      function makeRecorder(array, steps, metrics) {
+        return function (message, options) {
+          var opts = options || {};
+          steps.push({
+            array: array.slice(),
+            message: message,
+            compare: (opts.compare || []).slice(),
+            swap: (opts.swap || []).slice(),
+            candidate: (opts.candidate || []).slice(),
+            sorted: (opts.sorted || []).slice(),
+            active: opts.active ? opts.active.slice() : null,
+            pivot: typeof opts.pivot === "number" ? opts.pivot : null,
+            line: typeof opts.line === "number" ? opts.line : -1,
+            aux: opts.aux ? JSON.parse(JSON.stringify(opts.aux)) : null,
+            metrics: copyMetrics(metrics)
+          });
+        };
+      }
+
+      function range(start, end) {
+        var result = [];
+        for (var i = start; i <= end; i += 1) result.push(i);
+        return result;
+      }
+
+      function allIndexes(length) { return range(0, length - 1); }
+
+      function generateBubble(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m), sorted = [];
+        record("Start at the left and compare adjacent values.", { line: 0 });
+        for (var end = a.length - 1; end > 0; end -= 1) {
+          var swapped = false;
+          for (var i = 0; i < end; i += 1) {
+            m.comparisons += 1;
+            record("Compare " + a[i] + " and " + a[i + 1] + ".", { compare: [i, i + 1], sorted: sorted, line: 3 });
+            if (a[i] > a[i + 1]) {
+              var temp = a[i]; a[i] = a[i + 1]; a[i + 1] = temp;
+              m.swaps += 1; m.writes += 2; swapped = true;
+              record("Swap them because they are out of order.", { swap: [i, i + 1], sorted: sorted, line: 5 });
+            }
+          }
+          sorted.unshift(end);
+          record(a[end] + " is now fixed at index " + end + ".", { sorted: sorted, line: 7 });
+          if (!swapped) { sorted = allIndexes(a.length); record("No swap occurred, so the array is already sorted.", { sorted: sorted, line: 7 }); break; }
+        }
+        record("Bubble Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateSelection(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m);
+        record("Begin with the entire array unsorted.", { line: 0 });
+        for (var i = 0; i < a.length - 1; i += 1) {
+          var min = i;
+          record(a[min] + " is the current minimum candidate.", { candidate: [min], sorted: range(0, i - 1), line: 1 });
+          for (var j = i + 1; j < a.length; j += 1) {
+            m.comparisons += 1;
+            record("Compare " + a[j] + " with minimum candidate " + a[min] + ".", { compare: [j, min], candidate: [min], sorted: range(0, i - 1), line: 3 });
+            if (a[j] < a[min]) { min = j; record(a[min] + " becomes the new minimum candidate.", { candidate: [min], sorted: range(0, i - 1), line: 5 }); }
+          }
+          if (min !== i) {
+            var temp = a[i]; a[i] = a[min]; a[min] = temp; m.swaps += 1; m.writes += 2;
+            record("Place the minimum at index " + i + ".", { swap: [i, min], sorted: range(0, i), line: 6 });
+          } else record(a[i] + " is already the smallest remaining value.", { sorted: range(0, i), line: 6 });
+        }
+        record("Selection Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateInsertion(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m);
+        record("The first value is a sorted prefix of length one.", { sorted: [0], line: 0 });
+        for (var i = 1; i < a.length; i += 1) {
+          var key = a[i], j = i - 1;
+          record("Select key " + key + "; values may shift right to create space.", { candidate: [i], sorted: range(0, i - 1), line: 1, aux: { type: "note", text: "Selected key = " + key + ". Sorted prefix: indices 0…" + (i - 1) + "." } });
+          while (j >= 0) {
+            m.comparisons += 1;
+            record("Compare " + a[j] + " with key " + key + ".", { compare: [j], candidate: [j + 1], line: 3, aux: { type: "note", text: "Keep key " + key + " safe while larger values move one position right." } });
+            if (a[j] <= key) break;
+            a[j + 1] = a[j]; m.writes += 1;
+            record("Shift " + a[j] + " right; the space for " + key + " moves left.", { swap: [j, j + 1], line: 4, aux: { type: "note", text: "Key " + key + " is still held temporarily." } });
+            j -= 1;
+          }
+          a[j + 1] = key; m.writes += 1;
+          record("Insert " + key + " at index " + (j + 1) + ".", { candidate: [j + 1], sorted: range(0, i), line: 6 });
+        }
+        record("Insertion Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateMerge(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m);
+        record("Start recursive division of the full range.", { active: [0, a.length - 1], line: 0 });
+        function sort(left, right, depth) {
+          if (left >= right) {
+            record("Base case: [" + a[left] + "] is already sorted.", { active: [left, right], line: 1, aux: { type: "note", text: "Recursion depth " + depth + ": one-element range." } });
+            return;
+          }
+          var mid = Math.floor((left + right) / 2);
+          record("Divide indices " + left + "…" + right + " at " + mid + ".", { active: [left, right], line: 2, aux: { type: "note", text: "Left: " + left + "…" + mid + " | Right: " + (mid + 1) + "…" + right } });
+          sort(left, mid, depth + 1);
+          sort(mid + 1, right, depth + 1);
+          var leftValues = a.slice(left, mid + 1), rightValues = a.slice(mid + 1, right + 1), temp = [], i = 0, j = 0;
+          while (i < leftValues.length && j < rightValues.length) {
+            m.comparisons += 1;
+            record("Compare " + leftValues[i] + " and " + rightValues[j] + " for the next output position.", { active: [left, right], line: 5, aux: { type: "merge", left: leftValues, right: rightValues, temp: temp, leftIndex: i, rightIndex: j } });
+            if (leftValues[i] <= rightValues[j]) temp.push(leftValues[i++]); else temp.push(rightValues[j++]);
+          }
+          while (i < leftValues.length) temp.push(leftValues[i++]);
+          while (j < rightValues.length) temp.push(rightValues[j++]);
+          record("The temporary range is now sorted: [" + temp.join(", ") + "].", { active: [left, right], line: 5, aux: { type: "merge", left: leftValues, right: rightValues, temp: temp } });
+          for (var k = 0; k < temp.length; k += 1) {
+            a[left + k] = temp[k]; m.writes += 1;
+            record("Copy " + temp[k] + " back to index " + (left + k) + ".", { candidate: [left + k], active: [left, right], line: 6, aux: { type: "merge", left: leftValues, right: rightValues, temp: temp } });
+          }
+        }
+        sort(0, a.length - 1, 0);
+        record("Merge Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateQuick(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m), fixed = [];
+        record("Start Quick Sort on the full array.", { active: [0, a.length - 1], line: 0 });
+        function sort(low, high) {
+          if (low > high) return;
+          if (low === high) { if (fixed.indexOf(low) < 0) fixed.push(low); record(a[low] + " is a one-value partition and is fixed.", { sorted: fixed, active: [low, high], line: 8 }); return; }
+          var pivotValue = a[high], i = low - 1;
+          record("Choose the last value, " + pivotValue + ", as pivot.", { pivot: high, active: [low, high], sorted: fixed, line: 1, aux: { type: "note", text: "Partition indices " + low + "…" + high + ". Values ≤ pivot move left." } });
+          for (var j = low; j < high; j += 1) {
+            m.comparisons += 1;
+            record("Compare " + a[j] + " with pivot " + pivotValue + ".", { compare: [j], pivot: high, active: [low, high], sorted: fixed, line: 4 });
+            if (a[j] <= pivotValue) {
+              i += 1;
+              if (i !== j) { var t = a[i]; a[i] = a[j]; a[j] = t; m.swaps += 1; m.writes += 2; record("Move " + a[i] + " into the ≤ pivot region.", { swap: [i, j], pivot: high, active: [low, high], sorted: fixed, line: 6 }); }
+            }
+          }
+          var target = i + 1;
+          if (target !== high) { var temp = a[target]; a[target] = a[high]; a[high] = temp; m.swaps += 1; m.writes += 2; }
+          fixed.push(target);
+          record("Pivot " + a[target] + " is fixed at index " + target + ".", { pivot: target, active: [low, high], sorted: fixed, line: 7 });
+          sort(low, target - 1);
+          sort(target + 1, high);
+        }
+        sort(0, a.length - 1);
+        record("Quick Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateHeap(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m), sorted = [];
+        record("Treat the array as a complete binary tree.", { line: 0, aux: { type: "heap", size: a.length, text: "Build phase: restore the max-heap property from the last internal node upward." } });
+        function heapify(size, root, phase) {
+          var largest = root, left = 2 * root + 1, right = 2 * root + 2;
+          if (left < size) { m.comparisons += 1; record("Compare parent " + a[largest] + " with left child " + a[left] + ".", { compare: [largest, left], sorted: sorted, active: [0, size - 1], line: 5, aux: { type: "heap", size: size, text: phase } }); if (a[left] > a[largest]) largest = left; }
+          if (right < size) { m.comparisons += 1; record("Compare current largest " + a[largest] + " with right child " + a[right] + ".", { compare: [largest, right], sorted: sorted, active: [0, size - 1], line: 5, aux: { type: "heap", size: size, text: phase } }); if (a[right] > a[largest]) largest = right; }
+          if (largest !== root) {
+            var temp = a[root]; a[root] = a[largest]; a[largest] = temp; m.swaps += 1; m.writes += 2;
+            record("Swap the parent with its larger child to restore the heap property.", { swap: [root, largest], sorted: sorted, active: [0, size - 1], line: 6, aux: { type: "heap", size: size, text: phase } });
+            heapify(size, largest, phase);
+          }
+        }
+        for (var i = Math.floor(a.length / 2) - 1; i >= 0; i -= 1) heapify(a.length, i, "Building the max heap.");
+        record("The maximum value is now at the heap root.", { candidate: [0], active: [0, a.length - 1], line: 0, aux: { type: "heap", size: a.length, text: "Max heap complete." } });
+        for (var end = a.length - 1; end > 0; end -= 1) {
+          var t = a[0]; a[0] = a[end]; a[end] = t; m.swaps += 1; m.writes += 2; sorted.unshift(end);
+          record("Move maximum " + a[end] + " to final index " + end + ".", { swap: [0, end], sorted: sorted, active: [0, end - 1], line: 2, aux: { type: "heap", size: end, text: "Heap shrinks to indices 0…" + (end - 1) + "." } });
+          heapify(end, 0, "Restoring the max heap after extraction.");
+        }
+        record("Heap Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateShell(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m);
+        var gap = Math.floor(a.length / 2);
+        record("Begin with gap = floor(n/2) = " + gap + ".", { line: 0, aux: { type: "gap", gap: gap } });
+        while (gap > 0) {
+          record("Perform a gapped insertion pass with gap " + gap + ".", { line: 1, aux: { type: "gap", gap: gap } });
+          for (var i = gap; i < a.length; i += 1) {
+            var temp = a[i], j = i;
+            record("Hold " + temp + " and inspect positions separated by " + gap + ".", { candidate: [i], line: 3, aux: { type: "gap", gap: gap, key: temp } });
+            while (j >= gap) {
+              m.comparisons += 1;
+              record("Compare " + a[j - gap] + " with held value " + temp + ".", { compare: [j - gap, j], line: 4, aux: { type: "gap", gap: gap, key: temp } });
+              if (a[j - gap] <= temp) break;
+              a[j] = a[j - gap]; m.writes += 1;
+              record("Shift " + a[j] + " forward by gap " + gap + ".", { swap: [j - gap, j], line: 4, aux: { type: "gap", gap: gap, key: temp } });
+              j -= gap;
+            }
+            a[j] = temp; m.writes += 1;
+            record("Place " + temp + " at index " + j + " within its gap sequence.", { candidate: [j], line: 5, aux: { type: "gap", gap: gap } });
+          }
+          gap = Math.floor(gap / 2);
+          if (gap > 0) record("Reduce the gap to " + gap + ".", { line: 6, aux: { type: "gap", gap: gap } });
+        }
+        record("Shell Sort is complete.", { sorted: allIndexes(a.length), line: -1, aux: { type: "gap", gap: 0 } });
+        return steps;
+      }
+
+      function generateCounting(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m), max = Math.max.apply(null, a), counts = new Array(max + 1).fill(0);
+        record("Create count cells for keys 0 through " + max + ".", { line: 0, aux: { type: "count", counts: counts } });
+        for (var i = 0; i < a.length; i += 1) {
+          counts[a[i]] += 1;
+          record("Read " + a[i] + " and increment count[" + a[i] + "].", { candidate: [i], line: 1, aux: { type: "count", counts: counts, hot: a[i] } });
+        }
+        for (var key = 1; key < counts.length; key += 1) counts[key] += counts[key - 1];
+        record("Cumulative counts now identify final output positions.", { line: 2, aux: { type: "count", counts: counts } });
+        var output = new Array(a.length);
+        for (var index = a.length - 1; index >= 0; index -= 1) {
+          var value = a[index], position = counts[value] - 1;
+          output[position] = value; counts[value] -= 1;
+          record("Place " + value + " at stable output index " + position + ".", { candidate: [index], line: 4, aux: { type: "output", output: output, hot: position, counts: counts } });
+        }
+        for (var p = 0; p < output.length; p += 1) {
+          a[p] = output[p]; m.writes += 1;
+          record("Copy output value " + output[p] + " back to index " + p + ".", { sorted: range(0, p), line: 6, aux: { type: "output", output: output, hot: p } });
+        }
+        record("Counting Sort is complete.", { sorted: allIndexes(a.length), line: -1, aux: { type: "output", output: output } });
+        return steps;
+      }
+
+      function emptyBuckets(count) {
+        var buckets = [];
+        for (var i = 0; i < count; i += 1) buckets.push([]);
+        return buckets;
+      }
+
+      function generateRadix(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m), max = Math.max.apply(null, a);
+        var exp = 1;
+        record("Start with the ones digit.", { line: 0, aux: { type: "buckets", buckets: emptyBuckets(10), hot: null, title: "Ones digit" } });
+        while (Math.floor(max / exp) > 0) {
+          var buckets = emptyBuckets(10), place = exp === 1 ? "ones" : exp === 10 ? "tens" : "hundreds";
+          for (var i = 0; i < a.length; i += 1) {
+            var digit = Math.floor(a[i] / exp) % 10;
+            buckets[digit].push(a[i]);
+            record("The " + place + " digit of " + a[i] + " is " + digit + "; append it to bucket " + digit + ".", { candidate: [i], line: 3, aux: { type: "buckets", buckets: buckets, hot: digit, title: place.charAt(0).toUpperCase() + place.slice(1) + " digit" } });
+          }
+          var position = 0;
+          for (var b = 0; b < 10; b += 1) {
+            for (var q = 0; q < buckets[b].length; q += 1) {
+              a[position] = buckets[b][q]; m.writes += 1;
+              record("Collect " + buckets[b][q] + " from bucket " + b + " into index " + position + ".", { candidate: [position], line: 4, aux: { type: "buckets", buckets: buckets, hot: b, title: place.charAt(0).toUpperCase() + place.slice(1) + " digit" } });
+              position += 1;
+            }
+          }
+          record("The array is stable-sorted through the " + place + " digit.", { line: 5, aux: { type: "buckets", buckets: buckets, hot: null, title: place.charAt(0).toUpperCase() + place.slice(1) + " digit complete" } });
+          exp *= 10;
+        }
+        record("Radix Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function generateBucket(input) {
+        var a = input.slice(), steps = [], m = { comparisons: 0, swaps: 0, writes: 0 }, record = makeRecorder(a, steps, m);
+        var count = Math.max(3, Math.ceil(Math.sqrt(a.length))), buckets = emptyBuckets(count);
+        record("Create " + count + " ordered range buckets for values 0…99.", { line: 0, aux: { type: "buckets", buckets: buckets, hot: null, bucketCount: count, title: "Range buckets" } });
+        for (var i = 0; i < a.length; i += 1) {
+          var bucketIndex = Math.min(count - 1, Math.floor(a[i] * count / 100));
+          buckets[bucketIndex].push(a[i]);
+          record("Distribute " + a[i] + " to range bucket " + bucketIndex + ".", { candidate: [i], line: 2, aux: { type: "buckets", buckets: buckets, hot: bucketIndex, bucketCount: count, title: "Range buckets" } });
+        }
+        for (var b = 0; b < buckets.length; b += 1) {
+          for (var x = 1; x < buckets[b].length; x += 1) {
+            var key = buckets[b][x], j = x - 1;
+            while (j >= 0) {
+              m.comparisons += 1;
+              if (buckets[b][j] <= key) break;
+              buckets[b][j + 1] = buckets[b][j]; j -= 1;
+            }
+            buckets[b][j + 1] = key;
+          }
+          record("Bucket " + b + " is internally sorted.", { line: 3, aux: { type: "buckets", buckets: buckets, hot: b, bucketCount: count, title: "Sorted range buckets" } });
+        }
+        var position = 0;
+        for (var bucket = 0; bucket < buckets.length; bucket += 1) {
+          for (var v = 0; v < buckets[bucket].length; v += 1) {
+            a[position] = buckets[bucket][v]; m.writes += 1;
+            record("Collect " + a[position] + " from bucket " + bucket + ".", { sorted: range(0, position), line: 4, aux: { type: "buckets", buckets: buckets, hot: bucket, bucketCount: count, title: "Concatenating buckets" } });
+            position += 1;
+          }
+        }
+        record("Bucket Sort is complete.", { sorted: allIndexes(a.length), line: -1 });
+        return steps;
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"]/g, function (character) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[character];
+        });
+      }
+
+      function renderTabs() {
+        elements.tabs.innerHTML = "";
+        Object.keys(algorithms).forEach(function (key) {
+          var algorithm = algorithms[key], button = document.createElement("button");
+          button.type = "button";
+          button.className = "algorithm-tab" + (algorithm.family.indexOf("Non") === 0 ? " noncomparison" : "") + (key === state.algorithm ? " active" : "");
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-selected", key === state.algorithm ? "true" : "false");
+          button.dataset.algorithm = key;
+          button.innerHTML = escapeHtml(algorithm.short) + "<span>" + (algorithm.family.indexOf("Non") === 0 ? "distribution" : "comparison") + "</span>";
+          button.addEventListener("click", function () { selectAlgorithm(key); });
+          elements.tabs.appendChild(button);
+        });
+      }
+
+      function renderAlgorithmInfo() {
+        var algorithm = algorithms[state.algorithm];
+        elements.name.textContent = algorithm.name;
+        elements.summary.textContent = algorithm.summary;
+        elements.invariant.textContent = invariants[state.algorithm];
+        elements.best.textContent = algorithm.best;
+        elements.average.textContent = algorithm.average;
+        elements.worst.textContent = algorithm.worst;
+        elements.space.textContent = algorithm.space;
+        elements.typeBadge.textContent = algorithm.family;
+        elements.typeBadge.classList.toggle("noncomparison", algorithm.family.indexOf("Non") === 0);
+        renderCode(-1);
+      }
+
+      function renderCode(activeLine) {
+        var lines = algorithms[state.algorithm].code;
+        elements.pseudocode.innerHTML = lines.map(function (line, index) {
+          return "<span class=\"code-line" + (index === activeLine ? " active" : "") + "\">" + escapeHtml(line) + "</span>";
+        }).join("");
+      }
+
+      function contains(list, value) { return list && list.indexOf(value) >= 0; }
+
+      function barRole(step, index) {
+        if (step.pivot === index) return "pivot";
+        if (contains(step.swap, index)) return "move";
+        if (contains(step.compare, index)) {
+          if (step.compare.length > 1) return index === step.compare[0] ? "i" : "j";
+          return "check";
+        }
+        if (contains(step.candidate, index)) {
+          if (state.algorithm === "selection") return "min";
+          if (state.algorithm === "insertion" || state.algorithm === "shell") return "key";
+          if (state.algorithm === "heap") return "root";
+          return "active";
+        }
+        return "";
+      }
+
+      function stageContext(step) {
+        var items = [];
+        if (step.active) items.push("active indices " + step.active[0] + "…" + step.active[1]);
+        if (typeof step.pivot === "number") items.push("pivot index " + step.pivot);
+        if (step.aux && step.aux.type === "gap") items.push("gap = " + step.aux.gap);
+        if (step.aux && step.aux.type === "heap") items.push("heap size = " + step.aux.size);
+        if (step.aux && step.aux.type === "buckets" && step.aux.title) items.push(step.aux.title);
+        if (!items.length) items.push(algorithms[state.algorithm].family);
+        return items;
+      }
+
+      function renderStage(step) {
+        var max = Math.max.apply(null, step.array.concat([1]));
+        elements.stage.innerHTML = "";
+        elements.stage.classList.toggle("complete", state.index === state.steps.length - 1);
+        var context = document.createElement("div");
+        context.className = "stage-context";
+        stageContext(step).forEach(function (text) {
+          var chip = document.createElement("span");
+          chip.className = "context-chip";
+          chip.textContent = text;
+          context.appendChild(chip);
+        });
+        elements.stage.appendChild(context);
+        step.array.forEach(function (value, index) {
+          var wrap = document.createElement("div"), bar = document.createElement("div"), label = document.createElement("span"), valueLabel = document.createElement("span"), role = barRole(step, index);
+          wrap.className = "bar-wrap";
+          bar.className = "bar";
+          if (contains(step.sorted, index)) bar.classList.add("sorted");
+          if (contains(step.candidate, index)) bar.classList.add("candidate");
+          if (contains(step.compare, index)) bar.classList.add("compare");
+          if (contains(step.swap, index)) bar.classList.add("swap");
+          if (step.pivot === index) bar.classList.add("pivot");
+          if (step.active && (index < step.active[0] || index > step.active[1]) && !contains(step.sorted, index)) bar.classList.add("outside");
+          bar.style.height = (38 + Math.round((value / max) * 205)) + "px";
+          if (state.index === state.steps.length - 1) bar.style.animationDelay = (index * 45) + "ms";
+          bar.title = "Index " + index + " · value " + value + (role ? " · " + role : "");
+          valueLabel.className = "bar-value";
+          valueLabel.textContent = value;
+          bar.appendChild(valueLabel);
+          if (role) {
+            var roleLabel = document.createElement("span");
+            roleLabel.className = "bar-role";
+            roleLabel.textContent = role;
+            bar.appendChild(roleLabel);
+          }
+          label.className = "index-label";
+          label.textContent = index;
+          wrap.appendChild(bar); wrap.appendChild(label); elements.stage.appendChild(wrap);
+        });
+        elements.stage.setAttribute("aria-label", "Current array: " + step.array.join(", "));
+      }
+
+      function renderCells(values, hot) {
+        return "<div class=\"cell-row\">" + Array.from({ length: values.length }, function (_, index) {
+          var value = values[index];
+          var shown = typeof value === "undefined" || value === null ? "·" : value;
+          return "<div class=\"aux-cell" + (hot === index ? " hot" : "") + "\"><b>" + index + "</b><span>" + escapeHtml(shown) + "</span></div>";
+        }).join("") + "</div>";
+      }
+
+      function renderBuckets(aux) {
+        var count = aux.bucketCount || 10;
+        var columns = count === 10 ? 10 : count;
+        var content = "<div class=\"bucket-grid\" style=\"grid-template-columns:repeat(" + columns + ",minmax(64px,1fr));min-width:" + Math.max(480, count * 72) + "px\">";
+        aux.buckets.forEach(function (bucket, index) {
+          var label;
+          if (aux.bucketCount) {
+            var lower = Math.ceil(index * 100 / count), upper = index === count - 1 ? 99 : Math.ceil((index + 1) * 100 / count) - 1;
+            label = lower + "–" + upper;
+          } else label = index;
+          content += "<div class=\"bucket" + (aux.hot === index ? " hot" : "") + "\"><div class=\"bucket-label\">" + label + "</div><div class=\"bucket-values\">" + (bucket.length ? bucket.join(" · ") : "—") + "</div></div>";
+        });
+        return content + "</div>";
+      }
+
+      function renderAux(aux) {
+        if (!aux) {
+          elements.auxContent.className = "aux-placeholder";
+          elements.auxContent.innerHTML = "No extra structure is required at this step. The color highlights show the active array positions.";
+          return;
+        }
+        elements.auxContent.className = "";
+        if (aux.type === "note") elements.auxContent.innerHTML = "<div class=\"aux-note\">" + escapeHtml(aux.text) + "</div>";
+        else if (aux.type === "gap") elements.auxContent.innerHTML = "<div class=\"aux-note\"><strong>Current gap: " + aux.gap + "</strong><br>Indices separated by this distance belong to the same gapped insertion sequence." + (typeof aux.key === "number" ? " Held value: <strong>" + aux.key + "</strong>." : "") + "</div>";
+        else if (aux.type === "heap") elements.auxContent.innerHTML = "<div class=\"aux-note\"><strong>Active heap size: " + aux.size + "</strong><br>Children of index i are 2i + 1 and 2i + 2. " + escapeHtml(aux.text || "") + "</div>";
+        else if (aux.type === "count") elements.auxContent.innerHTML = renderCells(aux.counts, aux.hot);
+        else if (aux.type === "output") elements.auxContent.innerHTML = renderCells(aux.output, aux.hot);
+        else if (aux.type === "buckets") elements.auxContent.innerHTML = renderBuckets(aux);
+        else if (aux.type === "merge") {
+          elements.auxContent.innerHTML = "<div class=\"aux-title\">Left half</div>" + renderCells(aux.left || [], aux.leftIndex) + "<div class=\"aux-title\" style=\"margin-top:10px\">Right half</div>" + renderCells(aux.right || [], aux.rightIndex) + "<div class=\"aux-title\" style=\"margin-top:10px\">Temporary output</div>" + renderCells(aux.temp || [], null);
+        }
+      }
+
+      function render() {
+        var step = state.steps[state.index];
+        if (!step) return;
+        renderStage(step);
+        renderAux(step.aux);
+        renderCode(step.line);
+        elements.statusCard.classList.remove("input-error");
+        elements.statusCard.classList.toggle("complete", state.index === state.steps.length - 1);
+        elements.statusStep.textContent = state.index === 0 ? "READY" : state.index === state.steps.length - 1 ? "COMPLETE" : "STEP " + state.index;
+        elements.statusMessage.textContent = step.message;
+        elements.statusProgress.textContent = (state.index + 1) + " / " + state.steps.length;
+        elements.comparisons.textContent = step.metrics.comparisons;
+        elements.swaps.textContent = step.metrics.swaps;
+        elements.writes.textContent = step.metrics.writes;
+        elements.timeline.max = Math.max(0, state.steps.length - 1);
+        elements.timeline.value = state.index;
+        elements.timeline.setAttribute("aria-valuetext", "Step " + state.index + " of " + (state.steps.length - 1));
+        elements.previous.disabled = state.index <= 0;
+        elements.step.disabled = state.index >= state.steps.length - 1;
+      }
+
+      function stop() {
+        state.playing = false;
+        clearTimeout(state.timer);
+        state.timer = null;
+        elements.play.textContent = "Play";
+      }
+
+      function tick() {
+        if (!state.playing) return;
+        if (state.index >= state.steps.length - 1) { stop(); return; }
+        state.index += 1;
+        render();
+        state.timer = setTimeout(tick, Number(elements.speed.value));
+      }
+
+      function playPause() {
+        if (state.playing) { stop(); return; }
+        if (state.index >= state.steps.length - 1) state.index = 0;
+        state.playing = true;
+        elements.play.textContent = "Pause";
+        render();
+        state.timer = setTimeout(tick, Math.min(350, Number(elements.speed.value)));
+      }
+
+      function rebuild() {
+        stop();
+        state.steps = algorithms[state.algorithm].generate(state.source);
+        state.index = 0;
+        elements.input.value = state.source.join(", ");
+        render();
+      }
+
+      function selectAlgorithm(key) {
+        if (!algorithms[key]) return;
+        state.algorithm = key;
+        renderTabs();
+        renderAlgorithmInfo();
+        rebuild();
+      }
+
+      function parseInput() {
+        var parts = elements.input.value.trim().split(/[\s,]+/).filter(Boolean);
+        if (parts.length < 2 || parts.length > 12) throw new Error("Enter between 2 and 12 integers.");
+        var values = parts.map(function (part) {
+          if (!/^\d+$/.test(part)) throw new Error("Use non-negative whole numbers only.");
+          var value = Number(part);
+          if (value < 0 || value > 99) throw new Error("Each value must be from 0 to 99.");
+          return value;
+        });
+        return values;
+      }
+
+      function applyInput() {
+        try {
+          state.source = parseInput();
+          rebuild();
+        } catch (error) {
+          stop();
+          elements.statusCard.classList.remove("complete");
+          elements.statusCard.classList.add("input-error");
+          elements.statusStep.textContent = "INPUT";
+          elements.statusMessage.textContent = error.message;
+          elements.statusProgress.textContent = "Please correct the array";
+          elements.input.focus();
+        }
+      }
+
+      function randomize() {
+        var length = 8, values = [];
+        for (var i = 0; i < length; i += 1) values.push(4 + Math.floor(Math.random() * 46));
+        state.source = values;
+        rebuild();
+      }
+
+      elements.play.addEventListener("click", playPause);
+      elements.previous.addEventListener("click", function () { stop(); if (state.index > 0) { state.index -= 1; render(); } });
+      elements.step.addEventListener("click", function () { stop(); if (state.index < state.steps.length - 1) { state.index += 1; render(); } });
+      elements.reset.addEventListener("click", rebuild);
+      elements.apply.addEventListener("click", applyInput);
+      elements.random.addEventListener("click", randomize);
+      elements.timeline.addEventListener("input", function () {
+        stop();
+        state.index = Math.max(0, Math.min(state.steps.length - 1, Number(elements.timeline.value)));
+        render();
+      });
+      elements.input.addEventListener("keydown", function (event) { if (event.key === "Enter") applyInput(); });
+      document.addEventListener("keydown", function (event) {
+        var tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : "";
+        if (tag === "input" || tag === "select" || tag === "button") return;
+        if (event.key === "ArrowRight" && state.index < state.steps.length - 1) {
+          event.preventDefault(); stop(); state.index += 1; render();
+        } else if (event.key === "ArrowLeft" && state.index > 0) {
+          event.preventDefault(); stop(); state.index -= 1; render();
+        } else if (event.code === "Space") {
+          event.preventDefault(); playPause();
+        }
+      });
+      window.addEventListener("scroll", function () { elements.backToTop.classList.toggle("visible", window.scrollY > 520); }, { passive: true });
+
+      renderTabs();
+      renderAlgorithmInfo();
+      rebuild();
+    })();
+  </script>
+</body>
+</html>
