@@ -410,7 +410,16 @@
     .bucket.hot { border-color: var(--purple); box-shadow: 0 0 0 2px rgba(124,58,237,.10); }
     .aux-note { padding: 12px; border-left: 4px solid var(--purple); border-radius: 8px; background: var(--purple-soft); color: #4b2978; font-size: 13.5px; }
 
-    .side-panel { min-width: 0; padding: 24px 22px; background: #fbfcfe; }
+    .side-panel {
+      position: sticky;
+      top: 78px;
+      align-self: start;
+      min-width: 0;
+      max-height: calc(100vh - 94px);
+      padding: 24px 22px;
+      overflow-y: auto;
+      background: #fbfcfe;
+    }
     .algorithm-name { margin-bottom: 4px; font-size: 1.35rem; }
     .algorithm-summary { min-height: 72px; margin: 0 0 14px; color: var(--ink-soft); font-size: 14px; }
     .algorithm-invariant {
@@ -439,6 +448,46 @@
     .metric span { color: var(--ink-soft); font-size: 10px; text-transform: uppercase; }
     .metric-note { margin: 9px 2px 0; color: #6a7890; font-size: 10.5px; line-height: 1.45; }
 
+    .mobile-code-panel {
+      display: none;
+      margin-top: 12px;
+      overflow: hidden;
+      border: 1px solid #243550;
+      border-radius: 11px;
+      background: #101b31;
+      box-shadow: 0 8px 18px rgba(16,28,51,.10);
+    }
+    .mobile-code-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 11px;
+      border-bottom: 1px solid #2c3e5d;
+      background: #17243d;
+      color: #a9b9d3;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mobile-code-window { padding: 7px 0; }
+    .mobile-code-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      padding: 3px 10px 3px 5px;
+      color: #aab9d1;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+    .mobile-code-row b { color: #61718d; font-weight: 500; text-align: center; }
+    .mobile-code-row code { overflow-wrap: anywhere; white-space: pre-wrap; }
+    .mobile-code-row.active { background: rgba(62,207,180,.17); color: #8ef4dc; box-shadow: inset 3px 0 #39c6ab; }
+    .mobile-code-row.active b { color: #8ef4dc; }
+    .mobile-code-complete { padding: 10px 13px; color: #8ef4dc; font-family: var(--mono); font-size: 11px; }
+
     @keyframes sorted-settle {
       0% { transform: translateY(-10px); box-shadow: 0 12px 20px rgba(15,118,110,.22); }
       65% { transform: translateY(2px); }
@@ -450,9 +499,12 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 9px;
-      padding: 18px 26px 22px;
-      border-top: 1px solid var(--line);
-      background: white;
+      margin-top: 12px;
+      padding: 13px;
+      border: 1px solid #cbd9e9;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #fff, #f1f7fb);
+      box-shadow: 0 7px 16px rgba(16,28,51,.06);
     }
     .controls .button { min-width: 92px; }
     .speed-control { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; color: var(--ink-soft); font-family: var(--mono); font-size: 12px; }
@@ -520,9 +572,10 @@
       .workbench { grid-template-columns: 1fr; }
       .stage-column { border-right: 0; border-bottom: 1px solid var(--line); }
       .algorithm-tabs { grid-template-columns: repeat(3, 1fr); }
-      .side-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .side-panel { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-height: none; overflow: visible; }
       .side-copy { min-width: 0; }
       .pseudocode { min-height: 230px; }
+      .mobile-code-panel { display: block; }
     }
     @media (max-width: 720px) {
       .brand-text span { display: none; }
@@ -536,14 +589,25 @@
       .input-row { grid-template-columns: 1fr 1fr; padding: 15px 17px; }
       .input-field { grid-column: 1 / -1; flex-direction: column; align-items: flex-start; }
       .stage-column { padding: 17px; }
-      .stage { min-height: 285px; padding-right: 10px; padding-left: 10px; }
+      .stage { min-height: 245px; padding: 42px 10px 34px; }
       .bar-wrap { min-width: 18px; }
       .bar { font-size: 10px; }
       .status-card { grid-template-columns: 1fr auto; }
       .status-message { grid-column: 1 / -1; grid-row: 2; }
       .side-panel { display: block; padding: 19px 17px; }
       .pseudocode { margin-top: 18px; min-height: 0; }
-      .controls { padding: 16px 17px 19px; }
+      .controls {
+        position: sticky;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        z-index: 25;
+        margin-top: 10px;
+        padding: 10px;
+        border-color: #b9cadf;
+        background: rgba(255,255,255,.96);
+        box-shadow: 0 12px 28px rgba(16,28,51,.16);
+        backdrop-filter: blur(10px);
+      }
+      .controls .button { flex: 1 1 calc(25% - 9px); min-width: 72px; padding: 9px 8px; font-size: 13px; }
       .speed-control { width: 100%; margin: 4px 0 0; justify-content: space-between; }
       .timeline-wrap { grid-template-columns: auto minmax(0, 1fr); }
       .control-hint { display: none; }
@@ -626,6 +690,33 @@
             <span class="status-progress" id="status-progress">0 / 0</span>
           </div>
 
+          <div class="mobile-code-panel" aria-live="polite">
+            <div class="mobile-code-head">
+              <span>Live pseudocode</span>
+              <span id="mobile-code-state">current step</span>
+            </div>
+            <div class="mobile-code-window" id="mobile-code-window"></div>
+          </div>
+
+          <div class="controls" aria-label="Sorting playback controls">
+            <button class="button primary" id="play-button" type="button">Play</button>
+            <button class="button" id="previous-button" type="button">Previous</button>
+            <button class="button" id="step-button" type="button">Step</button>
+            <button class="button" id="reset-button" type="button">Reset</button>
+            <label class="speed-control" for="speed-select">speed
+              <select id="speed-select">
+                <option value="1200">slow</option>
+                <option value="700" selected>normal</option>
+                <option value="330">fast</option>
+              </select>
+            </label>
+            <label class="timeline-wrap" for="timeline">
+              <span class="timeline-label">timeline</span>
+              <input class="timeline" id="timeline" type="range" min="0" max="1" value="0" step="1" aria-label="Go to any sorting step">
+              <span class="control-hint">←/→ step · Space play/pause</span>
+            </label>
+          </div>
+
           <div class="legend" aria-label="Color legend">
             <span><i class="swatch compare"></i>compare / inspect</span>
             <span><i class="swatch swap"></i>move / swap</span>
@@ -667,24 +758,6 @@
         </aside>
       </div>
 
-      <div class="controls">
-        <button class="button primary" id="play-button" type="button">Play</button>
-        <button class="button" id="previous-button" type="button">Previous</button>
-        <button class="button" id="step-button" type="button">Step</button>
-        <button class="button" id="reset-button" type="button">Reset</button>
-        <label class="speed-control" for="speed-select">speed
-          <select id="speed-select">
-            <option value="1200">slow</option>
-            <option value="700" selected>normal</option>
-            <option value="330">fast</option>
-          </select>
-        </label>
-        <label class="timeline-wrap" for="timeline">
-          <span class="timeline-label">timeline</span>
-          <input class="timeline" id="timeline" type="range" min="0" max="1" value="0" step="1" aria-label="Go to any sorting step">
-          <span class="control-hint">←/→ step · Space play/pause</span>
-        </label>
-      </div>
       <p id="input-help" hidden>Enter between 2 and 12 integers from 0 to 99, separated by spaces or commas.</p>
     </section>
 
@@ -763,6 +836,8 @@
         worst: document.getElementById("worst-time"),
         space: document.getElementById("space-cost"),
         pseudocode: document.getElementById("pseudocode"),
+        mobileCodeWindow: document.getElementById("mobile-code-window"),
+        mobileCodeState: document.getElementById("mobile-code-state"),
         comparisons: document.getElementById("comparison-count"),
         swaps: document.getElementById("swap-count"),
         writes: document.getElementById("write-count"),
@@ -1195,6 +1270,22 @@
         }).join("");
       }
 
+      function renderMobileCode(activeLine) {
+        var lines = algorithms[state.algorithm].code;
+        if (state.index === state.steps.length - 1) {
+          elements.mobileCodeState.textContent = "complete";
+          elements.mobileCodeWindow.innerHTML = "<div class=\"mobile-code-complete\">✓ Sorting complete — every value is in order.</div>";
+          return;
+        }
+        var focus = activeLine >= 0 ? activeLine : 0;
+        var start = Math.max(0, focus - 1), end = Math.min(lines.length - 1, focus + 1), rows = [];
+        for (var index = start; index <= end; index += 1) {
+          rows.push("<div class=\"mobile-code-row" + (index === focus ? " active" : "") + "\"><b>" + (index + 1) + "</b><code>" + escapeHtml(lines[index]) + "</code></div>");
+        }
+        elements.mobileCodeState.textContent = "line " + (focus + 1) + " of " + lines.length;
+        elements.mobileCodeWindow.innerHTML = rows.join("");
+      }
+
       function contains(list, value) { return list && list.indexOf(value) >= 0; }
 
       function barRole(step, index) {
@@ -1226,6 +1317,7 @@
 
       function renderStage(step) {
         var max = Math.max.apply(null, step.array.concat([1]));
+        var barRange = window.matchMedia && window.matchMedia("(max-width: 720px)").matches ? 145 : 205;
         elements.stage.innerHTML = "";
         elements.stage.classList.toggle("complete", state.index === state.steps.length - 1);
         var context = document.createElement("div");
@@ -1247,7 +1339,7 @@
           if (contains(step.swap, index)) bar.classList.add("swap");
           if (step.pivot === index) bar.classList.add("pivot");
           if (step.active && (index < step.active[0] || index > step.active[1]) && !contains(step.sorted, index)) bar.classList.add("outside");
-          bar.style.height = (38 + Math.round((value / max) * 205)) + "px";
+          bar.style.height = (38 + Math.round((value / max) * barRange)) + "px";
           if (state.index === state.steps.length - 1) bar.style.animationDelay = (index * 45) + "ms";
           bar.title = "Index " + index + " · value " + value + (role ? " · " + role : "");
           valueLabel.className = "bar-value";
@@ -1313,6 +1405,7 @@
         renderStage(step);
         renderAux(step.aux);
         renderCode(step.line);
+        renderMobileCode(step.line);
         elements.statusCard.classList.remove("input-error");
         elements.statusCard.classList.toggle("complete", state.index === state.steps.length - 1);
         elements.statusStep.textContent = state.index === 0 ? "READY" : state.index === state.steps.length - 1 ? "COMPLETE" : "STEP " + state.index;
@@ -1426,6 +1519,11 @@
         }
       });
       window.addEventListener("scroll", function () { elements.backToTop.classList.toggle("visible", window.scrollY > 520); }, { passive: true });
+      var resizeTimer = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(render, 120);
+      }, { passive: true });
 
       renderTabs();
       renderAlgorithmInfo();
