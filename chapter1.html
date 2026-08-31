@@ -357,6 +357,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   border-radius: 50%; background: rgba(255,255,255,.16);
   font: 600 16px var(--font-mono);
 }
+.download-action.guide-action::before { content: "→"; }
 .download-action:hover {
   color: #fff; background: var(--accent-dark);
   transform: translateY(-2px); box-shadow: 0 9px 18px rgba(11, 114, 133, .24);
@@ -470,6 +471,44 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     .memory-figure svg .memory-piece.is-current {
       filter: drop-shadow(0 4px 5px rgba(11, 114, 133, .28));
     }
+
+    .storage-flow {
+      display: grid; grid-template-columns: minmax(0, .9fr) auto minmax(0, 1.1fr);
+      align-items: stretch; gap: 14px; margin-top: 14px;
+    }
+    .storage-tier {
+      min-width: 0; padding: 18px;
+      border: 1px solid var(--line); border-radius: 10px;
+      background: #fbfcfe;
+    }
+    .storage-tier.ram { border-color: #9bcbd4; background: var(--accent-soft); }
+    .storage-tier-label {
+      display: block; margin-bottom: 3px;
+      color: var(--accent-dark); font: 600 12px var(--font-mono);
+      letter-spacing: .08em; text-transform: uppercase;
+    }
+    .storage-tier h4 { margin-bottom: 10px; font-size: 1.02rem; }
+    .storage-tier p { margin: 0 0 9px; font-size: 14px; color: var(--ink-soft); }
+    .storage-tier p:last-child { margin-bottom: 0; }
+    .storage-file, .storage-list {
+      padding: 10px 12px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--line);
+      color: #24344f; font: 600 13px/1.65 var(--font-mono);
+    }
+    .storage-list { border-color: #9bcbd4; text-align: center; color: var(--accent-dark); }
+    .storage-arrow {
+      align-self: center; min-width: 72px; text-align: center;
+      color: var(--accent-dark); font: 600 12px/1.3 var(--font-mono);
+    }
+    .storage-arrow span { display: block; margin-top: 4px; font-size: 25px; line-height: 1; }
+    .storage-lifetime {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;
+    }
+    .storage-lifetime div {
+      padding: 10px 12px; border-radius: 8px; background: #fff;
+      border: 1px solid var(--line); font-size: 13.5px; color: var(--ink-soft);
+    }
+    .storage-lifetime strong { display: block; color: var(--ink); }
 
     .array-stage {
       min-height: 150px;
@@ -615,6 +654,10 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         min-height: 0; border-right: 0; border-bottom: 1px solid #263754;
       }
       .program-output { min-height: 170px; }
+      .storage-flow { grid-template-columns: 1fr; }
+      .storage-arrow { padding: 2px 0; }
+      .storage-arrow span { transform: rotate(90deg); }
+      .storage-lifetime { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; }
@@ -752,6 +795,51 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
         A data structure refers to the way of organising and storing data in
         computer memory following some logical or mathematical model.
       </div>
+      <h3>Where does a data structure live?</h3>
+      <p>
+        In this definition, <strong class="kw">computer memory</strong> normally means
+        <strong>main memory (RAM)</strong> while a program is running. For example, when
+        Python executes <code class="inline">A = [10, 20, 30, 40]</code>, the list and
+        the information needed to manage it exist in the program's memory, backed
+        primarily by RAM.
+      </p>
+      <figure class="fig" aria-labelledby="storage-flow-caption">
+        <div class="storage-flow" role="img" aria-label="A students text file on persistent SSD or HDD storage is read into RAM and organised as a linked list while the program runs">
+          <div class="storage-tier">
+            <span class="storage-tier-label">Secondary storage</span>
+            <h4>SSD / HDD</h4>
+            <p>Stores data persistently, even when the program or computer is off.</p>
+            <div class="storage-file">students.txt<br>101 Alice<br>102 Bob<br>103 John</div>
+          </div>
+          <div class="storage-arrow" aria-hidden="true">read()<span>→</span></div>
+          <div class="storage-tier ram">
+            <span class="storage-tier-label">Main memory</span>
+            <h4>RAM · running program</h4>
+            <p>The program organises the records into a useful runtime structure.</p>
+            <div class="storage-list">[101] → [102] → [103]</div>
+          </div>
+        </div>
+        <div class="storage-lifetime">
+          <div><strong>When the program ends</strong>The linked list normally disappears from memory.</div>
+          <div><strong>What remains</strong>The saved <code>students.txt</code> file stays on the SSD/HDD.</div>
+        </div>
+        <figcaption id="storage-flow-caption"><b>Fig 1.1</b> &#183; Persistent data is read from secondary storage into RAM, where a running program can organise and process it as a data structure.</figcaption>
+      </figure>
+      <div class="note-box">
+        <span class="def-label">In short</span>
+        RAM is the program's temporary working area; an SSD or HDD keeps files for
+        later use. To preserve changes made to an in-memory data structure, the
+        program must write or save them back to persistent storage.
+      </div>
+      <aside class="download-card supplemental-card" aria-labelledby="memory-guide-title">
+        <span class="download-file-icon" aria-hidden="true">DEEP</span>
+        <div class="download-copy">
+          <span class="resource-label">Supplementary reading</span>
+          <h3 id="memory-guide-title">Linked Lists, Stacks &amp; Queues at the Memory Level</h3>
+          <p>Explore pointers, cache locality, memory overhead, amortized analysis, circular queues, invariants, and practical performance.</p>
+        </div>
+        <a class="download-action guide-action" href="memory-level-data-structures.html">Open the guide</a>
+      </aside>
       <h3>Classification</h3>
       <table class="tbl">
         <thead><tr><th>Category</th><th>Examples</th></tr></thead>
@@ -846,7 +934,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
           <text class="l" x="40" y="40">int arr[5] = {10, 20, 30, 40, 50};</text>
           <text class="i" x="340" y="215" text-anchor="middle">one contiguous block &#183; each int = 4 bytes &#183; address of arr[i] = 1000 + 4 &#215; i</text>
         </svg>
-        <figcaption><b>Fig 1.1</b> &#183; The array from the code above, laid out in memory: five ints in one contiguous block. With base address 1000 and 4 bytes per int, arr[i] sits at 1000 + 4 &#215; i &#8212; index 3 &#8594; 1012.</figcaption>
+        <figcaption><b>Fig 1.2</b> &#183; The array from the code above, laid out in memory: five ints in one contiguous block. With base address 1000 and 4 bytes per int, arr[i] sits at 1000 + 4 &#215; i &#8212; index 3 &#8594; 1012.</figcaption>
       </figure>
     </section>
 
@@ -1013,7 +1101,7 @@ int main(void) {
             </div>
           </div>
         </div>
-        <figcaption><b>Fig 1.2</b> &#183; Run the program: printing <code>&amp;arr[i]</code> for an int array shows consecutive addresses exactly 4 bytes apart, confirming the contiguous layout behind the addressing formula.</figcaption>
+        <figcaption><b>Fig 1.3</b> &#183; Run the program: printing <code>&amp;arr[i]</code> for an int array shows consecutive addresses exactly 4 bytes apart, confirming the contiguous layout behind the addressing formula.</figcaption>
       </figure>
     </section>
 
@@ -1190,7 +1278,7 @@ int main(void) {
             </div>
           </div>
         </div>
-        <figcaption><b>Fig 1.3</b> &#183; Run the program: 'A' is stored as its ASCII code 65 (and still prints back as A with %c), while 5.5 is truncated to the int 5. The array stays all-ints &#8212; the values are coerced to fit.</figcaption>
+        <figcaption><b>Fig 1.4</b> &#183; Run the program: 'A' is stored as its ASCII code 65 (and still prints back as A with %c), while 5.5 is truncated to the int 5. The array stays all-ints &#8212; the values are coerced to fit.</figcaption>
       </figure>
       <h3>Experiment 2 — a string in an int array</h3>
       <pre class="code c-source">int arr[5] = {1, 2, 3, "hello", 5.5};   // ERROR?!</pre>
@@ -1219,7 +1307,7 @@ int main(void) {
             </div>
           </div>
         </div>
-        <figcaption><b>Fig 1.4</b> &#183; Compile the program: a string is a <code>char *</code> pointer, and turning a pointer into an int is rejected ("makes integer from pointer without a cast"). Same-type storage is enforced, not just recommended.</figcaption>
+        <figcaption><b>Fig 1.5</b> &#183; Compile the program: a string is a <code>char *</code> pointer, and turning a pointer into an int is rejected ("makes integer from pointer without a cast"). Same-type storage is enforced, not just recommended.</figcaption>
       </figure>
       <div class="note-box">
         <span class="def-label">Takeaway</span>
