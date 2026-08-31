@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Implementation notes on linked lists, stacks, and queues: 32-bit and 64-bit layouts, pointers, cache locality, allocation, invariants, and performance measurement.">
+  <title>Implementation Notes · Linked Lists, Stacks &amp; Queues</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="chapter-advanced.css">
+  <style>
+    .principle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+    .principle{position:relative;min-height:150px;padding:19px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+    .principle::after{content:attr(data-kind);position:absolute;right:12px;top:10px;color:#9aa9bd;font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+    .principle h3{margin:0 0 8px;font-size:1.15rem}.principle p{margin:0;color:var(--soft);font-size:15.5px}.principle code{display:block;margin-top:12px;color:var(--accent-dark);font:600 14px var(--mono)}
+    .principle.adt{border-color:#efd4a2;background:linear-gradient(145deg,#fff 42%,var(--amber-soft))}
+    .principle.layout-kind{border-color:#b9dbe1;background:linear-gradient(145deg,#fff 42%,var(--accent-soft))}
+
+    .memory-lab{margin:20px 0;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(16,28,51,.06)}
+    .memory-map{min-height:360px;padding:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto;gap:28px 18px;align-items:center;border:1px solid var(--line);border-radius:10px;background-color:#fbfcfe;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+    .memory-node{position:relative;padding:14px;border:2px solid #bdcadd;border-radius:10px;background:#fff;box-shadow:0 8px 18px rgba(16,28,51,.06);transition:.25s}
+    .memory-node:nth-child(2){grid-column:3;grid-row:1}.memory-node:nth-child(3){grid-column:2;grid-row:2}
+    .memory-node.active{border-color:var(--amber);background:var(--amber-soft);transform:translateY(-4px);box-shadow:0 10px 22px rgba(180,83,9,.16)}
+    .address{display:block;margin-bottom:8px;color:var(--accent-dark);font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .node-field{display:flex;justify-content:space-between;gap:12px;padding:7px 9px;border-top:1px solid var(--line);font:13px var(--mono)}
+    .node-field b{color:var(--soft);font-weight:500}.node-field span{font-weight:600}
+    .walk-status{margin:12px 0 0;padding:11px 13px;border-left:4px solid var(--accent);background:var(--accent-soft);font:13.5px var(--mono)}
+    .logic-physical{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.logic-physical div{padding:14px;border:1px solid var(--line);border-radius:9px;background:#fff;text-align:center;font:600 14px var(--mono)}.logic-physical strong{display:block;margin-bottom:6px;color:var(--soft);font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+
+    .byte-bar{display:grid;grid-template-columns:1fr 1fr 2fr;min-height:78px;margin:16px 0;overflow:hidden;border:1px solid var(--line);border-radius:10px}.byte-bar div{display:grid;place-items:center;padding:10px;border-right:1px solid #fff;text-align:center;font:600 13px var(--mono)}.byte-bar div:last-child{border-right:0}.byte-data{background:var(--green-soft);color:var(--green)}.byte-pad{background:var(--amber-soft);color:var(--amber)}.byte-pointer{background:var(--accent-soft);color:var(--accent-dark)}
+    .metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.metric-card{padding:16px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:center}.metric-card b{display:block;color:var(--accent-dark);font:700 1.45rem var(--mono)}.metric-card span{color:var(--soft);font-size:13.5px}
+    .cache-demo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.cache-panel{padding:17px;border:1px solid var(--line);border-radius:11px;background:#fff}.cache-panel h3{margin:0 0 6px;font-size:1.08rem}.cache-panel p{margin:0 0 13px;color:var(--soft);font-size:15px}.cache-line{display:flex;gap:3px;padding:7px;border:2px solid var(--green);border-radius:9px;background:var(--green-soft)}.cache-line span{flex:1;padding:8px 3px;border-radius:5px;background:#fff;text-align:center;font:600 12px var(--mono)}.pointer-chain{display:flex;align-items:center;justify-content:space-between;gap:5px}.pointer-chain span{padding:9px 7px;border:1px solid #9bcbd4;border-radius:7px;background:var(--accent-soft);font:600 12px var(--mono)}.pointer-chain i{color:var(--amber);font-style:normal;font-weight:700}
+
+    .operation{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;margin:16px 0;padding:17px;border:1px solid var(--line);border-radius:11px;background:#fff}.operation h3{margin:0 0 7px}.operation p{margin:0;color:var(--soft);font-size:15.5px}.complexity{min-width:76px;padding:10px;border-radius:9px;background:var(--accent-soft);color:var(--accent-dark);text-align:center;font:700 16px var(--mono)}
+    .list-strip,.slot-strip{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0}.list-box{padding:10px 13px;border:1px solid #9bcbd4;border-radius:8px;background:#fff;color:var(--accent-dark);font:600 13px var(--mono)}.list-arrow{color:var(--accent);font-weight:700}.sentinel{border-style:dashed;background:var(--amber-soft);color:var(--amber)}
+
+    .stack-stage{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0}.implementation{padding:18px;border:1px solid var(--line);border-radius:11px;background:#fff}.implementation h3{margin:0 0 6px}.implementation>p{color:var(--soft);font-size:15px}.stack-column{width:170px;margin:14px auto 4px}.stack-cell{padding:9px;border:1px solid #9bcbd4;border-bottom:0;background:var(--accent-soft);text-align:center;font:600 13px var(--mono)}.stack-cell:first-child{position:relative;border-radius:7px 7px 0 0;background:var(--amber-soft);border-color:#e5bf7d}.stack-cell:first-child::after{content:"← top";position:absolute;left:calc(100% + 8px);color:var(--amber);white-space:nowrap}.stack-cell:last-child{border-bottom:1px solid #9bcbd4;border-radius:0 0 7px 7px}
+    .resize-flow{display:flex;align-items:center;gap:12px;margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:auto}.slots{display:flex;gap:3px;min-width:max-content}.slot{width:38px;height:38px;display:grid;place-items:center;border:1px dashed #aebbcf;border-radius:5px;color:var(--soft);font:600 11px var(--mono)}.slot.used{border-style:solid;border-color:#9bcbd4;background:var(--accent-soft);color:var(--accent-dark)}.resize-arrow{min-width:max-content;color:var(--amber);font:600 12px var(--mono)}
+
+    .queue-stage{margin:18px 0;padding:18px;border:1px solid var(--line);border-radius:11px;background:#fff}.queue-labels{display:flex;justify-content:space-between;margin-bottom:5px;color:var(--soft);font:600 12px var(--mono)}.slot-strip{flex-wrap:nowrap;overflow:auto}.queue-slot{min-width:66px;padding:13px 8px;border:1px dashed #aebbcf;border-radius:7px;text-align:center;color:#8a96a9;font:600 13px var(--mono)}.queue-slot.used{border-style:solid;border-color:#9bcbd4;background:var(--accent-soft);color:var(--accent-dark)}.queue-slot.reused{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+    .modulo{padding:14px;border-radius:9px;background:var(--code);color:#dbe7ff;text-align:center;font:600 14px var(--mono)}
+    .choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}.choice-grid div{padding:13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--soft);font-size:14.5px}.choice-grid strong{display:block;color:var(--ink);font-family:var(--display)}
+
+    .invariant{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:start;padding:15px 0;border-bottom:1px solid var(--line)}.invariant:last-child{border-bottom:0}.invariant strong{color:var(--accent-dark);font-family:var(--display)}.invariant code{display:block;margin-bottom:4px;color:#24344f;font:600 13px var(--mono)}
+    .danger-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:17px 0}.danger-card{overflow:hidden;border:1px solid #f0c2b3;border-radius:10px;background:#fff}.danger-card h3{margin:0;padding:12px 14px;background:var(--red-soft);color:var(--red);font-size:1rem}.danger-card pre{min-height:112px;margin:0;padding:14px;background:var(--code);color:#dbe7ff;font:12.5px/1.6 var(--mono);white-space:pre-wrap}.danger-card p{margin:0;padding:12px 14px;color:var(--soft);font-size:14px}
+    .review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0;counter-reset:review}.review-grid li{position:relative;margin:0!important;padding:14px 14px 14px 47px;border:1px solid var(--line);border-radius:9px;background:#fff;list-style:none;counter-increment:review}.review-grid li::before{content:counter(review);position:absolute;left:13px;top:13px;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);font:600 11px var(--mono)}
+    .final-model{margin:22px 0;padding:23px;border:2px solid var(--accent);border-radius:14px;background:linear-gradient(135deg,#fff,var(--accent-soft));text-align:center}.final-model strong{display:block;margin-bottom:10px;font:700 clamp(1.15rem,2.5vw,1.5rem) var(--display)}.final-model code{display:block;padding:12px;border-radius:8px;background:rgba(255,255,255,.78);color:var(--accent-dark);font:600 14px/1.55 var(--mono)}
+    .related{margin:34px 0 0;padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid #bfdde3;border-radius:14px;background:linear-gradient(135deg,#fff,#f2fafb)}.related .icon{width:50px;height:50px;display:grid;place-items:center;border-radius:12px;background:var(--accent-soft);color:var(--accent);font:700 13px var(--mono)}.related .copy{flex:1;min-width:210px}.related h3{margin:0 0 3px;font-size:19px}.related p{margin:0;color:var(--soft);font-size:14px}.related a{padding:10px 16px;border-radius:9px;background:var(--accent);color:#fff;font:600 14px var(--display)}
+    @media(max-width:760px){.principle-grid,.logic-physical,.cache-demo,.stack-stage,.review-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:1fr 1fr}.choice-grid,.danger-grid{grid-template-columns:1fr}.memory-map{grid-template-columns:1fr;grid-template-rows:auto}.memory-node:nth-child(2),.memory-node:nth-child(3){grid-column:auto;grid-row:auto}.operation{grid-template-columns:1fr}.complexity{width:max-content}.invariant{grid-template-columns:1fr;gap:5px}.related a{width:100%;text-align:center}.stack-cell:first-child::after{left:auto;right:8px;top:8px}}
+    @media(max-width:430px){.metric-row{grid-template-columns:1fr}.byte-bar{grid-template-columns:1fr}.byte-bar div{border-right:0;border-bottom:1px solid #fff}.byte-bar div:last-child{border-bottom:0}.pointer-chain{align-items:stretch;flex-direction:column}.pointer-chain i{transform:rotate(90deg);text-align:center}}
+  </style>
+  <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
+</head>
+<body class="chapter-interaction-polish">
+  <a class="skip" href="#content">Skip to content</a>
+  <button type="button" class="top" id="top" aria-label="Back to top">↑ Top</button>
+  <header class="site-header">
+    <div class="progress" id="progress"></div>
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html"><span class="mark">RAM</span><span class="brand-copy"><strong>Design &amp; Analysis of Algorithms</strong><span>NMCC509 · IIT (ISM) Dhanbad</span></span></a>
+      <ul class="nav-links"><li><a href="index.html">Home</a></li><li><a class="active" href="topics.html">Topics</a></li><li><a href="practical.html">Practical</a></li><li><a href="tutorials.html">Tutorials</a></li></ul>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="toc" aria-label="Page contents">
+      <h4>In this guide</h4>
+      <ol>
+        <li><a href="#sec-1">1 · Abstraction boundary</a></li>
+        <li><a href="#sec-2">2 · Pointer paths</a></li>
+        <li><a href="#sec-3">3 · 32-bit versus 64-bit</a></li>
+        <li><a href="#sec-4">4 · Memory-system costs</a></li>
+        <li><a href="#sec-5">5 · Reading complexity claims</a></li>
+        <li><a href="#sec-6">6 · Representation choices</a></li>
+        <li><a href="#sec-7">7 · Stack and queue details</a></li>
+        <li><a href="#sec-8">8 · Lifetime and invariants</a></li>
+        <li><a href="#sec-9">9 · Measurement</a></li>
+      </ol>
+    </aside>
+
+    <main class="chapter" id="content">
+      <span class="kicker">Supplementary guide · Chapter 7</span>
+      <h1>Linked Lists, Stacks &amp; Queues: Implementation Notes</h1>
+      <p class="intro">These notes examine details that depend on the machine, compiler, ABI, allocator, and operating system. Examples use C on conventional 32-bit and 64-bit systems; exact sizes should always be checked on the target platform.</p>
+      <div class="interaction-guide"><strong>Prerequisite</strong><span>The definitions and elementary operations of arrays, linked lists, stacks, and queues are assumed. The emphasis here is representation and runtime behavior.</span></div>
+
+      <section class="section" id="sec-1">
+        <h2><span class="sec">01</span>The abstraction boundary</h2>
+        <p>A stack or queue specifies <em>observable behavior</em>; an array or linked list specifies a <em>representation</em>. Keeping these layers separate lets an implementation change without changing its public interface.</p>
+        <div class="grid2">
+          <article class="card"><strong>Semantic contract</strong><p>Which operations exist, what they return, and which ordering rule is preserved—for example, LIFO or FIFO.</p></article>
+          <article class="card"><strong>Representation contract</strong><p>Where elements live, which metadata is stored, which references remain valid, and what each operation costs on the target machine.</p></article>
+        </div>
+        <div class="def box"><span class="label">Consequence</span>Two implementations can satisfy the same ADT and have the same asymptotic bounds while differing in memory consumption, cache misses, latency variation, reference stability, and failure modes.</div>
+      </section>
+
+      <section class="section" id="sec-2">
+        <h2><span class="sec">02</span>What a pointer path really means</h2>
+        <pre class="code"><span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node *next;
+};</pre>
+        <p>The familiar picture <code>10 → 20 → 30</code> describes logical order. Each node is normally a separate heap allocation, so its successor can be far away in the process's address space.</p>
+        <div class="memory-lab">
+          <div class="lab-head"><div><h3>Follow the pointers</h3><p>Step through the logical list while observing its scattered physical addresses.</p></div><span class="status" id="walk-counter">node 1 of 3</span></div>
+          <div class="memory-map" aria-label="Three linked-list nodes stored at non-contiguous addresses">
+            <div class="memory-node active" data-step="0"><span class="address">Address 1000</span><div class="node-field"><b>data</b><span>10</span></div><div class="node-field"><b>next</b><span>5000</span></div></div>
+            <div class="memory-node" data-step="1"><span class="address">Address 5000</span><div class="node-field"><b>data</b><span>20</span></div><div class="node-field"><b>next</b><span>2200</span></div></div>
+            <div class="memory-node" data-step="2"><span class="address">Address 2200</span><div class="node-field"><b>data</b><span>30</span></div><div class="node-field"><b>next</b><span>NULL</span></div></div>
+          </div>
+          <p class="walk-status" id="walk-status" aria-live="polite">Start at address 1000: read data 10, then follow next = 5000.</p>
+          <div class="controls"><button class="primary" id="walk-next" type="button">Follow next</button><button id="walk-reset" type="button">Reset</button></div>
+        </div>
+        <div class="logic-physical"><div><strong>Logical order</strong>10 → 20 → 30</div><div><strong>Physical path</strong>1000 → 5000 → 2200</div></div>
+        <div class="answer box"><span class="label">Key idea</span><strong>Logical adjacency does not imply address adjacency.</strong> The <code>next</code> field contains a pointer representation—not the successor's payload. The processor must obtain the node, load that pointer, and only then know which address to request next.</div>
+        <div class="note box"><span class="label">Address translation</span>The displayed addresses are conceptual <strong>virtual addresses</strong>. The operating system and memory-management unit translate them to physical memory using page tables, with recent translations cached in the TLB. A node can therefore incur both a data-cache miss and, less frequently, an address-translation miss.</div>
+      </section>
+
+      <section class="section" id="sec-3">
+        <h2><span class="sec">03</span>The same program on 32-bit and 64-bit machines</h2>
+        <p>Consider the same definition on both targets:</p>
+        <pre class="code"><span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node *next;
+};</pre>
+        <p>The list algorithm is unchanged: <code>next</code> still identifies the successor and <code>NULL</code> still terminates the list. What changes is the binary representation. The comparison below reflects common ILP32 and LP64/LLP64 ABIs; it is typical, not a language guarantee.</p>
+        <div class="table-wrap"><table><thead><tr><th>Property</th><th>Typical 32-bit target</th><th>Typical 64-bit target</th></tr></thead><tbody>
+          <tr><td><code>sizeof(int)</code></td><td>4 bytes</td><td>4 bytes</td></tr>
+          <tr><td><code>sizeof(void *)</code></td><td>4 bytes</td><td>8 bytes</td></tr>
+          <tr><td>Offset of <code>next</code></td><td>4</td><td>8, after 4 bytes of padding</td></tr>
+          <tr><td><code>sizeof(struct Node)</code></td><td>Usually 8 bytes</td><td>Usually 16 bytes</td></tr>
+          <tr><td>One million nodes, excluding allocator overhead</td><td>About 8 MB</td><td>About 16 MB</td></tr>
+          <tr><td>Theoretical pointer address range</td><td>2<sup>32</sup> byte addresses</td><td>2<sup>64</sup> byte addresses; current systems implement fewer bits</td></tr>
+        </tbody></table></div>
+
+        <div class="grid2">
+          <article class="card"><strong>Typical 32-bit node</strong><div class="byte-bar" style="grid-template-columns:1fr 1fr"><div class="byte-data">data<br>4 B</div><div class="byte-pointer">next<br>4 B</div></div><p>Common total: 8 bytes, aligned to 4 bytes.</p></article>
+          <article class="card"><strong>Typical 64-bit node</strong><div class="byte-bar"><div class="byte-data">data<br>4 B</div><div class="byte-pad">padding<br>4 B</div><div class="byte-pointer">next<br>8 B</div></div><p>Common total: 16 bytes, aligned to 8 bytes.</p></article>
+        </div>
+
+        <h3>Measure the actual ABI</h3>
+        <pre class="code"><span class="kw">#include</span> &lt;stddef.h&gt;
+<span class="kw">#include</span> &lt;stdio.h&gt;
+
+<span class="kw">struct</span> Node {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> Node *next;
+};
+
+<span class="kw">int</span> main(<span class="kw">void</span>) {
+    printf(<span class="fn">"pointer size : %zu\n"</span>, sizeof(<span class="kw">void</span> *));
+    printf(<span class="fn">"node size    : %zu\n"</span>, sizeof(<span class="kw">struct</span> Node));
+    printf(<span class="fn">"next offset  : %zu\n"</span>, offsetof(<span class="kw">struct</span> Node, next));
+    printf(<span class="fn">"node align   : %zu\n"</span>, _Alignof(<span class="kw">struct</span> Node));
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        <p>When supported by the toolchain, compile the test separately with <code>-m32</code> and <code>-m64</code>. A 64-bit operating system may run a 32-bit binary through a compatibility subsystem; a 32-bit operating system cannot run a 64-bit binary. The same source is portable only after recompilation for the target architecture.</p>
+        <div class="grid2">
+          <article class="card"><strong>Representative <code>-m32</code> output</strong><pre class="code">pointer size : 4
+node size    : 8
+next offset  : 4
+node align   : 4</pre></article>
+          <article class="card"><strong>Representative <code>-m64</code> output</strong><pre class="code">pointer size : 8
+node size    : 16
+next offset  : 8
+node align   : 8</pre></article>
+        </div>
+
+        <h3>Consequences beyond node size</h3>
+        <ul>
+          <li><strong>Cache density:</strong> ignoring allocator overhead, a 64-byte cache line could hold eight 8-byte nodes but only four 16-byte nodes if the nodes were contiguous.</li>
+          <li><strong>Address printing:</strong> use <code>printf("%p", (void *)pointer)</code>. Converting a pointer to <code>int</code> truncates it on common 64-bit targets.</li>
+          <li><strong>Structure layout:</strong> compiler options such as packing can change offsets, but packed pointers may be misaligned and slower or invalid on some architectures.</li>
+          <li><strong>Data models:</strong> 64-bit Unix-like systems commonly use LP64, while 64-bit Windows uses LLP64. Pointer width is 8 bytes in both, but the size of <code>long</code> differs.</li>
+        </ul>
+        <div class="warn box"><span class="label">Do not serialize raw nodes</span>A pointer is meaningful only inside the process that created it. Writing <code>struct Node</code> bytes directly to a file also captures machine-dependent padding, byte order, and type sizes. Portable storage uses a defined encoding, fixed-width integers such as <code>int32_t</code>, and identifiers or offsets instead of live pointers.</div>
+      </section>
+
+      <section class="section" id="sec-4">
+        <h2><span class="sec">04</span>Memory-system costs</h2>
+        <h3>The source-level node is not the allocation size</h3>
+        <p>On a common 64-bit ABI, an <code>int</code> uses 4 bytes and a pointer 8 bytes. Alignment can add 4 bytes of padding, producing a 16-byte C structure. This is only the object layout—not necessarily the complete allocator cost.</p>
+        <div class="byte-bar" role="img" aria-label="A typical 16 byte node with 4 bytes of integer data, 4 bytes of padding, and an 8 byte pointer"><div class="byte-data">data<br>4 B</div><div class="byte-pad">padding<br>4 B</div><div class="byte-pointer">next pointer<br>8 B</div></div>
+        <div class="metric-row"><div class="metric-card"><b>4 B</b><span>payload</span></div><div class="metric-card"><b>16 B</b><span>structure size</span></div><div class="metric-card"><b>≥16 B</b><span>allocator footprint</span></div></div>
+        <p>General-purpose allocators round requests to size classes and maintain metadata, often beside the object or in separate bookkeeping structures. One million integers therefore need about 4 MB in a packed C array, at least 16 MB as these nodes, and potentially more after size-class rounding and fragmentation. Exact totals must be measured for the allocator and platform in use.</p>
+
+        <h3>Why pointer chasing stalls a modern CPU</h3>
+        <div class="cache-demo">
+          <article class="cache-panel"><h3>Contiguous traversal</h3><p>One cache-line fetch—commonly 64 bytes—delivers several elements. Hardware prefetchers can predict the next lines, and independent loads can overlap.</p><div class="cache-line"><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span></div></article>
+          <article class="cache-panel"><h3>Dependent traversal</h3><p>The address of node <em>i+1</em> is unavailable until node <em>i</em> arrives. This dependency limits prefetching and memory-level parallelism.</p><div class="pointer-chain"><span>1000</span><i>→</i><span>5000</span><i>→</i><span>2200</span></div></article>
+        </div>
+        <div class="grid2"><article class="card"><strong>Cache-line waste</strong><p>If a node occupies only part of a fetched cache line and nearby bytes belong to unrelated allocations, much of the transfer provides no useful list data.</p></article><article class="card"><strong>TLB and page pressure</strong><p>Scattered nodes may touch more virtual-memory pages, consuming more TLB entries and occasionally triggering page-table walks.</p></article></div>
+        <div class="note box"><span class="label">Practical consequence</span>Both traversals are O(n), but the array can process several useful values per memory transaction while the list may serialize one long-latency request per node. The asymptotic model deliberately hides this difference.</div>
+      </section>
+
+      <section class="section" id="sec-5">
+        <h2><span class="sec">05</span>Reading complexity claims correctly</h2>
+        <p>A complexity statement is meaningful only with its preconditions and cost model. “Linked-list insertion is O(1)” describes pointer rewiring after the relevant node is available; it does not promise that locating or allocating that node is free.</p>
+        <div class="table-wrap"><table><thead><tr><th>Operation request</th><th>Textbook bound</th><th>What the bound assumes</th><th>End-to-end path</th></tr></thead><tbody>
+          <tr><td>Insert after a known node</td><td>O(1)</td><td>Predecessor already available</td><td>allocate + initialize + two pointer writes</td></tr>
+          <tr><td>Insert after key 57</td><td>Often quoted O(1)</td><td>Search omitted</td><td>O(n) search + allocation + O(1) rewiring</td></tr>
+          <tr><td>Delete a singly linked node</td><td>O(1)</td><td>Predecessor and ownership known</td><td>rewire + destroy payload + release storage</td></tr>
+          <tr><td>Dynamic-array append</td><td>Amortized O(1)</td><td>Geometric growth over a sequence</td><td>Usually one write; occasionally O(n) allocate-and-copy</td></tr>
+          <tr><td>Stack or queue update</td><td>O(1)</td><td>No search; resize/allocation abstracted</td><td>Constant metadata work with possible latency variation</td></tr>
+        </tbody></table></div>
+        <div class="def box"><span class="label">Required context</span>For every bound, state what is already known, which resource operations are excluded, and whether the bound is worst-case, average-case, expected, or amortized.</div>
+      </section>
+
+      <section class="section" id="sec-6">
+        <h2><span class="sec">06</span>Choosing a representation</h2>
+        <div class="grid2">
+          <article class="card"><strong>Singly versus doubly linked</strong><p>A back pointer buys reverse traversal and O(1) unlinking from a known node, but increases node size and the number of writes needed to preserve consistency.</p></article>
+          <article class="card"><strong>Sentinel nodes</strong><p>Dummy head or tail nodes replace boundary branches with uniform rewiring. The small space cost often pays for itself through simpler invariants and fewer defects.</p></article>
+          <article class="card"><strong>Stable addresses</strong><p>List nodes normally do not move, so pointers and references to surviving nodes remain valid. Dynamic-array growth can relocate the buffer and invalidate pointers, references, and iterators.</p></article>
+          <article class="card"><strong>Intrusive lists</strong><p>Systems code may embed link fields directly inside application objects. This avoids wrapper-node allocation but couples the object's layout and lifetime to the container.</p></article>
+        </div>
+        <h3>Allocation strategy can change the result</h3>
+        <p>A node pool, slab, or arena allocates nodes in batches. This can reduce per-node metadata, improve locality, make allocation more predictable, and limit fragmentation. It also changes reclamation: an arena commonly frees many objects together rather than individually.</p>
+        <div class="note box"><span class="label">Comparison boundary</span>Compare complete representations rather than isolated container names: include growth policy, allocator, ownership model, reference-stability requirements, and expected workload.</div>
+      </section>
+
+      <section class="section" id="sec-7">
+        <h2><span class="sec">07</span>Implementation details for stacks and queues</h2>
+        <h3>Array stacks: fast paths and latency spikes</h3>
+        <div class="resize-flow"><div class="slots" aria-label="Full array of capacity four"><span class="slot used">10</span><span class="slot used">20</span><span class="slot used">30</span><span class="slot used">40</span></div><span class="resize-arrow">resize + copy →</span><div class="slots" aria-label="Larger array after adding fifty"><span class="slot used">10</span><span class="slot used">20</span><span class="slot used">30</span><span class="slot used">40</span><span class="slot used">50</span><span class="slot"></span><span class="slot"></span><span class="slot"></span></div></div>
+        <p>Most pushes perform one bounds check and one write. A growth push allocates a larger buffer, moves or copies the live elements, and invalidates addresses into the old buffer. Amortized O(1) explains total work over a sequence; it does not guarantee constant latency for an individual push. Systems with strict latency targets may reserve capacity in advance or use fixed-capacity storage.</p>
+
+        <h3>Circular queues: the invariant is the design</h3>
+        <div class="modulo">next position = (current position + 1) % capacity<br>if rear = 4 and capacity = 5, next rear = (4 + 1) % 5 = 0</div>
+        <div class="choice-grid"><div><strong>Size counter</strong>All slots are usable; size distinguishes full from empty.</div><div><strong>Reserved slot</strong>The buffer is full when the next rear would equal front.</div><div><strong>Monotonic counters</strong>Let counters grow and mask only when indexing the bounded array.</div></div>
+        <p>Power-of-two capacities permit <code>index &amp; (capacity − 1)</code> instead of modulo, but only when that power-of-two invariant is guaranteed. In concurrent queues, head/tail updates also require a defined atomic-memory-ordering protocol; volatile variables alone are not sufficient.</p>
+        <div class="grid2"><article class="card"><strong>Logical versus physical removal</strong><p>Moving <code>top</code> or <code>front</code> changes membership immediately even if old bits remain. Containers of references may clear vacated slots so garbage collection can reclaim referenced objects.</p></article><article class="card"><strong>Two stack overflows</strong><p>A fixed-capacity ADT can reject a push; recursive calls can exhaust the process call stack. The shared term describes different resources and remedies.</p></article></div>
+      </section>
+
+      <section class="section" id="sec-8">
+        <h2><span class="sec">08</span>Lifetime, ownership, and executable invariants</h2>
+        <p>Relinking removes a node from the logical structure; it does not, by itself, end the payload's lifetime or release storage. A correct manual-memory implementation needs a clear owner and a defined order: preserve required links, unlink, destroy the payload, release the allocation, and invalidate obsolete references.</p>
+        <div class="card">
+          <div class="invariant"><strong>List</strong><div><code>every reachable node is owned exactly once</code><code>tail == NULL or tail-&gt;next == NULL</code></div></div>
+          <div class="invariant"><strong>Array stack</strong><div><code>0 ≤ size ≤ capacity</code><code>storage[0 … size−1] is initialized</code></div></div>
+          <div class="invariant"><strong>Linked queue</strong><div><code>empty ⇔ front == NULL and rear == NULL</code><code>non-empty ⇒ rear-&gt;next == NULL</code></div></div>
+          <div class="invariant"><strong>Circular queue</strong><div><code>0 ≤ size ≤ capacity</code><code>front and rear indices are always in range</code></div></div>
+        </div>
+        <p>These are not merely documentation. In debug builds they can become assertions checked after every mutation; property-based tests can generate operation sequences and verify that the invariants always survive.</p>
+        <div class="danger-grid">
+          <article class="danger-card"><h3>Memory leak</h3><pre>Node *p = malloc(...);
+p = NULL;</pre><p>The only pointer to the allocation is discarded, so the program can no longer free it.</p></article>
+          <article class="danger-card"><h3>Dangling pointer</h3><pre>free(p);
+printf("%d", p-&gt;data);</pre><p>The address remains in <code>p</code>, but the object lifetime has ended. Dereferencing it is invalid.</p></article>
+          <article class="danger-card"><h3>Lost node</h3><pre>head = head-&gt;next;
+/* old head not freed */</pre><p>If the old head was not saved and released first, that node may leak.</p></article>
+        </div>
+        <div class="warn box"><span class="label">Concurrency changes the problem</span>Once multiple threads mutate a linked structure, pointer correctness alone is insufficient. Atomicity, visibility, reclamation, and problems such as ABA must be addressed with an appropriate algorithm and memory-reclamation scheme.</div>
+      </section>
+
+      <section class="section" id="sec-9">
+        <h2><span class="sec">09</span>Choosing and measuring a representation</h2>
+        <p>Modern CPUs usually reward contiguous storage. Dynamic arrays can outperform linked lists even when occasional shifts occur because they reduce allocations and pointer overhead while enabling prefetching and vectorization. A linked representation remains valuable when stable node addresses, constant-time splicing at known positions, or non-moving objects are actual requirements.</p>
+        <div class="table-wrap"><table><thead><tr><th>Factor</th><th>Array / dynamic array</th><th>Linked list</th></tr></thead><tbody><tr><td>Traversal complexity</td><td>O(n)</td><td>O(n)</td></tr><tr><td>Spatial locality</td><td>Strong</td><td>Usually weak</td></tr><tr><td>Per-element overhead</td><td>Low</td><td>Pointer(s), padding, allocator metadata</td></tr><tr><td>Allocation pattern</td><td>Occasional bulk resize</td><td>Often one allocation per node</td></tr><tr><td>Known-location insertion</td><td>May shift elements</td><td>Constant-time relinking</td></tr><tr><td>CPU optimization</td><td>Prefetching and vectorization friendly</td><td>Limited by dependencies between pointers</td></tr></tbody></table></div>
+        <h3>Benchmark the representation, not a toy operation</h3>
+        <div class="grid2"><article class="card"><strong>Include the real path</strong><p>Decide whether allocation, destruction, searching, resizing, and payload work belong inside the measurement. Report that boundary explicitly.</p></article><article class="card"><strong>Use representative conditions</strong><p>Vary collection size, payload size, mutation ratio, allocator, and cache state. Report tail latency when occasional slow operations matter.</p></article></div>
+        <h3>Review checklist</h3>
+        <ol class="review-grid"><li>Which precondition makes the quoted operation bound true?</li><li>How many useful payload bytes fit in each fetched cache line?</li><li>Will growth or mutation invalidate stored references?</li><li>Who owns each allocation, and when is it reclaimed?</li><li>Which invariants make empty and full states unambiguous?</li><li>Does the benchmark include the costs the application will actually pay?</li></ol>
+        <div class="final-model"><strong>A complete performance model</strong><code>observed time = algorithmic work + memory stalls + allocation + synchronization</code></div>
+      </section>
+
+      <aside class="related" aria-labelledby="related-title"><span class="icon">CH 7</span><div class="copy"><h3 id="related-title">Return to Chapter 7</h3><p>Review linked lists, stacks, queues, their operations, and standard implementations.</p></div><a href="chapter7.html">← Back to Chapter 7</a></aside>
+      <nav class="chapter-nav"><a href="chapter7.html">← Chapter 7</a><a href="topics.html">All topics</a><a href="chapter8.html">Chapter 8 →</a></nav>
+    </main>
+  </div>
+
+  <footer class="footer"><strong>Design and Analysis of Algorithms</strong>© 2026 <a href="https://alakesh-kalita.github.io/">Dr. Alakesh Kalita</a> · Mathematics and Computing · IIT (ISM) Dhanbad</footer>
+  <script src="chapter-advanced.js?v=20260816"></script>
+  <script>
+    (function(){
+      var nodes=Array.from(document.querySelectorAll('.memory-node'));
+      var next=document.getElementById('walk-next');
+      var reset=document.getElementById('walk-reset');
+      var status=document.getElementById('walk-status');
+      var counter=document.getElementById('walk-counter');
+      var messages=[
+        'Start at address 1000: read data 10, then follow next = 5000.',
+        'Arrive at address 5000: read data 20, then follow next = 2200.',
+        'Arrive at address 2200: read data 30. next = NULL, so traversal is complete.'
+      ];
+      var step=0;
+      function render(){nodes.forEach(function(node,i){node.classList.toggle('active',i===step)});status.textContent=messages[step];counter.textContent='node '+(step+1)+' of 3';next.textContent=step===2?'Traversal complete':'Follow next';next.disabled=step===2}
+      next.addEventListener('click',function(){if(step<2){step+=1;render()}});
+      reset.addEventListener('click',function(){step=0;render()});
+      render();
+    })();
+  </script>
+  <script src="./chapter-quality.js?v=20260816"></script>
+</body>
+</html>
