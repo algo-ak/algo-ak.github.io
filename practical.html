@@ -386,6 +386,7 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   padding: 0;
   overflow: hidden;
 }
+.collapsible-lab[hidden] { display: none !important; }
 
 .lab-sheet-summary {
   display: flex;
@@ -1221,7 +1222,7 @@ Comparisons: 2</pre>
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab">
       <summary class="lab-sheet-summary" aria-labelledby="lab-05-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 05</span>
@@ -1414,6 +1415,205 @@ k = 2</pre>
                 <pre>2 → 1 → 4 → 3 → 5</pre>
               </div>
             </div>
+          </li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-06-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 06</span>
+          <h3 id="lab-06-title">Advanced Linked Lists and Binary Search Trees</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+
+      <div class="lab-sheet-content">
+        <p class="lab-question-text" style="margin-top:18px;">
+          These problems assess in-place pointer manipulation, cycle handling,
+          BST ordering, and non-recursive tree traversal. Do not create new nodes
+          unless a question explicitly permits it.
+        </p>
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Rearrange a Linked List in Zig-Zag Order</h4>
+            <p class="lab-question-text">
+              Given a singly linked list <code>L0 → L1 → L2 → … → Ln</code>,
+              rearrange its existing nodes as
+              <code>L0 → Ln → L1 → Ln−1 → L2 → Ln−2 → …</code>.
+            </p>
+            <ul class="lab-question-points">
+              <li>Do not create another linked list or copy node values.</li>
+              <li>Target complexity: O(n) time and O(1) auxiliary space.</li>
+            </ul>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Split a Circular Linked List into Two Halves</h4>
+            <p class="lab-question-text">
+              Divide a circular singly linked list into two independent circular
+              lists of nearly equal size. If the list contains an odd number of
+              nodes, place the extra node in the first half.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>1 → 2 → 3 → 4 → 5 → back to 1</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Expected circular lists</span>
+                <pre>First:  1 → 2 → 3 → back to 1&#10;Second: 4 → 5 → back to 4</pre>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Delete Nodes Having a Greater Value on Their Right</h4>
+            <p class="lab-question-text">
+              Delete every node for which a node containing a greater value exists
+              somewhere to its right. Preserve the relative order of all remaining nodes.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>12 → 15 → 10 → 11 → 5 → 6 → 2 → 3</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>15 → 11 → 6 → 3</pre>
+              </div>
+            </div>
+            <p class="lab-question-text" style="margin-top:12px;"><strong>Target:</strong> O(n) time.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find and Remove a Loop Without Losing Nodes</h4>
+            <p class="lab-question-text">
+              A singly linked list may contain a cycle. Detect whether a cycle
+              exists, identify the node at which it begins, and remove the cycle so
+              that every original node remains reachable exactly once.
+            </p>
+            <ul class="lab-question-points">
+              <li>Report the cycle-entry node when a loop is present.</li>
+              <li>Required complexity: O(n) time and O(1) auxiliary space.</li>
+            </ul>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Merge Nodes Between Special Marker Nodes</h4>
+            <p class="lab-question-text">
+              A linked list contains integers, with <code>0</code> acting as a
+              separator. Replace the nodes between each pair of consecutive zero
+              markers with one node containing their sum, and remove every zero node.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Input</span>
+                <pre>0 → 3 → 1 → 0 → 4 → 5 → 2 → 0</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>4 → 11</pre>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find the k-th Smallest Element in a BST Without Creating an Array</h4>
+            <p class="lab-question-text">
+              Given the root of a binary search tree and an integer <em>k</em>, find
+              the k-th smallest key. You may not store the complete inorder traversal
+              in an array or list.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">BST</span>
+                <pre>        8&#10;      /   &#92;&#10;     3     10&#10;    / &#92;      &#92;&#10;   1   6      14&#10;      / &#92;     /&#10;     4   7   13</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Example</span>
+                <pre>k = 4&#10;Answer: 6</pre>
+              </div>
+            </div>
+            <p class="lab-question-text" style="margin-top:12px;"><strong>Challenge:</strong> Use only O(h) auxiliary space, where <em>h</em> is the tree height.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Print a Binary Tree in Spiral-Level Order</h4>
+            <p class="lab-question-text">
+              Print the tree level by level, alternating the traversal direction at
+              every level. Implement the traversal without recursion and select the
+              required stacks or queues deliberately.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Binary tree</span>
+                <pre>        1&#10;      /   &#92;&#10;     2     3&#10;    / &#92;   / &#92;&#10;   4   5 6   7</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Output</span>
+                <pre>1&#10;3 2&#10;4 5 6 7</pre>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Check Whether a Binary Tree Is a Valid BST</h4>
+            <p class="lab-question-text">
+              Determine whether the BST ordering property holds for every node with
+              respect to all of its ancestors—not only its immediate parent.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">Binary tree</span>
+                <pre>       10&#10;      /  &#92;&#10;     5    15&#10;         /  &#92;&#10;        6    20</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Expected result</span>
+                <pre>Not a valid BST&#10;&#10;6 is in the right subtree of 10,&#10;but 6 is smaller than 10.</pre>
+              </div>
+            </div>
+            <p class="lab-question-text" style="margin-top:12px;"><strong>Constraint:</strong> O(n) time without storing all node values.</p>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Find the Lowest Common Ancestor in a BST</h4>
+            <p class="lab-question-text">
+              Given a BST and two keys <em>p</em> and <em>q</em>, find their lowest
+              common ancestor. Use the BST ordering property rather than a general
+              binary-tree LCA traversal.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">BST</span>
+                <pre>        20&#10;       /  &#92;&#10;      8    22&#10;     / &#92;&#10;    4   12&#10;       /  &#92;&#10;      10  14</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Example</span>
+                <pre>p = 10, q = 14&#10;LCA = 12</pre>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <h4 class="lab-question-title">Convert a BST into a Sorted Doubly Linked List</h4>
+            <p class="lab-question-text">
+              Convert the BST in place into a sorted doubly linked list. Reuse each
+              node's <code>left</code> pointer as <code>prev</code> and its
+              <code>right</code> pointer as <code>next</code>.
+            </p>
+            <div class="lab-samples">
+              <div class="lab-sample">
+                <span class="lab-sample-label">BST</span>
+                <pre>        8&#10;      /   &#92;&#10;     4     12&#10;    / &#92;   / &#92;&#10;   2   6 10  14</pre>
+              </div>
+              <div class="lab-sample">
+                <span class="lab-sample-label">Sorted doubly linked list</span>
+                <pre>NULL ← 2 ⇄ 4 ⇄ 6 ⇄ 8 ⇄ 10 ⇄ 12 ⇄ 14 → NULL</pre>
+              </div>
+            </div>
+            <p class="lab-question-text" style="margin-top:12px;"><strong>Constraint:</strong> Do not create new tree or list nodes.</p>
           </li>
         </ol>
       </div>
