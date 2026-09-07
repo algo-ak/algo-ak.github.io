@@ -681,6 +681,116 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     details.ans summary::before { content: "+"; font-weight: 700; font-size: 16px; line-height: 1; }
     details.ans[open] summary::before { content: "\2212"; }
     details.ans .ans-body { margin-top: 10px; }
+
+    /* Chapter 1 prototype: non-blocking roadmap prompt */
+    .roadmap-prompt {
+      position: fixed;
+      right: clamp(16px, 2.4vw, 32px);
+      bottom: 88px;
+      z-index: 90;
+      width: min(225px, calc(100vw - 32px));
+      padding: 17px 45px 17px 17px;
+      border: 1px solid #dec45c;
+      border-radius: 5px 5px 14px 5px;
+      background:
+        linear-gradient(135deg, transparent 0 97%, rgba(180, 144, 32, .22) 97% 100%),
+        linear-gradient(155deg, #fff7bd 0%, #fff0a1 100%);
+      box-shadow: 0 22px 55px rgba(77, 62, 15, .22), 0 3px 0 rgba(178, 142, 27, .12);
+      opacity: 0;
+      transform: translateY(18px) rotate(-.8deg) scale(.98);
+      transform-origin: 56% 0;
+      pointer-events: none;
+      transition: opacity .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
+    }
+    .roadmap-prompt.is-visible {
+      opacity: 1;
+      transform: rotate(-.8deg);
+      pointer-events: auto;
+    }
+    .roadmap-prompt::before {
+      position: absolute;
+      right: -1px;
+      bottom: -1px;
+      width: 38px;
+      height: 38px;
+      border-radius: 0 0 13px 0;
+      background: linear-gradient(135deg, rgba(225, 195, 78, 0) 48%, #e4cb6d 49% 100%);
+      filter: drop-shadow(-2px -2px 2px rgba(123, 96, 13, .08));
+      content: "";
+    }
+    .roadmap-prompt-thread {
+      position: absolute;
+      left: 25%;
+      bottom: calc(100% - 3px);
+      width: 116px;
+      height: 88px;
+      overflow: visible;
+      color: #84704d;
+      pointer-events: none;
+      filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .5));
+    }
+    .roadmap-prompt-thread path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 2 4;
+    }
+    .roadmap-prompt-thread circle { fill: #6d5a3a; }
+    .roadmap-prompt-close {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--ink-soft);
+      font: 500 22px/1 var(--font-body);
+      cursor: pointer;
+    }
+    .roadmap-prompt-close:hover,
+    .roadmap-prompt-close:focus-visible {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      outline: none;
+    }
+    .roadmap-prompt-action {
+      min-height: 39px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font: 600 14px var(--font-display);
+      transition: background .18s ease, transform .18s ease;
+    }
+    .roadmap-prompt-action:hover {
+      background: var(--accent-dark);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .roadmap-prompt-action svg { width: 17px; height: 17px; }
+    @media (max-width: 620px) {
+      .roadmap-prompt {
+        right: 12px;
+        bottom: 84px;
+        width: min(220px, calc(100vw - 24px));
+        padding: 16px 43px 16px 16px;
+        border-radius: 5px 5px 12px 5px;
+      }
+      .roadmap-prompt-thread { left: 24%; bottom: calc(100% - 3px); height: 54px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .roadmap-prompt { transition: none; }
+    }
   </style>
   <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
 </head>
@@ -1335,7 +1445,45 @@ int main(void) {
   </div>
 </footer>
 
+<aside class="roadmap-prompt" id="roadmapPrompt" aria-label="Course roadmap" hidden>
+  <svg class="roadmap-prompt-thread" viewBox="0 0 116 88" aria-hidden="true" preserveAspectRatio="none">
+    <path d="M96 0 C 97 23, 59 22, 61 47 S 82 68, 52 87"></path>
+    <circle cx="96" cy="1" r="3.2"></circle>
+    <circle cx="52" cy="87" r="3.2"></circle>
+  </svg>
+  <button class="roadmap-prompt-close" id="roadmapPromptClose" type="button" aria-label="Dismiss roadmap suggestion">&times;</button>
+  <a class="roadmap-prompt-action" href="roadmap.html#roadmap">
+    Visit roadmap
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+  </a>
+</aside>
+
 <script>
+/* Chapter 1 prototype: reveal a dismissible roadmap prompt after the page settles. */
+(function () {
+  "use strict";
+  var prompt = document.getElementById("roadmapPrompt");
+  var closeButton = document.getElementById("roadmapPromptClose");
+  var storageKey = "daa-roadmap-prompt-dismissed";
+  var dismissed = false;
+
+  try { dismissed = window.sessionStorage.getItem(storageKey) === "true"; } catch (error) {}
+  if (dismissed) return;
+
+  window.setTimeout(function () {
+    prompt.hidden = false;
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(function () { prompt.classList.add("is-visible"); });
+    });
+  }, 650);
+
+  closeButton.addEventListener("click", function () {
+    prompt.classList.remove("is-visible");
+    try { window.sessionStorage.setItem(storageKey, "true"); } catch (error) {}
+    window.setTimeout(function () { prompt.hidden = true; }, 280);
+  });
+})();
+
 /* Shared JS for chapter pages: TOC scroll-spy + bubble sort visualizer */
 
 /* ---------- Syntax coloring ---------- */

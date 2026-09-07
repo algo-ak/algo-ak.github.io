@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A visual, interactive roadmap for all chapters in Design and Analysis of Algorithms.">
+  <title>DAA Roadmap · Design &amp; Analysis of Algorithms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f7f9fc; --card: #fff; --ink: #101c33; --soft: #536178; --muted: #7d899b;
+      --line: #d8e2ee; --line-strong: #aebed0; --teal: #0b7285; --teal-dark: #075967;
+      --teal-soft: #e5f1f2; --chapter: #173955; --chapter-border: #0d2b45;
+      --chapter-hover: #214a6b; --topic: #edf3f7; --topic-border: #b5c7d3;
+      --topic-hover: #e1ebf1; --phase: #dfecea; --phase-border: #9bbcb7;
+      --resource: #e8efe9; --resource-border: #afc4b2;
+      --display: "Space Grotesk", sans-serif; --body: "IBM Plex Sans", sans-serif;
+      --mono: "IBM Plex Mono", monospace; --max: 1360px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh; color: var(--ink);
+      background: linear-gradient(rgba(216,226,238,.28) 1px,transparent 1px), linear-gradient(90deg,rgba(216,226,238,.28) 1px,transparent 1px), var(--paper);
+      background-size: 28px 28px; font: 18px/1.68 var(--body);
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    [hidden] { display: none !important; }
+    .skip-link { position: fixed; top: 8px; left: 8px; z-index: 200; padding: 8px 13px; border-radius: 7px; color: #fff; background: var(--ink); transform: translateY(-150%); }
+    .skip-link:focus { transform: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .site-header { position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.93); backdrop-filter: blur(12px); }
+    .nav { width: min(100%,1180px); margin: auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; color: #fff; background: var(--ink); font: 600 13px var(--mono); }
+    .brand-copy { display: flex; flex-direction: column; line-height: 1.25; }
+    .brand-copy strong { font: 600 16px var(--display); }
+    .brand-copy span { color: var(--soft); font-size: 13px; }
+    .nav-links { display: flex; gap: 4px; list-style: none; }
+    .nav-links a { display: block; padding: 8px 14px; border-radius: 8px; color: var(--soft); font-size: 16px; font-weight: 500; }
+    .nav-links a:hover { color: var(--teal-dark); background: var(--teal-soft); }
+    .hero { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.8); }
+    .hero-inner { width: min(100%,1180px); margin: auto; padding: 40px 24px 42px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 8px; color: var(--teal-dark); font: 500 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .eyebrow::before { width: 7px; height: 7px; content: ""; border-radius: 50%; background: var(--teal); }
+    h1, h2, h3 { font-family: var(--display); line-height: 1.2; }
+    h1 { max-width: 820px; font-size: clamp(2rem,3.7vw,2.85rem); letter-spacing: -.025em; }
+    .hero p { max-width: 800px; margin-top: 10px; color: var(--soft); font-size: 1.08rem; }
+    .legend { margin-top: 25px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .legend-item { padding: 6px 10px; display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 7px; color: var(--soft); background: #fff; font-size: 12.5px; }
+    .legend-swatch { width: 13px; height: 13px; border: 1px solid; border-radius: 3px; }
+    .legend-swatch.chapter { border-color: #5a6680; background: linear-gradient(135deg,#0f6b78 0 33%,#5a4b9b 33% 66%,#a14e38 66%); }
+    .legend-swatch.topic { border-color: #adc0cf; background: linear-gradient(135deg,#e7f3f4 0 33%,#f1eff9 33% 66%,#faf0ed 66%); }
+    .legend-swatch.open { border-color: var(--resource-border); background: var(--resource); }
+    .roadmap-section { width: min(100%,var(--max)); margin: auto; padding: 42px 24px 90px; }
+    .roadmap-toolbar { position: sticky; top: 78px; z-index: 80; margin: 0 auto 28px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,.94); box-shadow: 0 10px 28px rgba(16,28,51,.07); backdrop-filter: blur(10px); }
+    .toolbar-copy { min-width: 170px; }
+    .toolbar-copy strong { display: block; font: 600 14px var(--display); }
+    .toolbar-copy span { display: block; color: var(--soft); font-size: 11.5px; }
+    .toolbar-actions { display: flex; align-items: center; gap: 7px; }
+    .search { position: relative; width: min(330px,34vw); }
+    .search svg { position: absolute; left: 11px; top: 50%; width: 16px; height: 16px; color: var(--muted); transform: translateY(-50%); pointer-events: none; }
+    .search input { width: 100%; height: 39px; padding: 8px 12px 8px 35px; border: 1px solid var(--line); border-radius: 8px; outline: none; color: var(--ink); background: var(--paper); }
+    .search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(11,114,133,.11); }
+    .control-button { height: 39px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font: 600 12.5px var(--display); }
+    .control-button:hover { color: var(--teal-dark); border-color: #a3cfd5; background: var(--teal-soft); }
+    .mobile-hint { display: none; margin: -11px 0 15px; color: var(--soft); font: 500 11px var(--mono); text-align: center; }
+    .map-frame { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: radial-gradient(circle at 50% 0,rgba(11,114,133,.055),transparent 34rem), rgba(255,255,255,.94); box-shadow: 0 18px 55px rgba(16,28,51,.075); }
+    .map-scroll { overflow-x: auto; scrollbar-color: #b9c8d8 transparent; }
+    .roadmap-map { position: relative; z-index: 1; min-width: 1080px; padding: 44px 54px 66px; }
+    .wires { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .wire-spine { fill: none; stroke: #304f65; stroke-width: 2.4; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .wire-branch { fill: none; stroke: #506d80; stroke-width: 1.9; stroke-dasharray: 6 5; stroke-linecap: round; opacity: .96; vector-effect: non-scaling-stroke; }
+    .wire-junction { fill: #fff; stroke: #456477; stroke-width: 1.7; vector-effect: non-scaling-stroke; }
+    .map-intro { position: relative; z-index: 2; width: 265px; margin: 0 auto 24px; padding: 12px 15px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; text-align: center; font: 600 12px var(--mono); letter-spacing: .04em; }
+    .phase { position: relative; z-index: 2; }
+    .phase + .phase { margin-top: 20px; }
+    .phase-title { width: max-content; max-width: 330px; margin: 0 auto 20px; padding: 8px 15px; border: 1px solid var(--phase-border); border-radius: 7px; color: #315954; background: var(--phase); text-align: center; font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .chapter-branch { position: relative; z-index: 2; min-height: 106px; padding: 9px 0; display: grid; grid-template-columns: minmax(215px,1fr) 270px 76px 270px minmax(215px,1fr); align-items: center; column-gap: 18px; }
+    .topic-column { display: flex; flex-direction: column; gap: 7px; }
+    .topic-column.left { grid-column: 1; grid-row: 1; align-items: flex-end; }
+    .topic-column.right { grid-column: 5; grid-row: 1; align-items: flex-start; }
+    .topic-node { position: relative; z-index: 3; width: min(100%,300px); min-height: 37px; padding: 7px 10px; display: grid; grid-template-columns: 42px 1fr 13px; align-items: center; gap: 7px; border: 1px solid var(--chapter-line,var(--topic-border)); border-radius: 5px; color: var(--chapter-color,#29485d); background: var(--chapter-soft,var(--topic)); box-shadow: 0 2px 0 rgba(53,79,98,.06); transition: transform .15s ease,box-shadow .15s ease,background .15s ease; }
+    .topic-node:hover { border-color: var(--chapter-color,#91aaba); background: var(--chapter-soft-hover,var(--topic-hover)); transform: translateY(-1px); box-shadow: 0 5px 13px rgba(38,67,87,.11); }
+    .topic-node code { font: 600 10px var(--mono); }
+    .topic-node span { font-size: 12px; line-height: 1.25; }
+    .topic-node svg { width: 12px; height: 12px; opacity: .7; }
+    .chapter-core { position: relative; z-index: 4; grid-row: 1; display: flex; flex-direction: column; align-items: center; }
+    .chapter-branch.topics-left .chapter-core { grid-column: 2; }
+    .chapter-branch.topics-right .chapter-core { grid-column: 4; }
+    .chapter-node { width: 270px; min-height: 72px; padding: 11px 14px; display: grid; grid-template-columns: 42px 1fr 18px; align-items: center; gap: 10px; border: 1.5px solid var(--chapter-hover,var(--chapter-border)); border-radius: 7px; color: #f6f9fc; background: var(--chapter-color,var(--chapter)); box-shadow: 0 4px 0 rgba(13,43,69,.14); cursor: pointer; text-align: left; transition: transform .16s ease,box-shadow .16s ease,background .16s ease; }
+    .chapter-node:hover { background: var(--chapter-hover); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(20,48,72,.19); }
+    .chapter-node[aria-expanded="true"] { background: var(--chapter-hover); box-shadow: 0 0 0 3px var(--chapter-soft), 0 7px 18px rgba(20,48,72,.17); }
+    .chapter-index { color: rgba(255,255,255,.78); font: 600 11px var(--mono); }
+    .chapter-node strong { color: #fff; font: 600 13px/1.28 var(--display); }
+    .chapter-node .chevron { width: 16px; height: 16px; color: rgba(255,255,255,.78); transition: transform .18s ease; }
+    .chapter-node[aria-expanded="true"] .chevron { transform: rotate(90deg); }
+    .chapter-meta { margin-top: 5px; display: block; color: rgba(255,255,255,.72); font: 500 9.5px var(--mono); letter-spacing: .02em; }
+    .chapter-open { margin-top: 7px; padding: 5px 10px; border: 1px solid var(--chapter-line,var(--resource-border)); border-radius: 5px; color: var(--chapter-color,#3b5a43); background: var(--chapter-soft,var(--resource)); font: 600 10.5px var(--mono); }
+    .chapter-open:hover { border-color: var(--chapter-color,#93ad98); background: var(--chapter-soft-hover,#dce8de); }
+    .empty { max-width: 470px; margin: 35px auto; padding: 22px; border: 1px dashed var(--line-strong); border-radius: 9px; color: var(--soft); background: #fff; text-align: center; }
+    .map-footer { width: 265px; margin: 25px auto 0; padding: 11px 14px; border: 1px solid var(--teal); border-radius: 7px; color: #fff; background: var(--teal); text-align: center; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .status { position: absolute; left: 20px; bottom: 16px; z-index: 5; color: var(--muted); font: 500 10.5px var(--mono); }
+    .site-footer { border-top: 1px solid var(--line); background: #fff; }
+    .footer-inner { width: min(100%,1180px); margin: auto; padding: 25px 24px; display: flex; justify-content: space-between; gap: 18px; color: var(--soft); font-size: 13.5px; }
+    .footer-inner a { color: var(--teal-dark); font-weight: 600; }
+    :focus-visible { outline: 3px solid rgba(11,114,133,.28); outline-offset: 3px; }
+    @media (max-width: 800px) {
+      .nav { flex-direction: column; gap: 8px; }
+      .nav-links { width: 100%; justify-content: center; }
+      .roadmap-toolbar { top: 112px; align-items: stretch; flex-direction: column; }
+      .toolbar-copy { display: none; }
+      .toolbar-actions { width: 100%; }
+      .search { width: auto; flex: 1; }
+      .mobile-hint { display: block; }
+    }
+    @media (max-width: 650px) {
+      body { background-size: 22px 22px; }
+      .nav { padding: 11px 15px; }
+      body { font-size: 16.5px; }
+      .brand-copy strong { font-size: 14px; }
+      .brand-copy span { display: none; }
+      .nav-links { overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+      .nav-links a { padding: 7px 9px; font-size: 14px; white-space: nowrap; }
+      .hero-inner { padding: 40px 17px 34px; }
+      .hero p { font-size: .98rem; }
+      .roadmap-section { padding: 28px 12px 60px; }
+      .roadmap-toolbar { top: 108px; margin-bottom: 22px; }
+      .control-button { padding: 8px 9px; font-size: 11px; }
+      .map-frame, .map-scroll { overflow: visible; }
+      .roadmap-map { min-width: 0; padding: 31px 13px 54px; }
+      .wires { display: none; }
+      .roadmap-map::before { position: absolute; top: 72px; bottom: 78px; left: 24px; z-index: 0; width: 2px; content: ""; background: #48687c; }
+      .map-intro, .phase-title, .map-footer { width: calc(100% - 34px); margin-left: 34px; }
+      .phase-title { max-width: none; }
+      .chapter-branch { min-height: 88px; padding: 8px 0 8px 34px; display: flex; align-items: stretch; flex-direction: column; gap: 7px; }
+      .chapter-branch::before { position: absolute; top: 43px; left: 11px; width: 23px; height: 2px; content: ""; background: var(--chapter-color,#48687c); }
+      .chapter-core { order: 1; align-items: stretch; }
+      .topic-column.left { order: 2; }
+      .topic-column.right { order: 3; }
+      .topic-column { padding-left: 15px; align-items: stretch !important; border-left: 2px dashed var(--chapter-color,#5d7789); }
+      .topic-node, .chapter-node { width: 100%; }
+      .chapter-open { align-self: flex-start; }
+      .status { left: 48px; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *,*::before,*::after { transition: none !important; } }
+    @media print {
+      .site-header,.roadmap-toolbar,.site-footer { display: none !important; }
+      body { background: #fff; }
+      .hero-inner { padding: 25px 0; }
+      .roadmap-section { width: 100%; padding: 20px 0; }
+      .map-frame { border: 0; box-shadow: none; }
+      .map-scroll { overflow: visible; }
+      .roadmap-map { transform: scale(.72); transform-origin: top center; }
+      .topic-column[hidden] { display: flex !important; }
+      .chapter-open[hidden] { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#roadmap">Skip to roadmap</a>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html"><span class="brand-mark">O(n)</span><span class="brand-copy"><strong>Design &amp; Analysis of Algorithms</strong><span>NMCC509 · IIT (ISM) Dhanbad</span></span></a>
+      <ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="topics.html">Topics</a></li><li><a href="practical.html">Practical</a></li><li><a href="tutorials.html">Tutorials</a></li></ul>
+    </nav>
+  </header>
+  <main>
+    <section class="hero"><div class="hero-inner">
+      <span class="eyebrow">Visual learning path</span>
+      <h1>Design &amp; Analysis of Algorithms Roadmap</h1>
+      <p>Follow the course from foundations to advanced problem solving. Every chapter has its own color—click a <strong>chapter card</strong> to reveal its content, then select any <strong>matching topic</strong> to open that exact section of the lesson.</p>
+      <div class="legend" aria-label="Roadmap legend"><span class="legend-item"><i class="legend-swatch chapter"></i> Chapter — click to expand</span><span class="legend-item"><i class="legend-swatch topic"></i> Topic — opens lesson section</span><span class="legend-item"><i class="legend-swatch open"></i> Full chapter link</span></div>
+    </div></section>
+    <section class="roadmap-section" id="roadmap" aria-labelledby="roadmap-heading">
+      <div class="roadmap-toolbar">
+        <div class="toolbar-copy"><strong id="roadmap-heading">Complete course map</strong><span>17 chapters · 205 linked sections</span></div>
+        <div class="toolbar-actions">
+          <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><span class="sr-only">Search the roadmap</span><input id="roadmapSearch" type="search" placeholder="Find a chapter or topic…" autocomplete="off"></label>
+          <button class="control-button" id="expandAll" type="button">Expand all</button><button class="control-button" id="collapseAll" type="button">Collapse</button>
+        </div>
+      </div>
+      <p class="mobile-hint">Tap a colored chapter to reveal its branches.</p>
+      <div class="map-frame"><div class="map-scroll"><div class="roadmap-map" id="roadmapMap">
+        <svg class="wires" id="wires" aria-hidden="true"></svg><div class="map-intro spine-node">START · DAA COURSE</div><div id="mapContent"></div><div class="map-footer spine-node">Course complete · Keep solving</div><p class="status" id="mapStatus" aria-live="polite">17 chapters shown</p>
+      </div></div></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><span>Design &amp; Analysis of Algorithms · NMCC509</span><span>IIT (ISM) Dhanbad · <a href="index.html">Back to home</a></span></div></footer>
+  <script>
+    (function () {
+      "use strict";
+      var phases = [
+        {id:1,title:"Foundations",chapterIds:[1,2,3,4]}, {id:2,title:"Core Design Techniques",chapterIds:[5,6]},
+        {id:3,title:"Essential Data Structures",chapterIds:[7,8,9]}, {id:4,title:"Optimization and Graphs",chapterIds:[10,11,12,13]},
+        {id:5,title:"Advanced Structures and Complexity",chapterIds:[14,15,16,17]}
+      ];
+      var chapters = [
+        {id:1,title:"Introduction, Data Structures & Arrays",topics:[["1.2","Data and Information"],["1.3","Organising Information: Field, Record, File"],["1.4","What is a Data Structure?"],["1.5","Why Data Structures Matter"],["1.6","Arrays"],["1.7","Array Indexing (Offset or Position)"],["1.8","Array Operations"],["1.9","Strengths and Limitations"],["1.10","Array Addressing"],["1.11","2-Dimensional (2D) Arrays"],["1.12","2D Arrays: Memory Representation"],["1.13","2D Array Addressing (0-based)"],["1.14","Worked Question"],["1.15","Observations: Why Same Data Type?"]]},
+        {id:2,title:"Basics of Algorithms",topics:[["2.1","What is an Algorithm?"],["2.2","Algorithm vs Program"],["2.3","The Life of a Programmer"],["2.4","Sorting Algorithms"],["2.5","Bubble Sort"],["2.6","Optimised Bubble Sort"],["2.7","Algorithm Analysis"],["2.8","Time Complexity"],["2.9","Analysing Loops"],["2.10","Loop Examples — Find the Complexity"],["2.11","Characteristics of an Algorithm"],["2.12","Beyond Sorting — Algorithms for…"],["2.13","Classification of Algorithms"],["2.14","Algorithm Design Paradigms"],["2.15","Algorithms as a Technology"],["2.16","Machine Learning vs Algorithms"],["2.17","Hard Problems"]]},
+        {id:3,title:"Analyzing Algorithms",topics:[["3.1","Insertion Sort"],["3.2","Correctness: The Loop Invariant Technique"],["3.3","Key Assumptions in Algorithm Analysis"],["3.4","What is Input Size?"],["3.5","Calculating Running Time"],["3.6","Insertion Sort: Best, Worst, and Average Case"],["3.7","Asymptotic Behaviour of Running-Time Expressions"],["3.8","Linear Search"],["3.9","Linear Search: Case Analysis"],["3.10","Linear Search: Properties and Correctness"],["3.11","Exercises"],["3.12","Binary Search — Search Smart, Not Hard!"],["3.13","Binary Search: Algorithm"],["3.14","Binary Search: Execution Time Analysis"],["3.15","Selection Sort"]]},
+        {id:4,title:"Asymptotic Notations",topics:[["4.1","What is Asymptotic Notation?"],["4.2","Big-O Notation — the Upper Bound"],["4.3","Big-O: Worked Checks"],["4.4","Try it: The Big-O Playground"],["4.5","Omega (Ω) Notation — the Lower Bound"],["4.6","Theta (Θ) Notation — the Tight Bound"],["4.7","Using the Notations Precisely"],["4.8","Practical Conventions"],["4.9","Small-o and Small-ω — Strict Bounds"],["4.10","Properties of Asymptotic Notations"],["4.11","Exercises"]]},
+        {id:5,title:"Recursion and Divide & Conquer",topics:[["5.1","Functions"],["5.2","Recursive Functions"],["5.3","Recursive Factorial"],["5.4","Recurrence Relations"],["5.5","Substitution Method"],["5.6","Recursion-Tree Method"],["5.7","Master Theorem"],["5.8","Master-Theorem Examples"],["5.9","Decreasing Recurrences"],["5.10","Dividing Recurrences"],["5.11","Binary Search"],["5.12","Recursion Practice"],["5.13","What Is Divide and Conquer?"],["5.14","Characteristics of Divide and Conquer"],["5.15","General Algorithmic Template"],["5.16","Strengths and Limitations"]]},
+        {id:6,title:"Divide and Conquer Algorithms",topics:[["6.1","Merge Sort — Overview"],["6.2","The Merge Operation"],["6.3","Merge Algorithm & Its Space Cost"],["6.4","Merging Without Extra Space"],["6.5","Gap-Merge — a Shell-Sort-Style In-Place Merge"],["6.6","Merge Sort — the Full Algorithm"],["6.7","Merge Sort — Time Analysis"],["6.8","Merge Sort — Space, Overall Verdict"],["6.9","Quick Sort — Strategy"],["6.10","Quick Sort — Partitioning and Full Execution"],["6.11","QuickSort() Algorithm"],["6.12","Quick Sort — Best and Worst Case"],["6.13","Quick Sort — Discussion Questions"],["6.14","Case Study: Hybrid Quicksort"],["6.15","Probabilistic Analysis vs Randomized Analysis"],["6.16","The Hiring Problem"],["6.17","Indicator Random Variables"],["6.18","Solving the Hiring Problem with Indicator Variables"],["6.19","Randomized Quicksort via Indicator Variables"],["6.20","Matrix Multiplication"],["6.21","Strassen's Algorithm"],["6.22","Powering a Number"]]},
+        {id:7,title:"Linked Lists, Stacks and Queues",topics:[["7.1","Linked Lists"],["7.2","Node Structure"],["7.3","Singly Linked List"],["7.4","Insertion at the Front"],["7.5","Insertion in the Middle"],["7.6","Insertion at the End"],["7.7","Insertion in a Singly Linked List"],["7.8","Deletion in a Singly Linked List"],["7.9","Doubly and Circular Linked Lists"],["7.10","Advantages, Disadvantages and Exercises"],["7.11","Stack Data Structure"],["7.12","Stack Operations"],["7.13","Stack Operations: Algorithms"],["7.14","Queue Data Structure"],["7.15","Queue Operations"],["7.16","Circular Queue Operations"],["7.17","Queue Applications and Abstract Data Types"]]},
+        {id:8,title:"Trees and Binary Search Trees",topics:[["8.1","What is a Tree?"],["8.2","Tree Terminology"],["8.3","Types of Trees"],["8.4","Binary Tree Representation"],["8.5","Binary Tree Traversals"],["8.6","Recursive Traversals"],["8.7","Iterative Traversals with Stacks"],["8.8","Level-Order Traversal — BFS"],["8.9","Problems on Binary Trees"],["8.10","Reconstructing a Tree from Traversals"],["8.11","Binary Search Tree — Searching"],["8.12","BST Construction"],["8.13","Questions and Self Study"]]},
+        {id:9,title:"Heap Data Structure and Heap Sort",topics:[["9.1","Why Heaps?"],["9.2","Complete Binary Trees"],["9.3","Array Representation of a Heap"],["9.4","The Heap Property"],["9.5","Insertion into an Existing Max Heap"],["9.6","Deletion from an Existing Max Heap"],["9.7","Heapify Procedure"],["9.8","Building a Heap"],["9.9","Heap Sort"],["9.10","Problems on Heap"],["9.11","Amortized Time Complexity"],["9.12","Fibonacci Heap"]]},
+        {id:10,title:"Greedy Algorithms",topics:[["10.1","Introduction to Greedy Algorithms"],["10.2","Steps to Design a Greedy Algorithm"],["10.3","Fractional Knapsack Problem"],["10.4","Huffman Coding"],["10.5","Building a Huffman Tree with a Priority Queue"],["10.6","Job Sequencing with Deadlines"],["10.7","Optimal Merge Pattern"]]},
+        {id:11,title:"Graph Data Structure",topics:[["11.1","Graph foundations"],["11.2","Graph representations"],["11.3","Why graphs and how traversal works"],["11.4","Breadth-first search (BFS)"],["11.5","Depth-first search (DFS)"],["11.6","Topological sort and cycle detection"],["11.7","Articulation points (cut vertices)"],["11.8","Questions, applications, and shortest paths"]]},
+        {id:12,title:"Shortest Paths and Minimum Spanning Trees",topics:[["12.1","Single-source shortest paths"],["12.2","Dijkstra’s algorithm"],["12.3","Negative edges and Dijkstra’s limitation"],["12.4","Bellman–Ford algorithm"],["12.5","Shortest-path variants and unweighted graphs"],["12.6","Minimum spanning trees"],["12.7","Prim’s algorithm"],["12.8","Kruskal’s algorithm"],["12.9","Questions and exercises"]]},
+        {id:13,title:"Dynamic Programming",topics:[["13.1","Why dynamic programming?"],["13.2","Fibonacci: recursion versus DP"],["13.3","Top-down and bottom-up DP"],["13.4","0/1 knapsack"],["13.5","Building the knapsack table"],["13.6","Matrix multiplication order matters"],["13.7","Matrix-chain dynamic programming"],["13.8","Rod-cutting problem"],["13.9","Exercises and checks"]]},
+        {id:14,title:"B-Trees and B+ Trees",topics:[["14.1","From binary trees to m-way search trees"],["14.2","Indexing and multilevel indexing"],["14.3","Index-capacity exercises"],["14.4","B-tree structure and order"],["14.5","B-tree insertion"],["14.6","B-tree deletion"],["14.7","B+ tree structure"],["14.8","B+ tree capacity calculations"],["14.9","B-tree versus B+ tree"]]},
+        {id:15,title:"Hashing",topics:[["15.1","Why hashing?"],["15.2","Direct addressing and memory waste"],["15.3","Components of hashing and good hash functions"],["15.4","Collision resolution by chaining"],["15.5","Open addressing"],["15.6","Deletion requires a tombstone"],["15.7","Bloom filters"],["15.8","Static versus dynamic hashing"],["15.9","Exercises from the slides"]]},
+        {id:16,title:"NP-Completeness",topics:[["16.1","Decision and optimization problems"],["16.2","Growth rates and tractability"],["16.3","P and NP"],["16.4","What makes a problem NP-complete?"],["16.5","3-SAT: verify an assignment"],["16.6","Polynomial-time reductions"],["16.7","Polynomial problems and their harder cousins"],["16.8","NP-hard problems"],["16.9","NP, NP-complete, and NP-hard"]]},
+        {id:17,title:"Branch and Bound: 0/1 Knapsack",topics:[["17.1","The knapsack problem"],["17.2","Backtracking baseline"],["17.3","Branch, bound, and prune"],["17.4","The fractional upper bound"],["17.5","Exact best-first search"],["17.6","Step-by-step summary"],["17.7","Brute-force and optimized algorithms"],["17.8","Complexity analysis"]]}
+      ];
+      var chapterPalette = [
+        {color:"#0f6b78",hover:"#0b5661",soft:"#e7f3f4",softHover:"#d8ebed",line:"#9bc9ce"},
+        {color:"#15627a",hover:"#104e62",soft:"#e8f3f7",softHover:"#d9eaf1",line:"#9cc6d4"},
+        {color:"#245e91",hover:"#1c4b75",soft:"#ebf2f9",softHover:"#dce8f4",line:"#a8c3dd"},
+        {color:"#3c57a3",hover:"#304583",soft:"#edf0fa",softHover:"#dfe4f5",line:"#b3bde2"},
+        {color:"#5a4b9b",hover:"#473b7c",soft:"#f1eff9",softHover:"#e5e1f4",line:"#c1b9df"},
+        {color:"#71458e",hover:"#5a3772",soft:"#f5eef8",softHover:"#ebe0f0",line:"#cfb3d8"},
+        {color:"#8a416f",hover:"#6e3459",soft:"#f8edf3",softHover:"#f0dee8",line:"#d9afc6"},
+        {color:"#9a445c",hover:"#7b3649",soft:"#faeef1",softHover:"#f2dde3",line:"#dfafbc"},
+        {color:"#a14e38",hover:"#813e2d",soft:"#faf0ed",softHover:"#f3e0db",line:"#ddb6ab"},
+        {color:"#90611d",hover:"#734e17",soft:"#faf4e7",softHover:"#f2e8d1",line:"#d8c299"},
+        {color:"#6f6a24",hover:"#59551d",soft:"#f5f5e9",softHover:"#eaead5",line:"#cbca9f"},
+        {color:"#3f7043",hover:"#325a36",soft:"#edf5ee",softHover:"#dfeadf",line:"#afcbaf"},
+        {color:"#28705d",hover:"#205a4a",soft:"#eaf5f1",softHover:"#daebe5",line:"#a3cdc0"},
+        {color:"#2e6d6a",hover:"#255755",soft:"#eaf4f4",softHover:"#dbe9e8",line:"#a5cac8"},
+        {color:"#3f6484",hover:"#32506a",soft:"#edf3f7",softHover:"#dfe9ef",line:"#aec5d4"},
+        {color:"#5b547f",hover:"#494366",soft:"#f0eff6",softHover:"#e3e1ed",line:"#beb9d2"},
+        {color:"#465e70",hover:"#384b5a",soft:"#eff3f5",softHover:"#e2e9ed",line:"#b6c5ce"}
+      ];
+      var openChapters = new Set(), searchTerm = "", resizeTimer, mobileLayout = window.innerWidth <= 650;
+      var map = document.getElementById("roadmapMap"), content = document.getElementById("mapContent"), wires = document.getElementById("wires"), status = document.getElementById("mapStatus"), search = document.getElementById("roadmapSearch");
+      function pad(n){return String(n).padStart(2,"0");}
+      function chapterById(id){return chapters[id-1];}
+      function sectionHref(chapter,number){return "chapter"+chapter.id+".html#sec-"+number.split(".")[1];}
+      function arrowIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';}
+      function chevronIcon(){return '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';}
+      function matchesChapter(chapter){return !searchTerm||chapter.title.toLowerCase().includes(searchTerm)||chapter.topics.some(function(t){return(t[0]+" "+t[1]).toLowerCase().includes(searchTerm);});}
+      function visibleTopics(chapter){if(!searchTerm||chapter.title.toLowerCase().includes(searchTerm))return chapter.topics;return chapter.topics.filter(function(t){return(t[0]+" "+t[1]).toLowerCase().includes(searchTerm);});}
+      function makeTopic(chapter,topic,side){var link=document.createElement("a");link.className="topic-node wire-target";link.href=sectionHref(chapter,topic[0]);link.dataset.side=side;link.innerHTML="<code>"+topic[0]+"</code><span>"+topic[1]+"</span>"+arrowIcon();return link;}
+      function makeChapter(chapter,forceOpen){
+        var row=document.createElement("div"),isOpen=forceOpen||openChapters.has(chapter.id),topics=visibleTopics(chapter),palette=chapterPalette[chapter.id-1];
+        row.className="chapter-branch "+(chapter.id%2===1?"topics-left":"topics-right")+(isOpen?" open":"");row.dataset.chapter=chapter.id;
+        row.style.setProperty("--chapter-color",palette.color);row.style.setProperty("--chapter-hover",palette.hover);row.style.setProperty("--chapter-soft",palette.soft);row.style.setProperty("--chapter-soft-hover",palette.softHover);row.style.setProperty("--chapter-line",palette.line);
+        var left=document.createElement("div"),right=document.createElement("div"),topicSide=mobileLayout||chapter.id%2===1?"left":"right",controlledId="chapter-topics-"+chapter.id;left.className="topic-column left";right.className="topic-column right";left.hidden=!isOpen;right.hidden=!isOpen;(topicSide==="left"?left:right).id=controlledId;
+        topics.forEach(function(topic){(topicSide==="left"?left:right).appendChild(makeTopic(chapter,topic,topicSide));});
+        var core=document.createElement("div");core.className="chapter-core";
+        var button=document.createElement("button");button.type="button";button.className="chapter-node spine-node";button.setAttribute("aria-expanded",String(isOpen));button.setAttribute("aria-controls",controlledId);button.innerHTML='<span class="chapter-index">CH '+pad(chapter.id)+'</span><span><strong>'+chapter.title+'</strong><small class="chapter-meta">'+chapter.topics.length+' sections · click to '+(isOpen?"collapse":"expand")+'</small></span>'+chevronIcon();
+        button.addEventListener("click",function(){if(openChapters.has(chapter.id))openChapters.delete(chapter.id);else openChapters.add(chapter.id);render();requestAnimationFrame(function(){var next=content.querySelector('[data-chapter="'+chapter.id+'"] .chapter-node');if(next)next.focus({preventScroll:true});});});
+        var openLink=document.createElement("a");openLink.className="chapter-open";openLink.href="chapter"+chapter.id+".html";openLink.textContent="Open full chapter →";openLink.hidden=!isOpen;
+        core.appendChild(button);core.appendChild(openLink);row.appendChild(left);row.appendChild(core);row.appendChild(right);return row;
+      }
+      function render(){
+        content.innerHTML="";var shown=0;
+        phases.forEach(function(phase){var visible=phase.chapterIds.map(chapterById).filter(matchesChapter);if(!visible.length)return;shown+=visible.length;var section=document.createElement("section");section.className="phase";var heading=document.createElement("h2");heading.className="phase-title spine-node";heading.textContent="Phase "+pad(phase.id)+" · "+phase.title;section.appendChild(heading);visible.forEach(function(chapter){section.appendChild(makeChapter(chapter,Boolean(searchTerm)));});content.appendChild(section);});
+        if(!shown){var empty=document.createElement("div");empty.className="empty";empty.textContent="No chapter or topic matches your search.";content.appendChild(empty);}status.textContent=shown+(shown===1?" chapter shown":" chapters shown");requestAnimationFrame(drawWires);
+      }
+      function svgPath(className,d,color){var path=document.createElementNS("http://www.w3.org/2000/svg","path");path.setAttribute("class",className);path.setAttribute("d",d);if(color)path.style.stroke=color;wires.appendChild(path);}
+      function svgCircle(x,y,r,color){var circle=document.createElementNS("http://www.w3.org/2000/svg","circle");circle.setAttribute("class","wire-junction");circle.setAttribute("cx",x);circle.setAttribute("cy",y);circle.setAttribute("r",r);if(color)circle.style.stroke=color;wires.appendChild(circle);}
+      function drawWires(){
+        wires.innerHTML="";if(window.innerWidth<=650)return;var mapRect=map.getBoundingClientRect(),junctions=[];wires.setAttribute("viewBox","0 0 "+mapRect.width+" "+map.scrollHeight);
+        var points=Array.from(map.querySelectorAll(".spine-node")).map(function(node){var r=node.getBoundingClientRect();return{x:r.left-mapRect.left+r.width/2,y:r.top-mapRect.top+r.height/2};});
+        for(var i=0;i<points.length-1;i+=1){var a=points[i],b=points[i+1],mid=(a.y+b.y)/2;svgPath("wire-spine","M "+a.x+" "+a.y+" C "+a.x+" "+mid+", "+b.x+" "+mid+", "+b.x+" "+b.y);}
+        map.querySelectorAll(".chapter-branch.open").forEach(function(row){var source=row.querySelector(".chapter-node").getBoundingClientRect(),sourceY=source.top-mapRect.top+source.height/2,sourceAdded=false,branchColor=getComputedStyle(row).getPropertyValue("--chapter-color").trim();row.querySelectorAll(".wire-target").forEach(function(target){var r=target.getBoundingClientRect(),side=target.dataset.side,fromX=side==="left"?source.left-mapRect.left:source.right-mapRect.left,toX=side==="left"?r.right-mapRect.left:r.left-mapRect.left,toY=r.top-mapRect.top+r.height/2,bend=Math.abs(toX-fromX)*.55,c1=side==="left"?fromX-bend:fromX+bend,c2=side==="left"?toX+bend*.35:toX-bend*.35;svgPath("wire-branch","M "+fromX+" "+sourceY+" C "+c1+" "+sourceY+", "+c2+" "+toY+", "+toX+" "+toY,branchColor);if(!sourceAdded){junctions.push({x:fromX,y:sourceY,r:4.5,color:branchColor});sourceAdded=true;}junctions.push({x:toX,y:toY,r:3,color:branchColor});});});
+        junctions.forEach(function(point){svgCircle(point.x,point.y,point.r,point.color);});
+      }
+      search.addEventListener("input",function(){searchTerm=search.value.trim().toLowerCase();render();});
+      document.getElementById("expandAll").addEventListener("click",function(){chapters.forEach(function(chapter){openChapters.add(chapter.id);});render();});
+      document.getElementById("collapseAll").addEventListener("click",function(){openChapters.clear();render();});
+      window.addEventListener("resize",function(){clearTimeout(resizeTimer);resizeTimer=setTimeout(function(){var nextMobile=window.innerWidth<=650;if(nextMobile!==mobileLayout){mobileLayout=nextMobile;render();}else drawWires();},120);});
+      if("ResizeObserver" in window)new ResizeObserver(function(){clearTimeout(resizeTimer);resizeTimer=setTimeout(drawWires,80);}).observe(content);
+      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawWires);render();
+    })();
+  </script>
+</body>
+</html>
