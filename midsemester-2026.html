@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student-style worked answers to all eight parts of the DAA 2026 mid-semester paper, with algorithms, complexity analysis and a complete recursion stack trace.">
+  <title>Mid-Semester 2026 Answers · DAA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="midsemester-2026.css">
+  <link rel="stylesheet" href="midsemester-stack.css">
+</head>
+<body>
+<a class="skip-link" href="#answers">Skip to answers</a>
+<header class="site-header">
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="index.html"><span class="brand-mark">O(n)</span><span><strong>Design &amp; Analysis of Algorithms</strong><small>IIT (ISM) Dhanbad · 2026</small></span></a>
+    <ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="topics.html">Topics</a></li><li><a href="tutorials.html">Tutorials</a></li><li><a class="active" aria-current="page" href="midsemester-2026.html">Exam answers</a></li></ul>
+  </nav>
+</header>
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">The worked paper / 2026</p>
+    <h1>Mid-semester.<br> <span>Questions, answered.</span></h1>
+  </div>
+</section>
+<div class="page-layout">
+  <aside class="toc" aria-label="On this page">
+    <p class="eyebrow">On this page</p>
+    <a href="#q1" class="toc-question"><span>01</span> Sorting <small>12 marks</small></a>
+    <a href="#q1a">A. In-place Merge Sort</a><a href="#q1b">B. Two-way partitioning</a><a href="#q1c">C. Sorting 90 GB</a>
+    <a href="#q2" class="toc-question"><span>02</span> Recursion <small>12 marks</small></a>
+    <a href="#q2a">A. Reverse a linked list</a><a href="#q2b">B. Complete stack trace</a><a href="#q2c">C. Fast exponentiation</a>
+    <a href="#q3" class="toc-question"><span>03</span> Trees <small>6 marks</small></a>
+    <a href="#q3a">A. Building a BST</a><a href="#q3b">B. Deleting a tree</a>
+  </aside>
+  <main id="answers">
+    <section class="question" id="q1" aria-labelledby="q1-title">
+      <div class="question-heading"><span class="question-number">01</span><div><p class="eyebrow">Question 1 · 12 marks</p><h2 id="q1-title">Sorting</h2></div></div>
+      <article class="answer" id="q1a">
+        <div class="part-heading"><h3>Part A · In-place Merge Sort</h3><span class="marks">5 marks</span></div>
+        <blockquote>Write an in-place Merge Sort algorithm. Discuss the time complexity of the algorithm.</blockquote>
+        <h4>Algorithm: IN-PLACE-MERGE-SORT(A, left, right)</h4>
+        <pre><code>1. If left ≥ right, return.
+2. Set mid ← ⌊(left + right) / 2⌋.
+3. Call IN-PLACE-MERGE-SORT(A, left, mid).
+4. Call IN-PLACE-MERGE-SORT(A, mid + 1, right).
+5. Call GAP-MERGE(A, left, right).</code></pre>
+        <p>Initially, call <code>IN-PLACE-MERGE-SORT(A, 0, n − 1)</code>. In step 5, both adjacent halves are already sorted.</p>
+        <h4>Algorithm: GAP-MERGE(A, left, right)</h4>
+        <pre><code>1. Set length ← right − left + 1.
+2. If length ≤ 1, return.
+3. Set gap ← ⌈length / 2⌉.
+4. While gap &gt; 0, repeat:
+   a. Set i ← left and j ← left + gap.
+   b. While j ≤ right, repeat:
+      i.   If A[i] &gt; A[j], swap A[i] and A[j].
+      ii.  Set i ← i + 1 and j ← j + 1.
+   c. If gap = 1, set gap ← 0.
+      Otherwise, set gap ← ⌈gap / 2⌉.
+5. Return.</code></pre>
+        <p>For nine elements, the gaps are 5, 3, 2 and 1.</p>
+        <h4>Time complexity</h4>
+        <p>A merge of m elements has O(log m) gap passes, each taking O(m) time. Hence one gap-merge takes O(m log m). Using this merge at every level of Merge Sort gives:</p>
+        <div class="formula">T(n) = 2T(n/2) + O(n log n)<br>T(n) = O(n log² n)</div>
+        <div class="result"><strong>Full sort: O(n log² n).</strong> The merge uses O(1) extra space. The recursive sort additionally uses O(log n) stack space.</div>
+        <h4>Alternative: swap and re-sort</h4>
+        <ol class="steps"><li>For two sorted arrays A and B of sizes n and m, set i ← n − 1 and j ← 0.</li><li>While i ≥ 0 and j &lt; m, compare A[i] and B[j]. If A[i] &gt; B[j], swap them, decrease i by 1 and increase j by 1. Otherwise, stop the scan.</li><li>Sort A and B separately in place. Their concatenation is now sorted.</li></ol>
+        <p>Time complexity: <code>O(min(n, m)) + O(n log n) + O(m log m)</code>.</p>
+      </article>
+      <article class="answer" id="q1b">
+        <div class="part-heading"><h3>Part B · Why two-way partitioning?</h3><span class="marks">2 marks</span></div>
+        <blockquote>Why do Merge Sort and Quick Sort generally use two-way partitioning instead of more than two parts? Does a smaller recursion depth, such as log₃ n instead of log₂ n, necessarily reduce the overall time complexity?</blockquote>
+        <p>No. Changing the depth from log₂ n to log₃ n gives only a <strong>constant-factor improvement</strong>, since</p>
+        <div class="formula">log₃ n = log₂ n / log₂ 3.</div>
+        <p>Therefore, n log₂ n and n log₃ n are both Θ(n log n). Dividing into three parts does not improve the asymptotic time complexity. Two-way splitting is simpler; fewer recursion levels alone do not change the order of growth.</p>
+      </article>
+      <article class="answer" id="q1c">
+        <div class="part-heading"><h3>Part C · Sort 90 GB using a min-heap</h3><span class="marks">5 marks</span></div>
+        <blockquote>Suppose you have 90 GB of unsorted data stored on a hard disk, while the available RAM is only 10 GB. Write an algorithm to efficiently sort the entire dataset using a min-heap data structure.</blockquote>
+        <h4>Algorithm: EXTERNAL-SORT</h4>
+        <ol class="steps">
+          <li>Divide the 90 GB dataset into chunks that fit in the 10 GB RAM. Ignoring working-space overhead, this gives nine chunks of 10 GB each; leave room for working memory in an implementation.</li>
+          <li>Read one chunk into RAM, sort it, and write the sorted chunk back to disk as a separate file.</li>
+          <li>Repeat step 2 for every chunk.</li>
+          <li>Read about 90 MB of complete records from each sorted file into a separate input buffer in RAM. Also reserve an output buffer of about 90 MB.</li>
+          <li>Create a min-heap.</li>
+          <li>Extract the minimum element from the heap and append it to the output buffer.</li>
+          <li>Advance to the next element in the input buffer that supplied the extracted element. If that buffer is exhausted, refill it with the next block of about 90 MB from the same file. Insert the next element into the min-heap. If both the buffer and its file are exhausted, do not insert a replacement.</li>
+          <li>When the output buffer reaches about 90 MB, append its contents to the output file on disk and empty the buffer.</li>
+          <li>Repeat steps 6–8 until the heap becomes empty.</li>
+          <li>Write any remaining elements in the output buffer to disk. The output file now contains all 90 GB in sorted order.</li>
+        </ol>
+        <p>Each input buffer contributes only its smallest unprocessed element to the heap. The remaining elements stay in the buffer. This keeps the output globally sorted while disk reads and writes take place in blocks.</p>
+        <p>For nine sorted files, the input buffers use about 9 × 90 MB = 810 MB. Including the 90 MB output buffer gives about 900 MB, plus the small heap and bookkeeping, which fits within 10 GB RAM.</p>
+        <div class="result"><strong>Merge time: O(N log k),</strong> where N is the total number of elements and k is the number of sorted files. For nine files, this is O(N log 9). The heap holds at most k elements.</div>
+      </article>
+    </section>
+    <section class="question" id="q2" aria-labelledby="q2-title">
+      <div class="question-heading"><span class="question-number">02</span><div><p class="eyebrow">Question 2 · 12 marks</p><h2 id="q2-title">Recursion</h2></div></div>
+      <article class="answer" id="q2a">
+        <div class="part-heading"><h3>Part A · Reverse a singly linked list</h3><span class="marks">4 marks</span></div>
+        <blockquote>Write an algorithm/pseudocode to reverse a singly linked list using recursion.</blockquote>
+        <h4>Algorithm: REVERSE(prev, cur)</h4>
+        <p class="algorithm-note">head is the list’s shared head pointer.</p>
+        <pre><code>1. If cur ≠ NULL, go to step 2; otherwise go to step 4.
+2. Call REVERSE(cur, cur.next).
+3. Set cur.next ← prev, then return.
+4. Set head ← prev, then return.</code></pre>
+        <p>Start by calling <code>REVERSE(NULL, head)</code>. The procedure changes the head pointer and the existing links; it does not return a new head as a value.</p>
+        <div class="result"><strong>Time: O(n).</strong> Each node is processed once. The recursion stack uses O(n) space.</div>
+      </article>
+      <article class="answer" id="q2b">
+        <div class="part-heading"><h3>Part B · Complete recursion-stack trace</h3><span class="marks">4 marks</span></div>
+        <blockquote>For 1 → 2 → 3 → NULL, show the complete contents of the recursion stack at each stage, including variable state and the next line to be executed.</blockquote>
+        <div class="recursion-trace" id="recursive-reverse-trace">
+<div class="recursion-layout">
+            <div>
+              <div class="trace-code" aria-label="Recursive linked-list reversal algorithm with numbered steps">
+                <div class="trace-code-row" data-rec-line="1"><span class="line-number">1</span>REVERSE(prev, cur)</div>
+                <div class="trace-code-row active" data-rec-line="2"><span class="line-number">2</span>If cur ≠ NULL:</div>
+                <div class="trace-code-row" data-rec-line="3"><span class="line-number">3</span>    Call REVERSE(cur, cur.next).</div>
+                <div class="trace-code-row" data-rec-line="4"><span class="line-number">4</span>    Set cur.next ← prev, then return.</div>
+                <div class="trace-code-row" data-rec-line="5"><span class="line-number">5</span>Otherwise:</div>
+                <div class="trace-code-row" data-rec-line="6"><span class="line-number">6</span>    Set head ← prev, then return.</div>
+                <div class="trace-code-row" data-rec-line="7"><span class="line-number">7</span>Start: Call REVERSE(NULL, head).</div>
+              </div>
+
+              <div class="rec-list-state" id="rec-list-state">1 → 2 → 3 → NULL</div>
+              <div class="rec-var-grid" aria-label="Variables in the active stack frame">
+                <div class="rec-var">prev<b id="rec-prev">NULL</b></div>
+                <div class="rec-var">cur<b id="rec-cur">node 1</b></div>
+                <div class="rec-var">executes next<b id="rec-next-line">line 2</b></div>
+              </div>
+              <div class="viz-label" id="rec-message" aria-live="polite">Line 7 calls reverse(NULL, node 1). Frame F1 is pushed; line 2 executes next.</div>
+              <div class="viz-controls">
+                <button class="primary" id="rec-play" type="button">Play</button>
+                <button id="rec-step" type="button">Step</button>
+                <button id="rec-reset" type="button">Reset</button>
+                <span class="viz-status" id="rec-step-count">Step 1 of 13</span>
+              </div>
+            </div>
+
+            <aside class="rec-stack-panel" aria-labelledby="rec-stack-title">
+              <h4 id="rec-stack-title">Call stack</h4>
+              <p>Each frame preserves its own <code>prev</code>, <code>cur</code>, and return address. The top frame is the only one executing.</p>
+              <div class="rec-stack-axis" aria-hidden="true"><b>↑</b><span>stack grows on each call</span></div>
+              <div class="rec-stack-shell">
+                <div class="rec-stack" id="rec-stack"></div>
+                <div class="rec-stack-base">CALL STACK · BOTTOM</div>
+              </div>
+              <div class="rec-stack-event push" id="rec-stack-event" aria-live="polite">PUSH F1</div>
+            </aside>
+          </div>
+
+          <div class="rec-link-build" aria-labelledby="rec-link-title">
+            <div class="rec-link-build-header">
+              <div>
+                <span class="def-label">Link establishment</span>
+                <h4 id="rec-link-title">The new chain is built while the stack unwinds</h4>
+              </div>
+              <code class="rec-link-write" id="rec-link-write">No reverse link yet</code>
+            </div>
+            <div class="rec-link-scroll">
+              <div class="rec-link-chain" aria-label="Linked-list links established during recursive returns">
+                <div class="rec-link-node-wrap">
+                  <span class="rec-link-head-marker" id="rec-link-head">head<br>↓</span>
+                  <div class="rec-link-node" id="rec-link-node-3"><strong>3</strong><span>next</span></div>
+                </div>
+                <div class="rec-link-arrow" id="rec-link-32"><small>3.next</small><b>──→</b></div>
+                <div class="rec-link-node" id="rec-link-node-2"><strong>2</strong><span>next</span></div>
+                <div class="rec-link-arrow" id="rec-link-21"><small>2.next</small><b>──→</b></div>
+                <div class="rec-link-node" id="rec-link-node-1"><strong>1</strong><span>next</span></div>
+                <div class="rec-link-arrow" id="rec-link-1n"><small>1.next</small><b>──→</b></div>
+                <div class="rec-link-null" id="rec-link-null">NULL</div>
+              </div>
+            </div>
+            <p class="rec-link-caption" id="rec-link-caption" aria-live="polite">
+              The recursive calls are still moving toward the base case; no reverse link has been written.
+            </p>
+          </div>
+        </div>
+      </article>
+      <article class="answer" id="q2c">
+        <div class="part-heading"><h3>Part C · Compute aⁿ efficiently</h3><span class="marks">4 marks</span></div>
+        <blockquote>Write an optimized recursive algorithm for computing aⁿ, where n is a natural number. Write the corresponding recurrence relation and state its time complexity.</blockquote>
+        <p>Using exponentiation by squaring: If n is even, a<sup>n</sup> = (a<sup>n/2</sup>)². If n is odd, a<sup>n</sup> = a × (a<sup>(n−1)/2</sup>)². The half-power is calculated once and reused.</p>
+        <h4>Algorithm: POWER(a, n)</h4>
+        <pre><code>1. If n = 0, return 1.
+2. Set half ← POWER(a, ⌊n / 2⌋).
+3. If n is even, return half × half.
+4. Otherwise, return a × half × half.</code></pre>
+        <h4>Recurrence and complexity</h4>
+        <div class="formula">T(n) = T(⌊n/2⌋) + Θ(1), for n &gt; 0<br>T(0) = Θ(1)</div>
+        <p>Each recursive call halves n, so the number of calls is logarithmic.</p>
+        <div class="result"><strong>Time: Θ(log n).</strong> Recursion depth: Θ(log n), for n ≥ 2, counting each multiplication as a constant-time operation.</div>
+      </article>
+    </section>
+    <section class="question" id="q3" aria-labelledby="q3-title">
+      <div class="question-heading"><span class="question-number">03</span><div><p class="eyebrow">Question 3 · 6 marks</p><h2 id="q3-title">Trees</h2></div></div>
+      <article class="answer" id="q3a">
+        <div class="part-heading"><h3>Part A · Constructing a BST</h3><span class="marks">3 marks</span></div>
+        <blockquote>A BST is constructed by inserting n elements one by one into an initially empty tree. Discuss the average-case and worst-case time complexities. What insertion order leads to the worst case?</blockquote>
+        <p><strong>Average case:</strong> For a reasonably balanced insertion order, each insertion takes O(log n) time. Therefore, inserting all n elements takes <strong>O(n log n)</strong> time.</p>
+        <p><strong>Worst case:</strong> Increasing or decreasing insertion order makes an ordinary BST skewed. The insertion costs grow as 1, 2, 3, …, n, so their sum is <strong>O(n²)</strong>.</p>
+        <p>For example, the sorted order <code>3, 5, 7, 10, 12, 15, 18</code> creates a right-skewed BST. Reversing the order creates a left-skewed BST.</p>
+        <div class="result"><strong>Average: O(n log n).</strong> Worst: O(n²). Sorted or reverse-sorted insertion produces the worst case.</div>
+      </article>
+      <article class="answer" id="q3b">
+        <div class="part-heading"><h3>Part B · Delete all nodes of a tree</h3><span class="marks">3 marks</span></div>
+        <blockquote>Which tree traversal is most suitable for deleting all nodes of a binary tree, and why? Write the corresponding pseudocode.</blockquote>
+        <p><strong>Postorder traversal</strong> is most suitable. Its order is left subtree, right subtree, then root. Thus, both children are deleted before their parent, so the child pointers remain available until they are no longer needed.</p>
+        <h4>Algorithm: DELETE-TREE(node)</h4>
+        <pre><code>1. If node = NULL, return.
+2. Call DELETE-TREE(node.left).
+3. Call DELETE-TREE(node.right).
+4. Delete node.
+5. Return.</code></pre>
+        <p>Call <code>DELETE-TREE(root)</code> and then set <code>root ← NULL</code>.</p>
+      </article>
+    </section>
+    <footer class="page-footer"><p>End of the worked paper · All 30 marks covered</p><a href="#">Back to top ↑</a><a href="index.html">Return to course home →</a></footer>
+  </main>
+</div>
+<script src="midsemester-stack.js"></script>
+</body>
+</html>
