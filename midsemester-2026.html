@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="DAA 2026 mid-semester paper">
+  <meta name="description" content="Student-style worked answers to all eight parts of the DAA 2026 mid-semester paper, with algorithms, complexity analysis and a complete recursion stack trace.">
   <title>Mid-Semester 2026 Answers · DAA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 </header>
 <section class="hero">
   <div class="hero-inner">
-    <!-- <p class="eyebrow">The worked paper / 2026</p> -->
+    <p class="eyebrow">The worked paper / 2026</p>
     <h1>Mid-semester.<br> <span>Questions, answered.</span></h1>
   </div>
 </section>
@@ -109,6 +109,18 @@
 4. Set head ← prev, then return.</code></pre>
         <p>Start by calling <code>REVERSE(NULL, head)</code>. The procedure changes the head pointer and the existing links; it does not return a new head as a value.</p>
         <div class="result"><strong>Time: O(n).</strong> Each node is processed once. The recursion stack uses O(n) space.</div>
+        <h4>Alternative algorithm: Reverse(head)</h4>
+        <pre><code>1. If head = NULL or head.next = NULL:
+   Return head.
+
+2. Set newHead ← Reverse(head.next).
+
+3. Set head.next.next ← head.
+
+4. Set head.next ← NULL.
+
+5. Return newHead.</code></pre>
+        <p>Call <code>head ← Reverse(head)</code> to update the list’s head.</p>
       </article>
       <article class="answer" id="q2b">
         <div class="part-heading"><h3>Part B · Complete recursion-stack trace</h3><span class="marks">4 marks</span></div>
