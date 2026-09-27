@@ -738,6 +738,39 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   * { transition: none !important; }
 }
 
+
+/* Lab 8: one readable question per row; inline mathematical notation. */
+.lab-eight .detailed-program-list { gap: 12px; margin-top: 24px; }
+.lab-eight .detailed-program-list > li { background: #fff; padding: 22px 26px 22px 78px; }
+.lab-eight .lab-question-title { margin-bottom: 7px; }
+.lab-eight .lab-question-text { margin-bottom: 0; max-width: 85ch; font-size: 16px; }
+.lab-eight .lab-math { display: inline; white-space: nowrap; color: var(--ink); }
+.lab-eight sub, .lab-eight sup { font-size: .75em; line-height: 0; position: relative; vertical-align: baseline; }
+.lab-eight sub { bottom: -.25em; }
+.lab-eight sup { top: -.45em; }
+.lab-eight-example { margin-top: 22px; max-width: 570px; }
+.lab-eight-label { display: block; font: 600 11px var(--font-mono); letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); }
+.lab-eight table.tbl { margin: 10px 0 14px; table-layout: fixed; }
+.lab-eight table.tbl th { background: #edf4f7; color: var(--ink); }
+.lab-eight table.tbl th:not(:first-child), .lab-eight table.tbl td:not(:first-child) { text-align: center; }
+.lab-eight-output { padding: 14px 16px; border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-soft); }
+.lab-eight-output .lab-eight-label { color: var(--accent-dark); }
+.lab-eight-output p { margin: 7px 0 0; color: var(--ink); font-size: 15px; }
+.lab-eight-profit { display: inline-block; margin-left: 22px; }
+@media (max-width: 600px) {
+  .chapter-grid { grid-template-columns: minmax(0, 1fr); }
+  .page { padding-left: 16px; padding-right: 16px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; }
+  .nav-links a { padding: 8px 10px; }
+  .lab-eight .lab-sheet-content { padding: 0 12px 16px; }
+  .lab-eight .detailed-program-list > li { padding: 17px 14px 17px 52px; }
+  .lab-eight .detailed-program-list > li::before { top: 16px; left: 12px; width: 28px; height: 28px; border-radius: 7px; font-size: 12px; }
+  .lab-eight .lab-question-text { font-size: 14.5px; }
+  .lab-eight .lab-question-title { font-size: 16px; }
+  .lab-eight table.tbl th, .lab-eight table.tbl td { padding: 10px 6px; font-size: 12px; }
+  .lab-eight-profit { display: block; margin: 6px 0 0; }
+}
+
 </style>
 </head>
 <body>
@@ -1619,7 +1652,7 @@ k = 2</pre>
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab">
       <summary class="lab-sheet-summary" aria-labelledby="lab-07-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 07</span>
@@ -1639,6 +1672,65 @@ k = 2</pre>
           <li>Write a program to increase the value of a key in a max-heap and restore the heap property.</li>
           <li>Write a program to find the k largest elements from an unsorted array using a min-heap.</li>
           <li>Write a program to check whether a given array satisfies the max-heap property.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="chapter-card lab-sheet-card collapsible-lab lab-eight" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-08-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 08</span>
+          <h3 id="lab-08-title">Graph Algorithms and Greedy Algorithms</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="lab-sheet-content">
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Breadth First Search</h4>
+            <p class="lab-question-text">Implement Breadth First Search (BFS) for a given undirected graph and print the order of traversal.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Depth First Search</h4>
+            <p class="lab-question-text">Implement Depth First Search (DFS) for a given graph and print the order of traversal.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Articulation Points</h4>
+            <p class="lab-question-text">Write a program to count how many articulation points exist in a given graph.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Topological Sort</h4>
+            <p class="lab-question-text">Implement Topological Sort of a directed acyclic graph (DAG) using DFS.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Merge Sorted Lists</h4>
+            <p class="lab-question-text">Write a program to merge <span class="lab-math">⌈log<sub>2</sub> n⌉</span> sorted lists, each containing <span class="lab-math">⌊n / log<sub>2</sub> n⌋</span> elements, and produce a single sorted list of all the elements, taking <span class="lab-math">n = 2<sup>k</sup></span> for some positive integer k.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Job Sequencing with Deadlines</h4>
+            <p class="lab-question-text">Write a program to solve the Job Sequencing Problem with deadlines using a greedy algorithm. The program should find the maximum profit that can be earned by scheduling jobs within their deadlines.</p>
+            <div class="lab-eight-example">
+            <span class="lab-eight-label">Example input</span>
+            <table class="tbl" aria-label="Lab 8 job deadlines and profits">
+              <thead><tr><th scope="col">Job ID</th><th scope="col">Deadline</th><th scope="col">Profit</th></tr></thead>
+              <tbody>
+                <tr><td>J<sub>1</sub></td><td>2</td><td>6</td></tr>
+                <tr><td>J<sub>2</sub></td><td>1</td><td>8</td></tr>
+                <tr><td>J<sub>3</sub></td><td>1</td><td>5</td></tr>
+                <tr><td>J<sub>4</sub></td><td>2</td><td>10</td></tr>
+              </tbody>
+            </table>
+            <div class="lab-eight-output"><span class="lab-eight-label">Expected output</span><p>Schedule: <strong>J<sub>2</sub> → J<sub>4</sub></strong> <span class="lab-eight-profit">Maximum profit: <strong>18</strong></span></p></div>
+            </div>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Fractional Knapsack</h4>
+            <p class="lab-question-text">Write a program to implement the fractional knapsack problem.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Huffman Coding</h4>
+            <p class="lab-question-text">Write a program to generate the complete Huffman code for all input symbols.</p>
+          </li>
         </ol>
       </div>
     </details>
