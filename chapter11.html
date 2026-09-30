@@ -360,6 +360,7 @@
     @media (prefers-reduced-motion: reduce) { .reading-progress span, .back-top { transition: none; } }
   </style>
 <link rel="stylesheet" href="./chapter-quality.css?v=20260816">
+  <link rel="stylesheet" href="chapter11-traces.css">
 </head>
 <body class="chapter-interaction-polish">
 <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
@@ -400,12 +401,19 @@
 
     <main class="chapter-body">
       <span class="chapter-kicker">Chapter 11</span>
-      <h1>Graph Data Structure</h1>
+      <h1>Graphs: Represent, Traverse, Analyse</h1>
       <p class="chapter-intro">
-        Graphs model connections that are not restricted to a hierarchy. This chapter develops
-        graph terminology and representations, then traces BFS, DFS, topological sorting,
-        cycle detection, articulation points, and shortest-path reasoning.
+        A graph describes objects and the connections between them. Learn how to store those
+        connections, explore them systematically, and use traversal to answer questions about
+        reachability, dependencies and critical vertices.
       </p>
+
+      <div class="chapter-learning-path" aria-label="Learning path">
+        <a href="#sec-2"><span>01 · Represent</span><strong>Choose how to store a graph</strong><small>Adjacency lists and matrices</small></a>
+        <a href="#sec-4"><span>02 · Traverse</span><strong>Follow BFS and DFS</strong><small>Queues, call stacks and visited sets</small></a>
+        <a href="#sec-6"><span>03 · Apply</span><strong>Reason about graph structure</strong><small>Ordering, cycles and cut vertices</small></a>
+      </div>
+      <p class="chapter-conventions"><strong>Notation:</strong> V and E denote the vertex and edge sets; in complexity expressions, they mean the numbers of vertices and edges. An arrow u → v permits travel from u to v. In every trace, <strong>Next</strong> performs one operation, <strong>Back</strong> restores the previous state, and the slider jumps to a chosen step.</p>
 
       <section class="chapter-section" id="sec-1">
         <h2><span class="sec-no">11.1</span>Graph foundations</h2>
@@ -431,7 +439,7 @@
             <div class="edge-sample" aria-hidden="true">
               <span class="sample-node">A</span><span class="sample-edge directed"></span><span class="sample-node">B</span>
             </div>
-            <p>A is the source and B is the destination. B is adjacent from A, but A is not adjacent from B through this edge.</p>
+            <p>A is the source and B is the destination. The edge permits A → B, but does not permit B → A.</p>
           </article>
           <article class="type-card">
             <strong>Undirected — like a two-way rail link</strong>
@@ -469,7 +477,7 @@
 
         <h3>Degree of a vertex</h3>
         <ul>
-          <li>In an <strong>undirected graph</strong>, <code class="inline">deg(v)</code> is the number of incident edges.</li>
+          <li>In an <strong>undirected graph</strong>, <code class="inline">deg(v)</code> counts incident edge ends; a self-loop contributes two.</li>
           <li>In a <strong>directed graph</strong>, in-degree counts incoming edges and out-degree counts outgoing edges.</li>
           <li>Total directed degree is in-degree plus out-degree.</li>
         </ul>
@@ -528,7 +536,8 @@
           <div class="lab-readout">
             <div class="lab-message" id="repr-message">Start with five vertices and no edges.</div>
             <div class="controls">
-              <button class="primary" id="repr-next" type="button">Add next edge</button>
+              <button class="primary" id="repr-play" type="button">Play</button>
+              <button id="repr-next" type="button">Add next edge</button>
               <button id="repr-reset" type="button">Reset</button>
             </div>
           </div>
@@ -591,7 +600,7 @@ g.display()</code></pre>
       </section>
 
       <section class="chapter-section" id="sec-3">
-        <h2><span class="sec-no">11.3</span>Why graphs and how traversal works</h2>
+        <h2><span class="sec-no">11.3</span>Traversal: visit each reachable vertex</h2>
         <div class="two-col">
           <div class="card"><strong>Cycles</strong><p>Unlike trees, graphs can represent cyclic road and computer networks.</p></div>
           <div class="card"><strong>Multiple paths</strong><p>Graphs can offer several routes between two vertices, enabling shortest-path problems.</p></div>
@@ -615,19 +624,23 @@ g.display()</code></pre>
 
       <section class="chapter-section" id="sec-4">
         <h2><span class="sec-no">11.4</span>Breadth-first search (BFS)</h2>
-        <ol>
-          <li>Enqueue the starting vertex and mark it visited.</li>
-          <li>Dequeue a vertex, process it, then enqueue and mark each unvisited neighbor.</li>
-          <li>Repeat until the queue is empty.</li>
+        <p class="lesson-lead">BFS explores the nearest vertices first. A first-in, first-out queue holds discovered vertices whose neighbours still need to be examined.</p>
+        <ol class="lesson-steps">
+          <li><strong>Start:</strong> mark the source visited and put it in the queue.</li>
+          <li><strong>Process:</strong> remove the front vertex. Mark and enqueue each of its unvisited neighbours.</li>
+          <li><strong>Repeat:</strong> continue until the queue is empty.</li>
         </ol>
 
         <div class="lab">
           <div class="lab-head">
-            <div><h3>Exact BFS sequence from the slides</h3><p>Start at 0; neighbors are considered left to right.</p></div>
+            <div><h3>BFS: discover vertices level by level</h3><p>Directed graph; start at 0 and scan neighbours in the displayed adjacency-list order.</p></div>
             <span class="status" id="bfs-status">step 1</span>
           </div>
+          <div class="trace-guidance"><strong>Watch the queue</strong><p>After processing 0, the queue contains 1, 2 and 3. Vertex 4 is first discovered from 1. The later edge 2 → 4 must not enqueue it again.</p></div>
           <div class="lab-stage"><canvas id="bfs-canvas" role="img" aria-label="Interactive breadth-first traversal"></canvas></div>
-          <div class="structure-strip" id="bfs-structure" aria-live="polite"></div>
+          <div class="structure-strip" id="bfs-structure"></div>
+          <div class="structure-strip" id="bfs-order"></div>
+          <div class="table-wrap trace-table"><table><caption>Distance from 0 and first-discovery parent</caption><thead><tr><th>Vertex</th><th>Distance</th><th>Parent</th></tr></thead><tbody id="bfs-distances"></tbody></table></div>
           <div class="lab-readout">
             <div class="lab-message" id="bfs-message">Enqueue 0 and mark it visited.</div>
             <div class="controls">
@@ -640,7 +653,7 @@ g.display()</code></pre>
         </div>
         <div class="result-line">BFS sequence: 0, 1, 2, 3, 4, 5, 6</div>
 
-<pre class="code"><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+<details class="implementation"><summary>View the Python implementation</summary><pre class="code"><code><span class="kw">from</span> collections <span class="kw">import</span> deque
 
 <span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
     visited = {start}
@@ -654,8 +667,11 @@ g.display()</code></pre>
             <span class="kw">if</span> v <span class="kw">not in</span> visited:
                 visited.add(v)
                 queue.append(v)
-    <span class="kw">return</span> order</code></pre>
+    <span class="kw">return</span> order</code></pre></details>
 
+        <h3>Why BFS gives shortest paths</h3>
+        <p>The queue processes distance d before distance d + 1. When v is first discovered from u, set distance[v] = distance[u] + 1 and parent[v] = u. Mark v immediately when enqueuing it, so two incoming edges cannot enqueue it twice. Following parent pointers backwards reconstructs a shortest path; for example, 0 → 1 → 4 → 6 has three edges.</p>
+        <p>The traversal order depends on neighbour order, but shortest-path distances do not. In the animation, an undiscovered vertex has distance ∞; the source has distance 0 and no parent.</p>
         <h3>Analysis</h3>
         <div class="four-col">
           <div class="card metric"><b>O(V)</b><span>visited array</span></div>
@@ -668,7 +684,7 @@ g.display()</code></pre>
           all vertices and edges once, giving O(V + E).
         </p>
         <div class="answer-box">
-          <span class="box-label">Applications from the slides</span>
+          <span class="box-label">When to use BFS</span>
           BFS can find mutual-friend candidates by exploring nearby social-network levels. In an
           unweighted graph, it also finds the minimum number of edges from the source to every reachable vertex.
         </div>
@@ -682,19 +698,41 @@ g.display()</code></pre>
 
       <section class="chapter-section" id="sec-5">
         <h2><span class="sec-no">11.5</span>Depth-first search (DFS)</h2>
-        <ol>
-          <li>Start at a vertex and mark it visited.</li>
-          <li>Recursively visit an unvisited neighbor.</li>
-          <li>Backtrack when no unvisited neighbor remains.</li>
+        <p class="lesson-lead">DFS follows one route as far as possible before trying another. Recursion remembers where to continue: returning from a call resumes the caller’s neighbour scan.</p>
+        <ol class="lesson-steps">
+          <li><strong>Discover:</strong> mark the current vertex visited and record it.</li>
+          <li><strong>Explore:</strong> scan its outgoing neighbours in order. Recurse only on an unvisited neighbour.</li>
+          <li><strong>Return:</strong> once every neighbour is checked, pop the call and resume its parent.</li>
         </ol>
 
         <div class="lab">
           <div class="lab-head">
-            <div><h3>Exact DFS sequence from the slides</h3><p>The active recursion stack is shown below the graph.</p></div>
+            <div><h3>DFS: follow calls and returns</h3><p>Follow every call, neighbour check and return. Only the top frame executes.</p></div>
             <span class="status" id="dfs-status">step 1</span>
           </div>
+          <div class="trace-guidance"><strong>Watch the return</strong><p>Follow 0 → 1 → 4 → 6. When 6 has no outgoing neighbour, its frame is popped. Calls 4 and 1 then finish, allowing 0 to continue with neighbour 2.</p></div>
+          <div class="dfs-workspace">
+            <div>
           <div class="lab-stage"><canvas id="dfs-canvas" role="img" aria-label="Interactive depth-first traversal"></canvas></div>
-          <div class="structure-strip" id="dfs-structure" aria-live="polite"></div>
+              <div class="trace-code" aria-label="DFS algorithm with numbered steps">
+                <div data-dfs-line="1"><b>1</b> Mark u visited; append u to order.</div>
+                <div data-dfs-line="2"><b>2</b> Take the next neighbour v of u, or go to 5.</div>
+                <div data-dfs-line="3"><b>3</b> If v is visited, continue at 2.</div>
+                <div data-dfs-line="4"><b>4</b> Call DFS(v), then continue at 2.</div>
+                <div data-dfs-line="5"><b>5</b> Return to the caller.</div>
+              </div>
+            </div>
+            <aside class="dfs-stack-panel" aria-labelledby="dfs-stack-heading">
+              <h4 id="dfs-stack-heading">Recursion stack</h4>
+              <p>Top frame first · shared visited set and order below</p>
+              <div id="dfs-call-stack"></div>
+              <div class="stack-base">STACK BOTTOM</div>
+              <p id="dfs-depth"></p>
+            </aside>
+          </div>
+          <div class="structure-strip" id="dfs-structure"></div>
+          <div class="structure-strip" id="dfs-visited"></div>
+          <details class="dfs-adjacency-reference"><summary>View neighbour order for this graph</summary><div class="table-wrap trace-table"><table><caption>Neighbour order used by this directed graph</caption><thead><tr><th>Vertex</th><th>Neighbours, in order</th></tr></thead><tbody id="dfs-adjacency"></tbody></table></div></details>
           <div class="lab-readout">
             <div class="lab-message" id="dfs-message">Visit 0 and push it on the recursion stack.</div>
             <div class="controls">
@@ -707,7 +745,7 @@ g.display()</code></pre>
         </div>
         <div class="result-line">DFS sequence: 0, 1, 4, 6, 2, 5, 3</div>
 
-<pre class="code"><code><span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=<span class="kw">None</span>, order=<span class="kw">None</span>):
+<details class="implementation"><summary>View the Python implementation</summary><pre class="code"><code><span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=<span class="kw">None</span>, order=<span class="kw">None</span>):
     <span class="kw">if</span> visited <span class="kw">is None</span>:
         visited = <span class="fn">set</span>()
     <span class="kw">if</span> order <span class="kw">is None</span>:
@@ -717,8 +755,16 @@ g.display()</code></pre>
     <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
         <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
             dfs(graph, neighbor, visited, order)
-    <span class="kw">return</span> order</code></pre>
+    <span class="kw">return</span> order</code></pre></details>
 
+        <h3>How to read the call stack</h3>
+        <dl class="concept-list">
+          <div><dt>Local to each call</dt><dd>u is the vertex being explored; v is the neighbour currently being checked. The frame also remembers which neighbour comes next.</dd></div>
+          <div><dt>Shared by all calls</dt><dd>The visited set and discovery order belong to the whole traversal. Returning from a call does not erase them.</dd></div>
+          <div><dt>Suspended versus active</dt><dd>Only the top frame executes. A parent waits at step 4 while its child runs, then resumes at step 2.</dd></div>
+          <div><dt>Discovery versus completion</dt><dd>A vertex enters the traversal order when first visited. Its frame is removed only after every outgoing neighbour has been checked.</dd></div>
+        </dl>
+        <p><strong>Example:</strong> by the time DFS reaches 2, vertex 4 has already finished. The edge 2 → 4 is checked and skipped; it does not create another call.</p>
         <h3>Analysis and comparison</h3>
         <p>
           DFS uses O(V) space for visited plus up to O(V) recursive calls or explicit stack entries.
@@ -761,6 +807,7 @@ g.display()</code></pre>
             <div><h3>DFS finish times → topological order</h3><p>Watch vertices enter the finish stack, then leave in reverse order.</p></div>
             <span class="status" id="topo-status">step 1</span>
           </div>
+          <div class="trace-guidance"><strong>Watch when vertices are recorded</strong><p>A vertex enters the finish stack after its descendants finish. The displayed order is obtained by popping that stack, not by copying DFS discovery order.</p></div>
           <div class="lab-stage"><canvas id="topo-canvas" role="img" aria-label="Interactive topological sorting"></canvas></div>
           <div class="structure-strip" id="topo-structure" aria-live="polite"></div>
           <div class="lab-readout">
@@ -774,6 +821,7 @@ g.display()</code></pre>
         </div>
         <div class="result-line">One valid order: 0, 3, 2, 5, 1, 4, 6</div>
 
+        <p><strong>Finish stack versus call stack:</strong> the call stack contains unfinished calls and shrinks on return. The finish stack records vertices only after all their outgoing neighbours are finished. Reversing that finish order places every prerequisite before the vertices that depend on it. For a disconnected DAG, start DFS from each still-unvisited vertex before reversing the complete finish order.</p>
         <h3>Clothing example and DFS times</h3>
         <p>
           Constraints include undershorts → pants, undershorts → shoes, pants → belt,
@@ -791,10 +839,12 @@ g.display()</code></pre>
         <div class="result-line">socks, undershorts, pants, shoes, watch, shirt, belt, tie, jacket</div>
 
         <h3>Cycle detection using DFS</h3>
-        <p>
-          Keep a recursion-stack state in addition to visited. An edge to a vertex that is already
-          visited <em>and still in the current stack</em> is a back edge, so the directed graph contains a cycle.
-        </p>
+        <p>For a directed graph, an edge to an already-visited vertex is not enough to prove a cycle. The important question is whether that vertex’s call is <strong>still active</strong>.</p>
+        <div class="table-wrap"><table><thead><tr><th>State of neighbour v</th><th>Meaning</th><th>Action for edge u → v</th></tr></thead><tbody>
+          <tr><td>Unvisited (white)</td><td>DFS has not reached v.</td><td>Explore v recursively.</td></tr>
+          <tr><td>Active (grey)</td><td>v is on the current call stack.</td><td>A back edge closes a directed cycle.</td></tr>
+          <tr><td>Finished (black)</td><td>v’s call has returned.</td><td>This edge alone does not indicate a cycle.</td></tr>
+        </tbody></table></div>
         <div class="lab">
           <div class="lab-head">
             <div><h3>Directed cycle trace</h3><p>The red back edge closes 1 → 4 → 6 → 5 → 2 → 1.</p></div>
@@ -802,9 +852,11 @@ g.display()</code></pre>
           </div>
           <div class="lab-stage compact"><canvas id="cycle-canvas" role="img" aria-label="Directed graph cycle detection"></canvas></div>
           <div class="lab-readout">
+            <div class="structure-strip" id="cycle-stack"></div>
             <div class="lab-message" id="cycle-message">Trace the active DFS path.</div>
             <div class="controls">
               <button class="primary" id="cycle-play" type="button">Trace cycle</button>
+              <button id="cycle-step" type="button">Next</button>
               <button id="cycle-reset" type="button">Reset</button>
             </div>
           </div>
@@ -883,6 +935,39 @@ g.display()</code></pre>
           Vertex <strong>3</strong> is an articulation point. Removing it separates {5,6} from {1,2,4}.
         </div>
 
+        <h3>How discovery and low values change</h3>
+        <p><strong>disc[u]</strong> records when u is first visited. <strong>low[u]</strong> records the earliest discovery time reachable from u’s subtree without using the edge back to its parent.</p>
+        <ol class="lesson-steps">
+          <li><strong>On entry:</strong> set disc[u] = low[u] to the next discovery time.</li>
+          <li><strong>After a child v returns:</strong> set low[u] = min(low[u], low[v]).</li>
+          <li><strong>At a visited non-parent neighbour v:</strong> set low[u] = min(low[u], disc[v]).</li>
+          <li><strong>Test for separation:</strong> for a non-root u, low[v] ≥ disc[u] means that child’s subtree cannot reach an ancestor of u. For the root, count DFS-tree children: more than one makes it a cut vertex.</li>
+        </ol>
+<div class="lab" id="lowlink-lab">
+  <div class="lab-head"><div><h3>Articulation points: follow the DFS decisions</h3><p>Discover → explore → propagate low values → test for separation.</p></div><span class="status" id="lowlink-status"></span></div>
+  <div class="ap-toolbar"><label for="lowlink-example">Example</label><select id="lowlink-example"><option value="bridge">Two regions joined at vertex 3</option><option value="root">Root with three DFS children</option><option value="cycle">Cycle: no articulation point</option></select></div>
+  <div class="ap-legend"><span>Teal: DFS-tree edge</span><span>Purple dashed: back edge</span><span>Amber: current operation</span><span>Red border: confirmed cut vertex</span></div>
+  <div class="ap-workspace">
+    <div class="ap-graph-scroll" role="region" aria-label="DFS graph; scroll horizontally on small screens" tabindex="0"><svg id="lowlink-graph" viewBox="0 0 680 420" role="img" aria-label="Articulation DFS graph with discovery and low values"></svg></div>
+    <aside class="ap-state"><h4>Call stack <small>top first</small></h4><div id="lowlink-stack"></div><div class="ap-stack-base">STACK BOTTOM</div><p id="lowlink-clock"></p></aside>
+  </div>
+  <p class="ap-scroll-hint">On small screens, scroll the graph sideways to inspect every vertex.</p>
+  <div class="ap-decision" aria-live="polite"><span id="lowlink-phase"></span><strong id="lowlink-equation"></strong><p id="lowlink-message"></p></div>
+  <div class="lab-readout"><div class="controls"><button type="button" class="primary" id="lowlink-play">Play</button><button type="button" id="lowlink-step">Next</button><button type="button" id="lowlink-reset">Reset</button></div></div>
+  <div class="structure-strip" id="lowlink-structure"></div>
+  <details class="ap-reference"><summary>Algorithm steps and full vertex table</summary>
+    <div class="trace-code" id="lowlink-code">
+      <div data-ap-line="1"><b>1</b> Set disc[u] = low[u] = ++time; children = 0.</div>
+      <div data-ap-line="2"><b>2</b> Scan each neighbour v of u.</div>
+      <div data-ap-line="3"><b>3</b> If v is the parent, skip this edge.</div>
+      <div data-ap-line="4"><b>4</b> If v is unvisited: increment children, call DFS(v), then set low[u] = min(low[u], low[v]).</div>
+      <div data-ap-line="5"><b>5</b> Otherwise, set low[u] = min(low[u], disc[v]).</div>
+      <div data-ap-line="6"><b>6</b> After a child returns, mark non-root u if low[v] ≥ disc[u].</div>
+      <div data-ap-line="7"><b>7</b> Mark a root only if children &gt; 1. Return.</div>
+    </div>
+    <div class="table-wrap trace-table"><table><caption>Discovery order follows the listed edges; values persist after calls return.</caption><thead><tr><th>Vertex</th><th>Parent</th><th>disc</th><th>low</th><th>Cut vertex?</th></tr></thead><tbody id="lowlink-values"></tbody></table></div>
+  </details>
+</div>
         <h3>Second slide example</h3>
         <p>
           For the graph with edges G–C, C–B, C–D, B–A, A–D, D–F, F–E, and D–E,
@@ -891,7 +976,7 @@ g.display()</code></pre>
         </p>
         <div class="lab">
           <div class="lab-head">
-            <div><h3>Exact second articulation graph</h3><p>The highlighted vertices separate the two leaf-side regions.</p></div>
+            <div><h3>A graph with two cut vertices</h3><p>The highlighted vertices separate the two leaf-side regions.</p></div>
             <span class="status">start at A</span>
           </div>
           <div class="lab-stage compact">
@@ -935,6 +1020,8 @@ g.display()</code></pre>
               <div class="lab-readout">
                 <div class="lab-message" id="dfs-quiz-message">Choose one of the four proposed orders.</div>
                 <div class="controls">
+                  <button class="primary" id="dfs-quiz-play" type="button">Play</button>
+                  <button id="dfs-quiz-step" type="button">Next</button>
                   <button id="dfs-quiz-reset" type="button">Reset</button>
                 </div>
               </div>
@@ -959,6 +1046,7 @@ g.display()</code></pre>
               <div class="lab-stage compact">
                 <canvas id="stack-canvas" role="img" aria-label="Graph showing a DFS recursion path of length nineteen"></canvas>
               </div>
+              <p class="dense-scroll-hint">On a small screen, scroll the graph horizontally to see all vertices.</p>
               <div class="structure-strip" id="stack-structure" aria-live="polite"></div>
               <div class="lab-readout">
                 <div class="lab-message" id="stack-message">Visit vertex 1; stack depth is 1.</div>
@@ -1012,6 +1100,10 @@ g.display()</code></pre>
           </div>
         </details>
 
+        <h3>Traversing a disconnected graph</h3>
+        <p>Keep one visited set for the whole graph. Scan vertices in order; each unvisited vertex starts a new DFS tree and increases the component count. Returning from one DFS tree finishes only that component. An isolated vertex also forms a component.</p>
+<div class="lab" id="components-lab"><div class="lab-head"><div><h3>One DFS tree per connected component</h3><p>Scan A through F. The triangle, the pair and the isolated vertex form three components.</p></div><span class="status" id="components-status"></span></div>
+          <div class="trace-guidance"><strong>Watch the outer scan</strong><p>A new component is counted only when the next vertex is still unvisited. F is isolated, but its single DFS call still counts as one component.</p></div><div class="lab-stage"><canvas id="components-canvas" role="img" aria-label="One DFS tree per connected component"></canvas></div><div class="structure-strip" id="components-structure"></div><div class="lab-readout"><div class="lab-message" id="components-message" aria-live="polite"></div><div class="controls"><button type="button" class="primary" id="components-play">Play</button><button type="button" id="components-step">Next</button><button type="button" id="components-reset">Reset</button></div></div></div>
         <h3>Shortest paths: weighted versus unweighted graphs</h3>
         <div class="two-col">
           <div class="card">
@@ -1034,7 +1126,19 @@ g.display()</code></pre>
           not guarantee shortest paths in general graphs.
         </div>
 
-        <aside aria-labelledby="chapter11-download-title" style="margin:28px 0;padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid #bfdde3;border-radius:14px;background:linear-gradient(135deg,#ffffff,#f2fafb);box-shadow:0 10px 28px rgba(16,28,51,.07);">
+        <section class="chapter-review" aria-labelledby="chapter-review-title">
+        <span class="chapter-kicker">Review</span><h2 id="chapter-review-title">Choose the algorithm by the question</h2>
+        <div class="table-wrap"><table><thead><tr><th>Question</th><th>Method</th><th>What to remember</th></tr></thead><tbody>
+          <tr><td>Fewest edges from a source?</td><td>BFS</td><td>Queue + distance + parent; edges must have equal cost.</td></tr>
+          <tr><td>Explore paths and backtrack?</td><td>DFS</td><td>Visited set + call stack.</td></tr>
+          <tr><td>Order tasks with dependencies?</td><td>Topological sort</td><td>Reverse DFS finish order; requires a DAG.</td></tr>
+          <tr><td>Does a directed graph contain a cycle?</td><td>DFS with active-state tracking</td><td>An edge to an active ancestor proves a cycle.</td></tr>
+          <tr><td>Which vertices can disconnect an undirected graph?</td><td>DFS with discovery and low values</td><td>Check each child subtree; handle the root separately.</td></tr>
+        </tbody></table></div>
+        <p>These methods take O(V + E) time with adjacency lists. Before coding, identify whether the graph is directed, whether edge weights matter, and whether one traversal reaches every vertex.</p>
+      </section>
+
+      <aside aria-labelledby="chapter11-download-title" style="margin:28px 0;padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid #bfdde3;border-radius:14px;background:linear-gradient(135deg,#ffffff,#f2fafb);box-shadow:0 10px 28px rgba(16,28,51,.07);">
           <div aria-hidden="true" style="width:54px;height:62px;flex:0 0 54px;display:grid;place-items:center;border:1px solid #9fcbd3;border-radius:10px;background:#ffffff;color:#085a68;font:700 11px 'IBM Plex Mono',monospace;letter-spacing:.04em;">PPTX</div>
           <div style="flex:1 1 260px;min-width:0;">
             <span style="display:block;margin-bottom:3px;color:#085a68;font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Lecture resource</span>
@@ -1089,7 +1193,7 @@ g.display()</code></pre>
     var redraws = [];
 
     function prepareCanvas(canvas) {
-      var width = Math.max(280, canvas.clientWidth || 700);
+      var width = Math.max(1, canvas.clientWidth || 700);
       var height = Math.max(240, canvas.clientHeight || 360);
       var ratio = Math.min(window.devicePixelRatio || 1, 2.5);
       var pixelWidth = Math.round(width * ratio);
@@ -1153,8 +1257,8 @@ g.display()</code></pre>
       var height = surface.height;
       var dense = Boolean(state && state.dense);
       var radius = dense
-        ? Math.max(8, Math.min(12, width / 58))
-        : Math.max(12, Math.min(16, width / 42));
+        ? Math.max(12, Math.min(15, width / 48))
+        : Math.max(16, Math.min(21, width / 24));
       var padX = Math.max(44, width * .08);
       var padTop = 35;
       var padBottom = 30;
@@ -1200,7 +1304,7 @@ g.display()</code></pre>
         context.fillStyle = id === removed ? COLORS.red : (isVisited && id === "0" ? COLORS.white : COLORS.ink);
         context.textAlign = "center";
         context.textBaseline = "middle";
-        context.font = "650 " + Math.max(dense ? 8 : 10, radius * .68) + "px IBM Plex Mono, monospace";
+        context.font = "650 " + Math.max(dense ? 11 : 13, radius * .68) + "px IBM Plex Mono, monospace";
         context.fillText(Object.prototype.hasOwnProperty.call(labels, id) ? labels[id] : id, point.x, point.y);
         if (id === removed) {
           context.beginPath();
@@ -1235,46 +1339,38 @@ g.display()</code></pre>
       });
     }
 
+    var players = [];
     function createPlayer(config) {
-      var frames = config.frames;
-      var index = 0;
-      var timer = null;
-      var play = document.getElementById(config.play);
-      var step = document.getElementById(config.step);
-      var reset = document.getElementById(config.reset);
+      var frames = config.frames, index = 0, timer = null;
+      var play = document.getElementById(config.play), step = document.getElementById(config.step), reset = document.getElementById(config.reset);
+      var controls = play.parentElement, panel = play.closest(".lab");
       var speed = config.speed ? document.getElementById(config.speed) : null;
-
-      function render() { config.render(frames[index], index, frames.length); }
-      function stop() {
-        if (timer) window.clearInterval(timer);
-        timer = null;
-        if (play) play.textContent = "Play";
+      panel.setAttribute("aria-label", panel.querySelector("h3").textContent + " animation");
+      var back = document.createElement("button"); back.type = "button"; back.textContent = "Back";
+      back.id = config.play.replace(/-play$/, "-back"); controls.insertBefore(back, step); step.textContent = "Next";
+      if (!speed) { speed=document.createElement("select"); speed.setAttribute("aria-label","Playback speed"); speed.innerHTML='<option value="1400">Slow</option><option value="900" selected>Normal</option><option value="450">Fast</option>';controls.appendChild(speed); }
+      var slider=document.createElement("input");slider.type="range";slider.min=0;slider.max=frames.length-1;slider.step=1;slider.className="trace-slider";slider.setAttribute("aria-label","Animation step");panel.appendChild(slider);
+      function render() {
+        slider.max=frames.length-1;
+        config.render(frames[index],index,frames.length);
+        play.disabled=frames.length<2;slider.disabled=frames.length<2;
+        back.disabled=index===0;step.disabled=index===frames.length-1;
+        play.textContent=timer ? "Pause" : index===frames.length-1 ? "Replay" : "Play";
+        play.setAttribute("aria-pressed",String(Boolean(timer)));
+        slider.value=index;slider.setAttribute("aria-valuetext","Step "+(index+1)+" of "+frames.length);
       }
-      function next() {
-        if (index >= frames.length - 1) { stop(); return; }
-        index += 1;
-        render();
-        if (index >= frames.length - 1) stop();
-      }
-      if (play) {
-        play.addEventListener("click", function () {
-          if (timer) { stop(); return; }
-          if (index >= frames.length - 1) index = 0;
-          play.textContent = "Pause";
-          render();
-          timer = window.setInterval(next, speed ? Number(speed.value) : (config.interval || 800));
-        });
-      }
-      if (step) step.addEventListener("click", function () { stop(); next(); });
-      if (reset) reset.addEventListener("click", function () { stop(); index = 0; render(); });
-      if (speed) speed.addEventListener("change", function () {
-        if (!timer) return;
-        stop();
-        play.click();
-      });
-      render();
-      redraws.push(render);
-      return {render: render, stop: stop};
+      function stop(){clearTimeout(timer);timer=null;render();}
+      function schedule(){timer=setTimeout(function(){index++;if(index===frames.length-1){timer=null;render();}else{schedule();render();}},Number(speed.value));}
+      play.addEventListener("click",function(){if(timer){stop();return;}players.forEach(function(p){p.stop();});if(index===frames.length-1)index=0;schedule();render();});
+      function seek(n){clearTimeout(timer);timer=null;index=Math.max(0,Math.min(frames.length-1,n));render();}
+      back.addEventListener("click",function(){seek(Math.max(0,index-1));});
+      step.addEventListener("click",function(){seek(Math.min(frames.length-1,index+1));});
+      reset.addEventListener("click",function(){seek(0);});
+      slider.addEventListener("input",function(){seek(Number(slider.value));});
+      speed.addEventListener("change",function(){if(timer){clearTimeout(timer);schedule();}});
+      document.addEventListener("visibilitychange",function(){if(document.hidden&&timer)stop();});
+      if(window.IntersectionObserver)new IntersectionObserver(function(entries){if(!entries[0].isIntersecting&&timer)stop();}).observe(panel);
+      render();redraws.push(render);var player={render:render,stop:stop,seek:seek};players.push(player);return player;
     }
 
     /* Adjacency matrix and adjacency list */
@@ -1352,11 +1448,6 @@ g.display()</code></pre>
         ? "Added edge " + reprEdges[reprIndex - 1][0] + " → " + reprEdges[reprIndex - 1][1] + "."
         : "Start with five vertices and no edges.";
     }
-    document.getElementById("repr-next").addEventListener("click", function () {
-      reprIndex = Math.min(reprEdges.length, reprIndex + 1);
-      renderRepresentation();
-    });
-    document.getElementById("repr-reset").addEventListener("click", function () { reprIndex = 0; renderRepresentation(); });
     document.getElementById("repr-matrix-tab").addEventListener("click", function () {
       document.getElementById("repr-matrix").hidden = false;
       document.getElementById("repr-list").hidden = true;
@@ -1373,79 +1464,44 @@ g.display()</code></pre>
       document.getElementById("repr-matrix-tab").classList.remove("active");
       document.getElementById("repr-matrix-tab").setAttribute("aria-selected", "false");
     });
-    renderRepresentation();
-    redraws.push(renderRepresentation);
+    createPlayer({frames: Array.from({length:8},function(_,i){return i;}),play:"repr-play",step:"repr-next",reset:"repr-reset",render:function(frame){reprIndex=frame;renderRepresentation();}});
 
     function bfsFrames() {
-      var visited = new Set(["0"]);
-      var queue = ["0"];
-      var order = [];
-      var frames = [{
-        visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: "0", activeEdges: [],
-        message: "Enqueue 0 and mark it visited."
-      }];
-      while (queue.length) {
-        var u = queue.shift();
-        order.push(u);
-        frames.push({
-          visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: u, activeEdges: [],
-          message: "Dequeue " + u + " and process it."
-        });
-        adjacency[u].forEach(function (v) {
-          if (visited.has(v)) {
-            frames.push({
-              visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: u,
-              activeEdges: [edgeKey(u,v)], message: v + " is already visited; do not enqueue it again."
-            });
-            return;
-          }
-          visited.add(v);
-          queue.push(v);
-          frames.push({
-            visited: Array.from(visited), queue: queue.slice(), order: order.slice(), current: v,
-            activeEdges: [edgeKey(u,v)], message: "Discover " + v + " from " + u + "; mark it and enqueue it."
-          });
+      var visited=new Set(["0"]), queue=["0"], order=[], distance={"0":0}, parent={"0":null}, frames=[];
+      function save(current,message,edges){frames.push({visited:Array.from(visited),queue:queue.slice(),order:order.slice(),distance:Object.assign({},distance),parent:Object.assign({},parent),current:current,activeEdges:edges||[],message:message});}
+      save("0","Enqueue 0; mark it visited and set distance[0] = 0.");
+      while(queue.length){
+        var u=queue.shift();order.push(u);save(u,"Dequeue "+u+". Scan its outgoing neighbours.");
+        adjacency[u].forEach(function(v){
+          if(visited.has(v)){save(u,v+" is already discovered; keep its distance and do not enqueue again.",[edgeKey(u,v)]);return;}
+          visited.add(v);queue.push(v);distance[v]=distance[u]+1;parent[v]=u;
+          save(v,"Discover "+v+" from "+u+": distance = "+distance[v]+", parent = "+u+". Enqueue "+v+".",[edgeKey(u,v)]);
         });
       }
-      frames.push({visited: Array.from(visited), queue: [], order: order.slice(), current: null, activeEdges: [], message: "Queue empty. BFS is complete."});
-      return frames;
+      save(null,"Queue empty. Every reachable vertex has its shortest distance from 0.");return frames;
     }
 
     function dfsFrames() {
-      var visited = new Set();
-      var stack = [];
-      var order = [];
-      var frames = [];
-      function visit(u, parent) {
-        visited.add(u);
-        stack.push(u);
-        order.push(u);
-        frames.push({
-          visited: Array.from(visited), stack: stack.slice(), order: order.slice(), current: u,
-          activeEdges: parent == null ? [] : [edgeKey(parent,u)],
-          message: "Visit " + u + " and push it on the recursion stack."
-        });
-        adjacency[u].forEach(function (v) {
-          if (visited.has(v)) return;
-          frames.push({
-            visited: Array.from(visited), stack: stack.slice(), order: order.slice(), current: u,
-            activeEdges: [edgeKey(u,v)], message: "Follow " + u + " → " + v + "."
-          });
-          visit(v, u);
-        });
-        stack.pop();
-        frames.push({
-          visited: Array.from(visited), stack: stack.slice(), order: order.slice(),
-          current: stack.length ? stack[stack.length - 1] : null, activeEdges: [],
-          message: parent == null
-            ? "DFS(" + u + ") returns; pop the root and leave the recursion stack empty."
-            : "DFS(" + u + ") returns to DFS(" + parent + "); pop " + u + " from the recursion stack."
-        });
+      var visited=new Set(), stack=[], order=[], frames=[], finished=[];
+      function save(message,edges){var top=stack[stack.length-1];frames.push({visited:Array.from(visited),stack:stack.map(function(f){return Object.assign({},f);}),order:order.slice(),current:top?top.u:null,line:top?top.line:0,activeEdges:edges||[],finished:finished.slice(),message:message});}
+      function visit(u,parent){
+        var f={u:u,parent:parent,next:0,v:null,line:1,state:"active"};stack.push(f);
+        save("PUSH DFS("+u+"). Its local vertex is "+u+"; step 1 executes next.",parent===null?[]:[edgeKey(parent,u)]);
+        visited.add(u);order.push(u);f.line=2;save("Mark "+u+" visited and append it to discovery order. Scan its neighbours next.");
+        for(var i=0;i<adjacency[u].length;i++){
+          var v=adjacency[u][i];f.v=v;f.next=i+1;f.line=3;save("Inspect edge "+u+" → "+v+". Step 3 checks whether "+v+" is visited.",[edgeKey(u,v)]);
+          if(visited.has(v)){f.line=2;save("Skip "+v+": already visited. No new stack frame is created.",[edgeKey(u,v)]);continue;}
+          f.line=4;save(v+" is unvisited. Step 4 calls DFS("+v+").",[edgeKey(u,v)]);
+          f.state="waiting";visit(v,u);f.state="active";f.line=2;save("Resume DFS("+u+") at step 2 after DFS("+v+") returned.");
+        }
+        f.line=5;f.v=null;save("All neighbours of "+u+" have been checked. Step 5 returns.");
+        finished.push(u);stack.pop();
+        if(stack.length){stack[stack.length-1].state="active";stack[stack.length-1].line=2;}
+        save("POP DFS("+u+"). "+(parent===null?"The call stack is empty.":"Control returns to DFS("+parent+")."));
       }
-      visit("0", null);
-      frames.push({visited: Array.from(visited), stack: [], order: order.slice(), current: null, activeEdges: [], message: "DFS returns traversal order: " + order.join(" → ") + "."});
-      return frames;
+      visit("0",null);return frames;
     }
+    document.getElementById("dfs-adjacency").innerHTML=Object.keys(adjacency).map(function(u){return "<tr><td>"+u+"</td><td>"+(adjacency[u].join(", ")||"none")+"</td></tr>";}).join("");
 
     var bfsCanvas = document.getElementById("bfs-canvas");
     createPlayer({
@@ -1453,6 +1509,8 @@ g.display()</code></pre>
       render: function (frame, index, total) {
         drawGraph(bfsCanvas, graphNodes, graphEdges, frame);
         renderChips(document.getElementById("bfs-structure"), "Queue (front →)", frame.queue, 0);
+        renderChips(document.getElementById("bfs-order"), "Processed order", frame.order, -1);
+        document.getElementById("bfs-distances").innerHTML=Object.keys(adjacency).map(function(u){return '<tr><td>'+u+'</td><td>'+(frame.distance[u]===undefined?'∞':frame.distance[u])+'</td><td>'+(frame.parent[u]==null?'—':frame.parent[u])+'</td></tr>';}).join('');
         document.getElementById("bfs-message").textContent = frame.message;
         document.getElementById("bfs-status").textContent = "step " + (index + 1) + "/" + total;
       }
@@ -1463,7 +1521,14 @@ g.display()</code></pre>
       frames: dfsFrames(), play: "dfs-play", step: "dfs-step", reset: "dfs-reset", speed: "dfs-speed",
       render: function (frame, index, total) {
         drawGraph(dfsCanvas, graphNodes, graphEdges, frame);
-        renderChips(document.getElementById("dfs-structure"), "Stack (bottom → top)", frame.stack, frame.stack.length - 1);
+        renderChips(document.getElementById("dfs-structure"), "Discovery order", frame.order, -1);
+        renderChips(document.getElementById("dfs-visited"), "Visited (shared)", frame.visited, -1);
+        document.querySelectorAll("[data-dfs-line]").forEach(function(row){row.classList.toggle("active",Number(row.dataset.dfsLine)===frame.line);});
+        document.getElementById("dfs-call-stack").innerHTML=frame.stack.slice().reverse().map(function(f,i){
+          var next=adjacency[f.u][f.next];
+          return '<div class="dfs-frame '+(i===0?'top':'waiting')+'"><strong>'+(i===0?'TOP · ':'')+'DFS('+f.u+')</strong><span>'+(f.state==='waiting'?'Suspended at step 4':'Next: step '+f.line)+'</span><dl><dt>u</dt><dd>'+f.u+'</dd><dt>v</dt><dd>'+(f.v===null?'—':f.v)+'</dd><dt>Next neighbour</dt><dd>'+(next===undefined?'none':next)+'</dd><dt>Return to</dt><dd>'+(f.parent===null?'caller':'DFS('+f.parent+'), step 2')+'</dd></dl></div>';
+        }).join('')||'<p class="dfs-empty">Stack empty · traversal complete</p>';
+        document.getElementById("dfs-depth").textContent="Active calls: "+frame.stack.length+" · Finished: "+(frame.finished.join(", ")||"none");
         document.getElementById("dfs-message").textContent = frame.message;
         document.getElementById("dfs-status").textContent = "step " + (index + 1) + "/" + total;
       }
@@ -1480,13 +1545,13 @@ g.display()</code></pre>
         active.push(u);
         frames.push({
           visited: Array.from(visited), current: u, activeEdges: parent == null ? [] : [edgeKey(parent,u)],
-          finish: finish.slice(), output: output.slice(), message: "Discover " + u + "."
+          stack: active.slice(), finish: finish.slice(), output: output.slice(), message: "Discover " + u + "."
         });
         adjacency[u].forEach(function (v) { if (!visited.has(v)) visit(v, u); });
         active.pop();
         finish.push(u);
         frames.push({
-          visited: Array.from(visited), current: u, activeEdges: [], finish: finish.slice(), output: output.slice(),
+          visited: Array.from(visited), current: u, activeEdges: [], stack: active.slice(), finish: finish.slice(), output: output.slice(),
           message: "Finish " + u + "; push it onto the finish stack."
         });
       }
@@ -1496,12 +1561,12 @@ g.display()</code></pre>
         var u = work.pop();
         output.push(u);
         frames.push({
-          visited: Array.from(visited), current: u, activeEdges: [], finish: work.slice(), output: output.slice(),
+          visited: Array.from(visited), current: u, activeEdges: [], stack: [], finish: work.slice(), output: output.slice(),
           message: "Pop " + u + " into the topological ordering."
         });
       }
       frames.push({
-        visited: Array.from(visited), current: null, activeEdges: [], finish: [], output: output.slice(),
+        visited: Array.from(visited), current: null, activeEdges: [], stack: [], finish: [], output: output.slice(),
         message: "Topological ordering complete: " + output.join(", ") + "."
       });
       return frames;
@@ -1511,24 +1576,26 @@ g.display()</code></pre>
       var target = document.getElementById("topo-structure");
       target.innerHTML = "";
       function appendGroup(label, values) {
+        var row=document.createElement("div");row.className="trace-state-row";target.appendChild(row);
         var strong = document.createElement("strong");
         strong.textContent = label;
-        target.appendChild(strong);
+        row.appendChild(strong);
         if (!values.length) {
           var empty = document.createElement("span");
           empty.className = "empty-state";
           empty.textContent = "empty";
-          target.appendChild(empty);
+          row.appendChild(empty);
         } else {
           values.forEach(function (value) {
             var chip = document.createElement("span");
             chip.className = "chip";
             chip.textContent = value;
-            target.appendChild(chip);
+            row.appendChild(chip);
           });
         }
       }
-      appendGroup("Finish stack", frame.finish);
+      appendGroup("Call stack · bottom → top", frame.stack);
+      appendGroup("Finish stack · bottom → top", frame.finish);
       appendGroup("Order", frame.output);
     }
 
@@ -1547,57 +1614,101 @@ g.display()</code></pre>
     var cycleCanvas = document.getElementById("cycle-canvas");
     var cycleNodes = graphNodes;
     var cycleEdges = [["0","1"],["0","2"],["0","3"],["1","4"],["4","6"],["6","5"],["5","2"],["2","1"],["3","5"]];
-    var cyclePath = ["0","1","4","6","5","2","1"];
-    var cycleFrame = 0;
-    var cycleTimer = null;
-
-    function renderCycle() {
-      var visited = cyclePath.slice(0, Math.min(cycleFrame + 1, cyclePath.length - 1));
-      var activeEdges = [];
-      for (var i = 0; i < Math.min(cycleFrame, cyclePath.length - 1); i += 1) {
-        activeEdges.push(edgeKey(cyclePath[i], cyclePath[i + 1]));
-      }
-      drawGraph(cycleCanvas, cycleNodes, cycleEdges, {
-        directed: true, visited: visited, current: cycleFrame < cyclePath.length ? cyclePath[cycleFrame] : null,
-        activeEdges: activeEdges
-      });
-      if (cycleFrame >= cyclePath.length - 1) {
-        document.getElementById("cycle-message").textContent = "Back edge 2 → 1 reaches a vertex still in the DFS stack: cycle detected.";
-        document.getElementById("cycle-status").textContent = "cycle found";
-      } else {
-        document.getElementById("cycle-message").textContent = cycleFrame
-          ? "Continue along the active DFS path."
-          : "Trace the active DFS path.";
-        document.getElementById("cycle-status").textContent = "depth " + cycleFrame;
-      }
+    var cycleFrames=[], cycleStack=[], cycleSeen=new Set(), cycleActive=new Set();
+    function cycleSave(current,message,edge,found){
+      cycleFrames.push({current:current,visited:Array.from(cycleSeen),stack:cycleStack.slice(),activeEdges:edge?[edgeKey(edge[0],edge[1])]:[],message:message,found:Boolean(found)});
     }
-    document.getElementById("cycle-play").addEventListener("click", function () {
-      if (cycleTimer) return;
-      cycleFrame = 0;
-      renderCycle();
-      cycleTimer = window.setInterval(function () {
-        cycleFrame += 1;
-        renderCycle();
-        if (cycleFrame >= cyclePath.length - 1) {
-          window.clearInterval(cycleTimer);
-          cycleTimer = null;
+    cycleSave(null,"Start DFS at vertex 0. A cycle exists only when an edge reaches a vertex still on the recursion stack.");
+    function visitCycle(u){
+      cycleSeen.add(u);cycleActive.add(u);cycleStack.push(u);
+      cycleSave(u,"Enter DFS("+u+"). Push "+u+" onto the recursion stack.");
+      var neighbours=cycleEdges.filter(function(e){return e[0]===u;}).map(function(e){return e[1];});
+      for(var v of neighbours){
+        cycleSave(u,"Examine edge "+u+" → "+v+". "+(cycleActive.has(v)?v+" is still active.":cycleSeen.has(v)?v+" has finished.":v+" is unvisited."),[u,v]);
+        if(cycleActive.has(v)){
+          cycleSave(u,"Back edge "+u+" → "+v+" closes the cycle "+cycleStack.slice(cycleStack.indexOf(v)).concat(v).join(" → ")+". Stop the search; the stack shows the calls active at detection.",[u,v],true);return true;
         }
-      }, 650);
-    });
-    document.getElementById("cycle-reset").addEventListener("click", function () {
-      if (cycleTimer) window.clearInterval(cycleTimer);
-      cycleTimer = null;
-      cycleFrame = 0;
-      renderCycle();
-    });
-    renderCycle();
-    redraws.push(renderCycle);
+        if(!cycleSeen.has(v)&&visitCycle(v))return true;
+      }
+      cycleStack.pop();cycleActive.delete(u);cycleSave(u,"Return from DFS("+u+"). Remove "+u+" from the active stack.");return false;
+    }
+    visitCycle("0");
+    createPlayer({frames:cycleFrames,play:"cycle-play",step:"cycle-step",reset:"cycle-reset",render:function(f,i,total){
+      drawGraph(cycleCanvas,cycleNodes,cycleEdges,Object.assign({directed:true},f));
+      renderChips(document.getElementById("cycle-stack"),"Call stack · bottom → top",f.stack,f.stack.length-1);
+      document.getElementById("cycle-message").textContent=f.message;
+      document.getElementById("cycle-status").textContent=f.found?"Cycle detected":"Step "+(i+1)+" / "+total;
+    }});
 
     /* Articulation-point removal */
     var cutCanvas = document.getElementById("cut-canvas");
     var cutNodes = {"1":[.50,.10],"4":[.24,.42],"2":[.76,.42],"3":[.50,.60],"5":[.36,.88],"6":[.64,.88]};
     var cutEdges = [["1","4"],["1","2"],["4","3"],["2","3"],["3","5"],["3","6"],["5","6"]];
     var removedCut = null;
+    (function initLowlink(){
+      var examples={
+        bridge:{nodes:{"1":[340,48],"4":[135,158],"2":[545,158],"3":[340,260],"5":[205,370],"6":[475,370]},edges:cutEdges,root:"1"},
+        root:{nodes:{"1":[340,90],"2":[120,300],"3":[340,300],"4":[560,300]},edges:[["1","2"],["1","3"],["1","4"]],root:"1"},
+        cycle:{nodes:{"1":[340,55],"2":[535,210],"3":[340,365],"4":[145,210]},edges:[["1","2"],["2","3"],["3","4"],["4","1"]],root:"1"}
+      };
+      var example=examples.bridge;
+      function key(u,v){return [u,v].sort().join('-');}
+      function build(data){
+        var graph={},disc={},low={},parent={},cut=new Set(),clock=0,frames=[],stack=[],tree=[],back=[];
+        Object.keys(data.nodes).forEach(function(u){graph[u]=[];});data.edges.forEach(function(e){graph[e[0]].push(e[1]);graph[e[1]].push(e[0]);});
+        function save(u,phase,equation,message,line,edge,changed){frames.push({u:u,phase:phase,equation:equation,message:message,line:line,edge:edge?key(edge[0],edge[1]):null,changed:changed||null,disc:Object.assign({},disc),low:Object.assign({},low),parent:Object.assign({},parent),cuts:Array.from(cut),time:clock,stack:stack.map(function(f){return Object.assign({},f);}),tree:tree.slice(),back:back.slice()});}
+        function visit(u,p){
+          parent[u]=p;var f={u:u,parent:p,children:0,v:null};stack.push(f);disc[u]=low[u]=++clock;
+          save(u,'Discover','disc['+u+'] = low['+u+'] = '+clock,'Push DFS('+u+'). Record its discovery time and initial low value.',1,null,u);
+          graph[u].forEach(function(v){
+            f.v=v;save(u,'Inspect neighbour','u = '+u+'; v = '+v,'Check '+u+'–'+v+' before choosing a DFS action.',2,[u,v]);
+            if(v===p){save(u,'Skip parent','parent['+u+'] = '+p,'This is the edge used to enter '+u+', not an alternate route to an ancestor.',3,[u,v]);return;}
+            if(disc[v]===undefined){
+              f.children++;tree.push(key(u,v));save(u,'Recursive call','DFS('+v+'); children['+u+'] = '+f.children,'Pause DFS('+u+') while its child explores the next subtree.',4,[u,v]);
+              visit(v,u);var old=low[u];low[u]=Math.min(low[u],low[v]);
+              save(u,'Child returns','low['+u+'] ← min('+old+', '+low[v]+') = '+low[u],'DFS('+v+') has returned. Propagate the child’s earliest reachable discovery time.',4,[u,v],old!==low[u]?u:null);
+              if(p!==null){
+                var separates=low[v]>=disc[u];if(separates)cut.add(u);
+                save(u,'Test non-root','low['+v+'] = '+low[v]+' ≥ disc['+u+'] = '+disc[u]+' → '+(separates?'TRUE':'FALSE'),separates?'The subtree rooted at '+v+' cannot reach an ancestor of '+u+'. Removing '+u+' separates it: mark '+u+' as an articulation point.':'The subtree rooted at '+v+' can reach an ancestor of '+u+'. This child does not make '+u+' an articulation point.',6,[u,v]);
+              }else save(u,'Root rule','Root '+u+': '+f.children+' DFS-tree child'+(f.children===1?'':'ren')+' so far','Do not apply the non-root inequality to the root. Test its total DFS-tree children after its neighbour scan finishes.',7);
+            }else{
+              var old=low[u];low[u]=Math.min(low[u],disc[v]);if(disc[v]<disc[u]&&back.indexOf(key(u,v))<0)back.push(key(u,v));
+              save(u,disc[v]<disc[u]?'Back edge':'Visited descendant','low['+u+'] ← min('+old+', disc['+v+'] = '+disc[v]+') = '+low[u],disc[v]<disc[u]?'An alternate route reaches ancestor '+v+'. Use its discovery time, not its low value.':'This neighbour was already explored. Its later discovery time does not lower low['+u+'].',5,[u,v],old!==low[u]?u:null);
+            }
+          });
+          if(p===null){var isCut=f.children>1;if(isCut)cut.add(u);save(u,'Test root','children['+u+'] = '+f.children+' > 1 → '+(isCut?'TRUE':'FALSE'),isCut?'Separate DFS child subtrees have no path between them without the root. Mark '+u+' as an articulation point.':'A root with at most one DFS-tree child is not an articulation point, even if it has several graph neighbours.',7);}
+          stack.pop();save(p,'Return','POP DFS('+u+')',p===null?'The root has finished. The recursion stack is empty.':'Resume DFS('+p+'); the discovery and low values remain available.',7);
+        }
+        save(null,'Ready','Start DFS('+data.root+')','Each node shows its discovery time d and low value. A dash means unvisited.',0);
+        visit(data.root,null);save(null,'Complete','Articulation points: '+(Array.from(cut).join(', ')||'none'),'All vertices have been explored. Red-bordered nodes are the confirmed articulation points.',0);return frames;
+      }
+      var frames=build(example), svg=document.getElementById('lowlink-graph');
+      function graphMarkup(f){
+        var html='<title>DFS articulation trace: '+f.phase+'</title>';
+        example.edges.forEach(function(e){var a=example.nodes[e[0]],b=example.nodes[e[1]],dx=b[0]-a[0],dy=b[1]-a[1],k=key(e[0],e[1]);var t=Math.min(53/Math.max(Math.abs(dx),.001),29/Math.max(Math.abs(dy),.001));var active=f.edge===k;var cls=active?'examined':f.back.indexOf(k)>=0?'back-edge':f.tree.indexOf(k)>=0?'tree-edge':'unseen-edge';html+='<line class="'+cls+'" x1="'+(a[0]+dx*t)+'" y1="'+(a[1]+dy*t)+'" x2="'+(b[0]-dx*t)+'" y2="'+(b[1]-dy*t)+'"/>';});
+        Object.keys(example.nodes).forEach(function(u){var pos=example.nodes[u],known=f.disc[u]!==undefined,cut=f.cuts.indexOf(u)>=0;html+='<g class="ap-node '+(cut?'cut ':'')+(f.u===u?'current ':'')+(f.changed===u?'changed':'')+'" transform="translate('+pos[0]+' '+pos[1]+')"><rect x="-53" y="-29" width="106" height="58" rx="10"/><text class="ap-node-name" y="-6">'+u+(cut?' · CUT':'')+'</text><text class="ap-node-values" y="16">d '+(known?f.disc[u]:'—')+'  /  low '+(known?f.low[u]:'—')+'</text></g>';});return html;
+      }
+      var player=createPlayer({frames:frames,play:'lowlink-play',step:'lowlink-step',reset:'lowlink-reset',render:function(f,i,n){
+        svg.innerHTML=graphMarkup(f);renderChips(document.getElementById('lowlink-structure'),'Confirmed articulation points',f.cuts,-1);
+        document.getElementById('lowlink-phase').textContent=f.phase;document.getElementById('lowlink-equation').textContent=f.equation;document.getElementById('lowlink-message').textContent=f.message;document.getElementById('lowlink-status').textContent='Step '+(i+1)+' / '+n;
+        document.getElementById('lowlink-clock').textContent='Discovery clock: '+f.time;
+        document.getElementById('lowlink-stack').innerHTML=f.stack.slice().reverse().map(function(x,i){return '<div class="ap-frame '+(i===0?'top':'')+'"><strong>'+(i===0?'TOP · ':'')+'DFS('+x.u+')</strong><span>parent: '+(x.parent||'—')+' · v: '+(x.v||'—')+'</span><span>DFS children: '+x.children+'</span></div>';}).join('')||'<p class="ap-empty">No active calls</p>';
+        document.querySelectorAll('[data-ap-line]').forEach(function(row){row.classList.toggle('active',Number(row.dataset.apLine)===f.line);});
+        document.getElementById('lowlink-values').innerHTML=Object.keys(example.nodes).sort().map(function(u){return '<tr class="'+(f.changed===u?'ap-value-changed':'')+'"><td>'+u+'</td><td>'+(f.parent[u]||'—')+'</td><td>'+(f.disc[u]||'—')+'</td><td>'+(f.low[u]||'—')+'</td><td>'+(f.cuts.indexOf(u)>=0?'Yes':'—')+'</td></tr>';}).join('');
+      }});
+      document.getElementById('lowlink-example').addEventListener('change',function(){
+        player.stop();example=examples[this.value];var replacement=build(example);frames.splice.apply(frames,[0,frames.length].concat(replacement));document.querySelector('#lowlink-lab .trace-slider').max=frames.length-1;document.getElementById('lowlink-reset').click();
+      });
+    })();
+    (function initComponents(){
+      var nodes={A:[.1,.2],B:[.35,.2],C:[.22,.7],D:[.58,.25],E:[.65,.75],F:[.9,.45]},edges=[["A","B"],["B","C"],["C","A"],["D","E"]];
+      var graph={A:["B","C"],B:["A","C"],C:["B","A"],D:["E"],E:["D"],F:[]},visited=new Set(),stack=[],map={},count=0,frames=[];
+      function save(u,message,edge){frames.push({current:u,visited:Array.from(visited),directed:false,activeEdges:edge?[edgeKey(edge[0],edge[1])]:[],componentMap:Object.assign({},map),count:count,stack:stack.slice(),message:message});}
+      function visit(u){visited.add(u);stack.push(u);map[u]=["#ccebe4","#e3dcf7","#ffe6bd"][count-1];save(u,"Visit "+u+" in component "+count+".");graph[u].forEach(function(v){if(!visited.has(v)){save(u,"Follow "+u+"–"+v+".",[u,v]);visit(v);}else save(u,"Skip already-visited neighbour "+v+".",[u,v]);});stack.pop();save(stack.length?stack[stack.length-1]:null,"Return from "+u+".");}
+      save(null,"Scan vertices A, B, C, D, E, F with one shared visited set.");Object.keys(nodes).forEach(function(u){if(!visited.has(u)){count++;save(u,"Start component "+count+" at unvisited vertex "+u+".");visit(u);}else save(null,u+" is already visited; do not count another component.");});save(null,"Complete: {A, B, C}, {D, E} and {F}. Total = 3 components.");
+      createPlayer({frames:frames,play:"components-play",step:"components-step",reset:"components-reset",render:function(f,i,n){drawGraph(document.getElementById("components-canvas"),nodes,edges,f);renderChips(document.getElementById("components-structure"),"Components: "+f.count+" · Call stack",f.stack,f.stack.length-1);document.getElementById("components-message").textContent=f.message;document.getElementById("components-status").textContent="Step "+(i+1)+" / "+n;}});
+    })();
+
 
     function componentData(removed) {
       var ids = Object.keys(cutNodes).filter(function (id) { return id !== removed; });
@@ -1701,111 +1812,36 @@ g.display()</code></pre>
       {id:"dfs-quiz-3", sequence:["a","b","f","h","g","e"]},
       {id:"dfs-quiz-4", sequence:["a","f","g","h","b","e"]}
     ];
-    var dfsQuizShown = [];
-    var dfsQuizTarget = [];
-    var dfsQuizRejected = null;
-    var dfsQuizTimer = null;
-    var dfsQuizDone = false;
-    var dfsQuizButton = null;
-
-    function stopDfsQuiz() {
-      if (dfsQuizTimer) window.clearInterval(dfsQuizTimer);
-      dfsQuizTimer = null;
-    }
-    function renderDfsQuiz() {
-      var activeEdges = [];
-      for (var i = 1; i < dfsQuizShown.length; i += 1) {
-        activeEdges.push(edgeKey(dfsQuizShown[i - 1], dfsQuizShown[i]));
-      }
-      var rejectedMap = {};
-      if (dfsQuizDone && dfsQuizRejected) rejectedMap[dfsQuizRejected] = COLORS.redSoft;
-      drawGraph(dfsQuizCanvas, dfsQuizNodes, dfsQuizEdges, {
-        directed: false,
-        visited: dfsQuizShown,
-        current: dfsQuizShown.length ? dfsQuizShown[dfsQuizShown.length - 1] : null,
-        activeEdges: activeEdges,
-        componentMap: rejectedMap
-      });
-      renderChips(document.getElementById("dfs-quiz-structure"), "Active DFS path", dfsQuizShown, dfsQuizShown.length - 1);
-      var status = document.getElementById("dfs-quiz-status");
-      var message = document.getElementById("dfs-quiz-message");
-      if (!dfsQuizShown.length) {
-        status.textContent = "choose an option";
-        message.textContent = "Choose one of the four proposed orders.";
-      } else if (!dfsQuizDone) {
-        status.textContent = "step " + dfsQuizShown.length + "/" + dfsQuizTarget.length;
-        message.textContent = "Continue from " + dfsQuizShown[dfsQuizShown.length - 1] + ".";
-      } else if (dfsQuizRejected) {
-        status.textContent = "not a DFS order";
-        message.textContent = "Cannot visit " + dfsQuizRejected + " next: f still has unvisited neighbors h and g.";
-      } else {
-        status.textContent = "valid DFS order";
-        message.textContent = "Valid: every next vertex can be reached by continuing the current DFS path.";
-      }
-    }
-    function finishDfsQuiz() {
-      stopDfsQuiz();
-      dfsQuizDone = true;
-      if (dfsQuizButton) dfsQuizButton.classList.add(dfsQuizRejected ? "incorrect" : "correct");
-      renderDfsQuiz();
-    }
-    function startDfsQuiz(choice) {
-      stopDfsQuiz();
-      dfsQuizChoices.forEach(function (item) {
-        var button = document.getElementById(item.id);
-        button.classList.remove("selected", "correct", "incorrect");
-        button.setAttribute("aria-pressed", "false");
-      });
-      dfsQuizButton = document.getElementById(choice.id);
-      dfsQuizButton.classList.add("selected");
-      dfsQuizButton.setAttribute("aria-pressed", "true");
-      dfsQuizTarget = [choice.sequence[0]];
-      dfsQuizRejected = null;
-      for (var i = 1; i < choice.sequence.length; i += 1) {
-        if (!dfsQuizEdgeSet.has(edgeKey(choice.sequence[i - 1], choice.sequence[i]))) {
-          dfsQuizRejected = choice.sequence[i];
-          break;
+    var quizFrames=[{stack:[],visited:[],activeEdges:[],message:"Choose a sequence, then use Play or Next to inspect each call and return.",result:null}], quizChoice=null;
+    function buildQuizFrames(sequence){
+      var frames=[],stack=[],seen=new Set(),tree=[];
+      function save(message,result){frames.push({stack:stack.slice(),visited:Array.from(seen),activeEdges:tree.slice(),current:stack[stack.length-1],message:message,result:result||null});}
+      save("Start at a. A call may return only after all its neighbours have been visited.");
+      for(var v of sequence){
+        while(stack.length&&!dfsQuizEdgeSet.has(edgeKey(stack[stack.length-1],v))){
+          var u=stack[stack.length-1];
+          var remaining=Object.keys(dfsQuizNodes).filter(function(w){return !seen.has(w)&&dfsQuizEdgeSet.has(edgeKey(u,w));});
+          if(remaining.length){save("Cannot visit "+v+" next: DFS("+u+") still has unvisited neighbours "+remaining.join(", ")+". It cannot return yet.","invalid");return frames;}
+          stack.pop();save("All neighbours of "+u+" are visited. Return from DFS("+u+").");
         }
-        dfsQuizTarget.push(choice.sequence[i]);
+        if(stack.length)tree.push(edgeKey(stack[stack.length-1],v));
+        seen.add(v);stack.push(v);save("Visit "+v+" and push DFS("+v+") onto the stack.");
       }
-      dfsQuizShown = [dfsQuizTarget[0]];
-      dfsQuizDone = false;
-      renderDfsQuiz();
-      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) {
-        dfsQuizShown = dfsQuizTarget.slice();
-        finishDfsQuiz();
-        return;
-      }
-      dfsQuizTimer = window.setInterval(function () {
-        if (dfsQuizShown.length >= dfsQuizTarget.length) {
-          finishDfsQuiz();
-          return;
-        }
-        dfsQuizShown.push(dfsQuizTarget[dfsQuizShown.length]);
-        renderDfsQuiz();
-        if (dfsQuizShown.length >= dfsQuizTarget.length) finishDfsQuiz();
-      }, 380);
+      while(stack.length){var u=stack.pop();save("All neighbours of "+u+" are visited. Return from DFS("+u+").");}
+      save("Valid DFS order: "+sequence.join(" → ")+". Every call has returned; the stack is empty.","valid");return frames;
     }
-    dfsQuizChoices.forEach(function (choice) {
-      document.getElementById(choice.id).addEventListener("click", function () { startDfsQuiz(choice); });
-    });
-    document.getElementById("dfs-quiz-reset").addEventListener("click", function () {
-      stopDfsQuiz();
-      dfsQuizShown = [];
-      dfsQuizTarget = [];
-      dfsQuizRejected = null;
-      dfsQuizDone = false;
-      dfsQuizButton = null;
-      dfsQuizChoices.forEach(function (choice) {
-        var button = document.getElementById(choice.id);
-        button.classList.remove("selected", "correct", "incorrect");
-        button.setAttribute("aria-pressed", "false");
-      });
-      renderDfsQuiz();
-    });
-    renderDfsQuiz();
-    redraws.push(renderDfsQuiz);
+    var quizPlayer=createPlayer({frames:quizFrames,play:"dfs-quiz-play",step:"dfs-quiz-step",reset:"dfs-quiz-reset",render:function(f,i,total){
+      drawGraph(dfsQuizCanvas,dfsQuizNodes,dfsQuizEdges,Object.assign({directed:false},f));
+      renderChips(document.getElementById("dfs-quiz-structure"),"Call stack · bottom → top",f.stack,f.stack.length-1);
+      document.getElementById("dfs-quiz-message").textContent=f.message;
+      document.getElementById("dfs-quiz-status").textContent=f.result?(f.result==="valid"?"Valid DFS order":"Not a DFS order"):quizChoice?"Step "+(i+1)+" / "+total:"Choose a sequence";
+      dfsQuizChoices.forEach(function(c){var button=document.getElementById(c.id);button.classList.toggle("correct",c===quizChoice&&f.result==="valid");button.classList.toggle("incorrect",c===quizChoice&&f.result==="invalid");});
+    }});
+    dfsQuizChoices.forEach(function(choice){document.getElementById(choice.id).addEventListener("click",function(){
+      quizPlayer.stop();quizChoice=choice;
+      dfsQuizChoices.forEach(function(c){var button=document.getElementById(c.id);button.classList.toggle("selected",c===choice);button.setAttribute("aria-pressed",String(c===choice));});
+      quizFrames.splice.apply(quizFrames,[0,quizFrames.length].concat(buildQuizFrames(choice.sequence)));quizPlayer.seek(0);
+    });});
 
     /* Maximum stack question: exact slide-34 graph and numbered active path */
     var stackCanvas = document.getElementById("stack-canvas");
@@ -1849,6 +1885,12 @@ g.display()</code></pre>
         document.getElementById("stack-status").textContent = "depth " + (index + 1) + "/" + total;
       }
     });
+
+    document.querySelectorAll("details").forEach(function(detail){detail.addEventListener("toggle",function(){if(detail.open)requestAnimationFrame(function(){redraws.forEach(function(draw){draw();});});});});
+    if(window.ResizeObserver){
+      var graphResize=new ResizeObserver(function(){requestAnimationFrame(function(){redraws.forEach(function(draw){draw();});});});
+      document.querySelectorAll(".lab-stage").forEach(function(stage){graphResize.observe(stage);});
+    }
 
     /* Table-of-contents tracking */
     var tocLinks = Array.from(document.querySelectorAll(".toc a"));
