@@ -771,6 +771,192 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
   .lab-eight-profit { display: block; margin: 6px 0 0; }
 }
 
+/* Lab 9: one-week shortest-path assignment. */
+.lab-nine { border-top-color: #3157a4; }
+.lab-nine .chapter-num { color: #3157a4; }
+.lab-nine-assignment { padding-top: 24px; }
+.lab-nine-choice {
+  margin-bottom: 20px; padding: 22px 24px;
+  border: 1px solid #c2cde4; border-radius: 12px;
+  background: linear-gradient(135deg,#f4f7fd 0%,#ffffff 76%);
+}
+.lab-nine-choice-label {
+  display: block; margin-bottom: 5px; color: #3157a4;
+  font: 700 11px var(--font-mono); letter-spacing: .09em; text-transform: uppercase;
+}
+.lab-nine-choice h4 {
+  margin: 0 0 7px; color: var(--ink);
+  font: 700 1.3rem/1.3 var(--font-display);
+}
+.lab-nine-choice > p { margin: 0 0 16px; color: var(--ink-soft); }
+.lab-nine-choice-grid {
+  display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+  align-items: stretch; gap: 12px;
+}
+.lab-nine-choice-card {
+  padding: 15px 16px; border: 1px solid #b8c7e8; border-radius: 10px;
+  background: #fff; color: var(--ink-soft);
+}
+.lab-nine-choice-card strong {
+  display: block; margin-bottom: 5px; color: var(--ink);
+  font: 700 15px var(--font-display);
+}
+.lab-nine-choice-card span {
+  display: block; margin-bottom: 5px; color: #3157a4;
+  font: 700 10.5px var(--font-mono); letter-spacing: .07em; text-transform: uppercase;
+}
+.lab-nine-choice-card p { margin: 0; font-size: 14px; }
+.lab-nine-choice-card.class-option { border-color: #9bcfc3; background: #f2faf7; }
+.lab-nine-choice-card.class-option span { color: #176451; }
+.lab-nine-choice-or {
+  align-self: center; width: 38px; height: 38px; display: grid; place-items: center;
+  border: 1px solid #c2cde4; border-radius: 50%; background: var(--ink); color: #fff;
+  font: 700 10px var(--font-mono);
+}
+.lab-nine-class-option {
+  margin-bottom: 20px; padding: 21px 22px;
+  border: 1px solid #9bcfc3; border-left: 5px solid #176451;
+  border-radius: 12px; background: linear-gradient(135deg,#ecf8f4,#ffffff 76%);
+}
+.lab-nine-class-option h4 {
+  margin: 0 0 5px; color: var(--ink);
+  font: 700 1.2rem/1.35 var(--font-display);
+}
+.lab-nine-class-option > p { margin: 0 0 14px; color: var(--ink-soft); }
+.lab-nine-class-list {
+  display: grid; gap: 9px; margin: 0; padding: 0;
+  list-style: none; counter-reset: lab-nine-class-question;
+}
+.lab-nine-class-list li {
+  counter-increment: lab-nine-class-question;
+  display: grid; grid-template-columns: 34px minmax(0,1fr);
+  align-items: center; gap: 11px; padding: 12px 14px;
+  border: 1px solid #b8ddd4; border-radius: 9px;
+  background: #fff; color: var(--ink);
+}
+.lab-nine-class-list li::before {
+  content: counter(lab-nine-class-question); width: 30px; height: 30px;
+  display: grid; place-items: center; border-radius: 8px;
+  background: #d8efe9; color: #176451; font: 700 12px var(--font-mono);
+}
+.lab-nine-class-option .lab-nine-pending { margin-top: 14px; }
+.lab-nine-intro {
+  margin-bottom: 24px; padding: 22px 24px;
+  border: 1px solid #b8c7e8; border-radius: 12px;
+  background: linear-gradient(135deg,#edf2ff 0%,#ffffff 75%);
+}
+.lab-nine-kicker {
+  display: inline-block; margin-bottom: 8px; padding: 4px 9px;
+  border-radius: 999px; background: #dfe7fb; color: #3157a4;
+  font: 700 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+}
+.lab-nine-intro h4 {
+  margin: 0 0 10px; color: var(--ink);
+  font: 700 clamp(1.25rem,2.6vw,1.7rem)/1.3 var(--font-display);
+}
+.lab-nine-intro p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+.lab-nine-section {
+  margin-top: 18px; padding: 21px 22px;
+  border: 1px solid var(--line); border-radius: 12px; background: #fbfcfe;
+}
+.lab-nine-section h4 {
+  margin: 0 0 11px; color: var(--ink);
+  font: 700 1.13rem/1.35 var(--font-display);
+}
+.lab-nine-section h5 {
+  margin: 18px 0 8px; color: var(--ink);
+  font: 600 1rem/1.35 var(--font-display);
+}
+.lab-nine-section p { margin: 0 0 11px; color: var(--ink-soft); font-size: 15px; }
+.lab-nine-section p:last-child { margin-bottom: 0; }
+.lab-nine-section ul,
+.lab-nine-section ol { margin: 8px 0 12px 22px; color: var(--ink-soft); }
+.lab-nine-section li { margin: 6px 0; padding-left: 3px; }
+.lab-nine-formula {
+  width: fit-content; max-width: 100%; margin: 13px auto; padding: 10px 16px;
+  overflow-x: auto; border: 1px solid #bdcce9; border-radius: 9px;
+  background: #edf2ff; color: #253f7a;
+  font: 600 15px/1.5 var(--font-mono); text-align: center; white-space: nowrap;
+}
+.lab-nine-output-list { columns: 2; column-gap: 34px; }
+.lab-nine-table-wrap { overflow-x: auto; }
+.lab-nine table.tbl { min-width: 760px; margin-bottom: 8px; }
+.lab-nine table.tbl th { background: #3157a4; }
+.lab-nine table.tbl td:nth-child(n+3),
+.lab-nine table.tbl th:nth-child(n+3) { text-align: right; }
+.lab-nine-analysis {
+  margin: 0; padding: 0; list-style: none; counter-reset: lab-nine-question;
+}
+.lab-nine-analysis li {
+  counter-increment: lab-nine-question; position: relative;
+  margin: 0; padding: 13px 14px 13px 52px;
+  border-bottom: 1px solid var(--line); color: var(--ink-soft);
+}
+.lab-nine-analysis li:last-child { border-bottom: 0; }
+.lab-nine-analysis li::before {
+  content: "Q" counter(lab-nine-question); position: absolute; top: 12px; left: 8px;
+  width: 34px; height: 28px; display: grid; place-items: center;
+  border-radius: 7px; background: #dfe7fb; color: #3157a4;
+  font: 700 11px var(--font-mono);
+}
+.lab-nine-bonus { border-color: #e4cf99; background: #fffaf0; }
+.lab-nine-bonus h4 { color: #815b08; }
+.lab-nine-submission {
+  margin-top: 20px; padding: 20px 22px;
+  border: 1px solid #b7d8cf; border-radius: 12px; background: #f1faf7;
+}
+.lab-nine-submission h4 { margin-bottom: 9px; font: 700 1.13rem var(--font-display); }
+.lab-nine-submission ol { margin: 0 0 16px 22px; color: var(--ink-soft); }
+.lab-nine-submission li { margin: 5px 0; }
+.lab-nine-pending {
+  padding: 11px 14px; border: 1px dashed #8bbcaf; border-radius: 9px;
+  background: #fff; color: #176451; font: 700 13px var(--font-mono);
+}
+.lab-nine-deadline {
+  margin: 2px 0 13px; overflow: hidden;
+  border: 2px solid #e8bd58; border-radius: 10px;
+  background: linear-gradient(90deg,#6f1733,#922747,#6f1733);
+  color: #fff8df; box-shadow: 0 8px 20px rgba(111,23,51,.2);
+}
+.lab-nine-deadline-track {
+  width: max-content; min-width: max-content; padding: 10px 0 10px 100%;
+  display: flex; align-items: center; gap: 10px; white-space: nowrap;
+  font: 700 14px var(--font-mono); letter-spacing: .035em;
+  animation: lab-nine-deadline-scroll 11s linear infinite;
+}
+.lab-nine-deadline-track::before {
+  content: "◆"; color: #ffd66b; font-size: 11px;
+}
+.lab-nine-deadline:hover .lab-nine-deadline-track { animation-play-state: paused; }
+@keyframes lab-nine-deadline-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+.lab-nine-important {
+  margin-top: 18px; padding: 18px 20px;
+  border: 1px solid #e4c68a; border-left: 5px solid #9a670e;
+  border-radius: 11px; background: #fff8e8; color: var(--ink-soft);
+}
+.lab-nine-important > strong {
+  display: block; margin-bottom: 6px; color: #80550c;
+  font: 700 1rem var(--font-display);
+}
+.lab-nine-important p { margin: 0; font-size: 15px; }
+@media (max-width: 720px) {
+  .lab-nine .lab-sheet-content { padding-right: 14px; padding-left: 14px; }
+  .lab-nine-choice, .lab-nine-class-option, .lab-nine-intro, .lab-nine-section, .lab-nine-submission { padding: 17px 16px; }
+  .lab-nine-choice-grid { grid-template-columns: 1fr; }
+  .lab-nine-choice-or { justify-self: center; }
+  .lab-nine-output-list { columns: 1; }
+  .lab-nine-formula { width: 100%; font-size: 12.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-nine-deadline-track {
+    width: 100%; min-width: 100%; padding-left: 0;
+    justify-content: center; transform: none;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1676,7 +1862,7 @@ k = 2</pre>
       </div>
     </details>
 
-    <details class="chapter-card lab-sheet-card collapsible-lab lab-eight" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab lab-eight">
       <summary class="lab-sheet-summary" aria-labelledby="lab-08-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 08</span>
@@ -1736,6 +1922,206 @@ k = 2</pre>
             <p class="lab-question-text">Write a program to detect whether a given directed graph contains a cycle using Depth First Search (DFS).</p>
           </li>
         </ol>
+      </div>
+    </details>
+
+    <details class="chapter-card lab-sheet-card collapsible-lab lab-nine" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-09-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 09</span>
+          <h3 id="lab-09-title">Shortest-Path and Minimum Spanning Tree Algorithms</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="lab-sheet-content">
+        <article class="lab-nine-assignment">
+          <section class="lab-nine-choice" aria-labelledby="lab09-choice-title">
+            <span class="lab-nine-choice-label">Lab 09 participation</span>
+            <h4 id="lab09-choice-title">Choose one pathway</h4>
+            <p>Each student must complete <strong>either</strong> the one-week practical assignment <strong>or</strong> attend <strong>both Lab Class 09 and Lab Class 10</strong>. Students choosing the laboratory-class pathway must attend both classes.</p>
+            <div class="lab-nine-choice-grid">
+              <div class="lab-nine-choice-card">
+                <span>Option A</span>
+                <strong>One-Week Practical Assignment</strong>
+                <p>Complete the large-scale IoV/UAV shortest-path assignment and submit it by the stated deadline.</p>
+              </div>
+              <span class="lab-nine-choice-or" aria-hidden="true">OR</span>
+              <div class="lab-nine-choice-card class-option">
+                <span>Option B</span>
+                <strong>Attend Lab Classes 09 and 10</strong>
+                <p>Attend both laboratory classes. Complete the three Lab 09 questions below; the Lab 10 questions will be announced later.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="lab-nine-class-option" id="lab09-class-option" aria-labelledby="lab09-class-title">
+            <span class="lab-nine-choice-label">Option B · Attend Lab Classes 09 and 10</span>
+            <h4 id="lab09-class-title">Lab Class 09: In-Class Programming Questions</h4>
+            <p>Students choosing the lab-class pathway must attend both Lab Class 09 and Lab Class 10. Implement all three programs below during Lab Class 09.</p>
+            <ol class="lab-nine-class-list">
+              <li>Implement Dijkstra’s Algorithm.</li>
+              <li>Implement Prim’s Algorithm for finding the Minimum Spanning Tree (MST) using a min-heap.</li>
+              <li>Implement Prim’s Algorithm for finding the MST using an array.</li>
+            </ol>
+            <div class="lab-nine-pending" role="note">Lab Class 10 questions will be announced later.</div>
+          </section>
+
+          <header class="lab-nine-intro" id="lab09-assignment-option">
+            <span class="lab-nine-kicker">Option A · One-Week Practical Assignment</span>
+            <h4>Shortest-Path Planning in a Large-Scale IoV/UAV Mobility Network</h4>
+            <p><strong>Objective:</strong> Study the practical performance of shortest-path algorithms on a realistic large-scale mobility network. Identify a suitable publicly available dataset related to Internet of Vehicles (IoV), vehicular mobility, UAV mobility, road networks, or a similar moving-network scenario; model it as a weighted graph; and analyze shortest-path performance on graphs of different sizes.</p>
+          </header>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-problem">
+            <h4 id="lab09-problem">Problem Statement</h4>
+            <p>Consider a mobility network represented as a weighted graph:</p>
+            <div class="lab-nine-formula" aria-label="G equals V E">G = (V, E)</div>
+            <ul>
+              <li><strong>V</strong> represents locations, intersections, waypoints, or mobility nodes.</li>
+              <li><strong>E</strong> represents feasible movements between locations.</li>
+              <li>Each edge <strong>(u, v)</strong> has a positive weight <strong>w(u, v)</strong>, representing distance, travel time, or another meaningful movement cost.</li>
+            </ul>
+            <p>Your task is to determine the shortest path between a given source location <strong>S</strong> and destination location <strong>D</strong>.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-a">
+            <h4 id="lab09-part-a">Part A: Dataset Selection</h4>
+            <p>Identify a suitable <strong>publicly available real-world or realistic dataset</strong> that can be used to formulate the shortest-path problem. It may relate to vehicular mobility/IoV, urban road networks, UAV mobility or waypoints, traffic networks, transportation networks, or another suitable mobility scenario.</p>
+            <p>The dataset must be sufficiently large to permit meaningful algorithmic performance analysis. Clearly report:</p>
+            <ol>
+              <li>dataset name;</li>
+              <li>source or URL;</li>
+              <li>brief description of the dataset;</li>
+              <li>number of records, nodes, and edges used;</li>
+              <li>how the dataset is converted into a graph;</li>
+              <li>what each vertex represents;</li>
+              <li>what each edge represents;</li>
+              <li>what edge weight is used;</li>
+              <li>why the selected dataset is suitable for this problem.</li>
+            </ol>
+            <p><strong>Choosing and justifying an appropriate dataset is part of the assignment.</strong> Do not use a small manually created graph as the primary dataset.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-b">
+            <h4 id="lab09-part-b">Part B: Graph Construction</h4>
+            <p>Preprocess the selected dataset and construct the corresponding weighted graph using an <strong>adjacency-list representation</strong>.</p>
+            <p>After constructing the graph, report:</p>
+            <ul class="lab-nine-output-list">
+              <li>number of vertices;</li>
+              <li>number of edges;</li>
+              <li>average degree;</li>
+              <li>maximum degree.</li>
+            </ul>
+            <p>If the original dataset contains additional information that is not required for shortest-path computation, extract only the relevant information needed to construct the graph.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-c">
+            <h4 id="lab09-part-c">Part C: Dijkstra's Algorithm</h4>
+            <p>Implement <strong>Dijkstra's shortest-path algorithm</strong> using a min-priority queue. For a given source <strong>S</strong> and destination <strong>D</strong>, report:</p>
+            <ol>
+              <li>shortest-path cost;</li>
+              <li>complete sequence of vertices in the shortest path;</li>
+              <li>number of vertices explored;</li>
+              <li>number of edges examined;</li>
+              <li>execution time.</li>
+            </ol>
+            <p>Built-in shortest-path implementations from graph-processing libraries are not permitted. Also state and explain the theoretical time complexity of your implementation.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-d">
+            <h4 id="lab09-part-d">Part D: A* Algorithm</h4>
+            <p>Implement the <strong>A*</strong> shortest-path algorithm for the same graph. For a vertex <em>v</em>, evaluate:</p>
+            <div class="lab-nine-formula">f(v) = g(v) + h(v)</div>
+            <p>Here, <strong>g(v)</strong> is the cost from the source to <em>v</em>, and <strong>h(v)</strong> is a heuristic estimate of the cost from <em>v</em> to the destination.</p>
+            <p>If positional coordinates are available, an appropriate distance-based heuristic may be used. Justify the selected heuristic and discuss whether it is admissible. Report the same performance metrics as for Dijkstra's algorithm.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-e">
+            <h4 id="lab09-part-e">Part E: Experimental Evaluation</h4>
+            <p>Perform experiments using multiple graph sizes obtained from the selected dataset. Suggested graph sizes are approximately:</p>
+            <div class="lab-nine-formula">1,000 · 5,000 · 10,000 · 25,000 · and, if feasible, 50,000+ vertices</div>
+            <p>For each graph size, use multiple source-destination pairs. Record results in a table similar to the following:</p>
+            <div class="lab-nine-table-wrap">
+              <table class="tbl" aria-label="Dijkstra and A star experimental comparison">
+                <thead>
+                  <tr><th scope="col">Graph Size</th><th scope="col">Algorithm</th><th scope="col">Shortest-Path Cost</th><th scope="col">Vertices Explored</th><th scope="col">Edges Examined</th><th scope="col">Execution Time</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>—</td><td>Dijkstra</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td>—</td><td>A*</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p>Use at least <strong>five different source-destination pairs</strong> for each selected graph size and report average performance over the selected queries.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-part-f">
+            <h4 id="lab09-part-f">Part F: Analysis</h4>
+            <ol class="lab-nine-analysis">
+              <li>Why is the dataset you selected suitable for shortest-path analysis?</li>
+              <li>How did you transform the raw dataset into a weighted graph?</li>
+              <li>Do Dijkstra's algorithm and A* produce the same optimal path cost in your experiments? Explain.</li>
+              <li>Which algorithm explores fewer vertices, and why?</li>
+              <li>How does execution time vary as the graph size increases?</li>
+              <li>Explain the effect of the graph's density on shortest-path computation.</li>
+              <li>What is the theoretical time complexity of your Dijkstra implementation?</li>
+              <li>What heuristic did you use for A*? Is it admissible and/or consistent? Justify your answer.</li>
+              <li>What difficulties did you face while converting the real-world dataset into a graph?</li>
+              <li>Based on your observations, which algorithm would you recommend for large-scale IoV/UAV route planning? Justify your answer.</li>
+            </ol>
+          </section>
+
+          <section class="lab-nine-section lab-nine-bonus" aria-labelledby="lab09-bonus">
+            <h4 id="lab09-bonus">Bonus Task: Dynamic Edge Costs</h4>
+            <p>Real mobility networks are dynamic. Travel cost may change due to congestion, link quality, weather, or other factors. Define an edge cost such as:</p>
+            <div class="lab-nine-formula">w(u, v) = αd(u, v) + βc(u, v)</div>
+            <ul>
+              <li><strong>d(u, v)</strong> represents distance;</li>
+              <li><strong>c(u, v)</strong> represents another dynamic cost such as congestion or delay;</li>
+              <li><strong>α</strong> and <strong>β</strong> are weighting parameters.</li>
+            </ul>
+            <p>Modify selected edge weights and recompute the shortest path. Compare the new route with the original route and discuss the effect of changing network conditions.</p>
+          </section>
+
+          <section class="lab-nine-section" aria-labelledby="lab09-requirements">
+            <h4 id="lab09-requirements">Implementation Requirements</h4>
+            <ol>
+              <li>Students must independently identify a suitable dataset.</li>
+              <li>The selected dataset must be publicly available and properly cited.</li>
+              <li>The graph must be represented using an adjacency list.</li>
+              <li>Dijkstra's algorithm must use a min-priority queue.</li>
+              <li>A* must be implemented independently.</li>
+              <li>Built-in shortest-path implementations are not permitted.</li>
+              <li>Path reconstruction must be implemented explicitly.</li>
+              <li>The implementation must handle disconnected source-destination pairs appropriately.</li>
+              <li>Dataset preprocessing steps must be clearly documented.</li>
+              <li>All experiments must be reproducible.</li>
+            </ol>
+          </section>
+
+          <section class="lab-nine-submission" aria-labelledby="lab09-submission">
+            <h4 id="lab09-submission">Submission</h4>
+            <p>Submit the following:</p>
+            <ol>
+              <li>source code;</li>
+              <li>dataset source/reference;</li>
+              <li>preprocessing details;</li>
+              <li>README with execution instructions;</li>
+              <li>experimental results;</li>
+              <li>plots comparing the algorithms;</li>
+              <li>a short report containing observations and answers to Part F.</li>
+            </ol>
+            <div class="lab-nine-deadline" role="note" aria-label="Submission deadline: 15 October 2026">
+              <span class="lab-nine-deadline-track">Submission deadline: 15 October 2026</span>
+            </div>
+            <div class="lab-nine-pending" role="note">Submission link will be provided soon.</div>
+          </section>
+
+          <aside class="lab-nine-important" role="note" aria-labelledby="lab09-important-title">
+            <strong id="lab09-important-title">Important Note</strong>
+            <p>The objective of this assignment is not merely to execute a shortest-path algorithm. You are expected to make appropriate decisions regarding <strong>dataset selection, graph modelling, algorithm implementation, and performance evaluation</strong>. The quality of these decisions will be considered during evaluation.</p>
+          </aside>
+        </article>
       </div>
     </details>
 
