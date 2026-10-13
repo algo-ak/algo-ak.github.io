@@ -1937,6 +1937,7 @@ k = 2</pre>
         <article class="lab-nine-assignment">
           <section class="lab-nine-choice" aria-labelledby="lab09-choice-title">
             <span class="lab-nine-choice-label">Lab 09 participation</span>
+            <h4 id="lab09-choice-title">Choose one pathway</h4>
             <p>Each student must complete <strong>either</strong> the one-week practical assignment <strong>or</strong> attend <strong>both Lab Class 09 and Lab Class 10</strong>. Students choosing the laboratory-class pathway must attend both classes.</p>
             <div class="lab-nine-choice-grid">
               <div class="lab-nine-choice-card">
@@ -1948,7 +1949,7 @@ k = 2</pre>
               <div class="lab-nine-choice-card class-option">
                 <span>Option B</span>
                 <strong>Attend Lab Classes 09 and 10</strong>
-                <p>Attend both laboratory classes. Complete the three Lab 09 questions below; the Lab 10 questions will be announced later.</p>
+                <p>Attend both laboratory classes. Complete the three Lab 09 questions below and the <a href="#lab-10">seven Lab 10 questions</a>.</p>
               </div>
             </div>
           </section>
@@ -1962,7 +1963,7 @@ k = 2</pre>
               <li>Implement Prim’s Algorithm for finding the Minimum Spanning Tree (MST) using a min-heap.</li>
               <li>Implement Prim’s Algorithm for finding the MST using an array.</li>
             </ol>
-            <div class="lab-nine-pending" role="note">Lab Class 10 questions will be announced later.</div>
+            <div class="lab-nine-pending" role="note">Lab Class 10 questions are available in the <a href="#lab-10">Lab 10 section below</a>.</div>
           </section>
 
           <header class="lab-nine-intro" id="lab09-assignment-option">
@@ -2121,6 +2122,54 @@ k = 2</pre>
             <p>The objective of this assignment is not merely to execute a shortest-path algorithm. You are expected to make appropriate decisions regarding <strong>dataset selection, graph modelling, algorithm implementation, and performance evaluation</strong>. The quality of these decisions will be considered during evaluation.</p>
           </aside>
         </article>
+      </div>
+    </details>
+
+    <details class="chapter-card lab-sheet-card collapsible-lab" id="lab-10" open>
+      <summary class="lab-sheet-summary" aria-labelledby="lab-10-title">
+        <span class="lab-sheet-heading">
+          <span class="chapter-num">Lab 10</span>
+          <h3 id="lab-10-title">Graph Algorithms and Dynamic Connectivity</h3>
+        </span>
+        <span class="lab-toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="lab-sheet-content">
+        <ol class="detailed-program-list">
+          <li>
+            <h4 class="lab-question-title">Cycle Detection</h4>
+            <p class="lab-question-text">Implement cycle detection in directed and undirected graphs using DFS. Additionally, implement cycle detection in undirected graphs using Disjoint Set Union (DSU). Compare their time complexities.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Connected Components and SCCs</h4>
+            <p class="lab-question-text">Implement an algorithm to find connected components in an undirected graph and strongly connected components (SCCs) in a directed graph using Kosaraju&#x27;s algorithm. Construct the condensation graph.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Bellman–Ford Algorithm</h4>
+            <p class="lab-question-text">Implement Bellman–Ford to find single-source shortest paths in a weighted directed graph. Detect negative-weight cycles reachable from the source and identify affected vertices.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Minimum Spanning Tree</h4>
+            <p class="lab-question-text">Implement Prim&#x27;s and Kruskal&#x27;s algorithms to find an MST. Display the selected edges and total weight. Determine whether the MST is unique.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Topological Sorting</h4>
+            <p class="lab-question-text">Implement topological sorting using DFS and Kahn&#x27;s algorithm. Detect cycles, find the lexicographically smallest valid ordering, and determine whether the ordering is unique.</p>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Dynamic Graph Connectivity</h4>
+            <p class="lab-question-text">Implement DSU with path compression and union by rank/size to support the following operations:</p>
+            <ul>
+              <li><code>ADD u v</code>: Add an edge.</li>
+              <li><code>CONNECTED u v</code>: Check connectivity.</li>
+              <li><code>COUNT</code>: Count connected components.</li>
+              <li><code>SIZE u</code>: Find the size of a component.</li>
+            </ul>
+          </li>
+          <li>
+            <h4 class="lab-question-title">Second-Best MST</h4>
+            <p class="lab-question-text">Given a connected, undirected, weighted graph, find (i) the MST weight, (ii) the minimum weight of a spanning tree different from the selected MST, and (iii) the minimum spanning-tree weight strictly greater than the MST weight.</p>
+          </li>
+        </ol>
       </div>
     </details>
 
