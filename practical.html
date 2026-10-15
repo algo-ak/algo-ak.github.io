@@ -927,7 +927,11 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 .lab-nine-deadline-track::before {
   content: "◆"; color: #ffd66b; font-size: 11px;
 }
-.lab-nine-deadline:hover .lab-nine-deadline-track { animation-play-state: paused; }
+.lab-nine-deadline:hover .lab-nine-deadline-track,
+.lab-nine-deadline:focus-within .lab-nine-deadline-track { animation-play-state: paused; }
+.lab-nine-deadline-track a { color: inherit; text-decoration: underline; }
+.lab-nine-submission-link { display: inline-block; margin: 0 0 10px; font-weight: 700; text-decoration: underline; }
+.lab-nine-submission-instructions { margin-bottom: 12px; color: var(--ink-soft); }
 @keyframes lab-nine-deadline-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }
@@ -952,8 +956,9 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lab-nine-deadline-track {
-    width: 100%; min-width: 100%; padding-left: 0;
-    justify-content: center; transform: none;
+    width: 100%; min-width: 0; padding: 10px 14px;
+    justify-content: center; transform: none; animation: none;
+    white-space: normal; flex-wrap: wrap; text-align: center;
   }
 }
 
@@ -2111,10 +2116,11 @@ k = 2</pre>
               <li>plots comparing the algorithms;</li>
               <li>a short report containing observations and answers to Part F.</li>
             </ol>
-            <div class="lab-nine-deadline" role="note" aria-label="Submission deadline: 15 October 2026">
-              <span class="lab-nine-deadline-track">Submission deadline: 15 October 2026</span>
+            <div class="lab-nine-deadline" role="note" aria-label="Practical assignment submission link and deadline">
+              <span class="lab-nine-deadline-track"><a href="https://forms.gle/hHDmbwvy4bGvHDx3A" target="_blank" rel="noopener noreferrer">Practical Assignment Submission Link</a> · Submit by <time datetime="2026-10-16T23:59:00+05:30">16 October 2026, 11:59 PM IST (GMT+5:30)</time></span>
             </div>
-            <div class="lab-nine-pending" role="note">Submission link will be provided soon.</div>
+            <a class="lab-nine-submission-link" href="https://forms.gle/hHDmbwvy4bGvHDx3A" target="_blank" rel="noopener noreferrer">Practical Assignment Submission Link ↗</a>
+            <p class="lab-nine-submission-instructions">Place all files in a single folder and compress it into a <code>.zip</code> or <code>.rar</code> archive. Name the compressed file <code>admission_number.zip</code> or <code>admission_number.rar</code>, replacing <code>admission_number</code> with your admission number.</p>
           </section>
 
           <aside class="lab-nine-important" role="note" aria-labelledby="lab09-important-title">
