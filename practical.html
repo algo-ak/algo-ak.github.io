@@ -551,6 +551,55 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 6px;
 }
 
+/* ---------- Lab final exam announcement ---------- */
+.exam-announcement {
+  margin-bottom: 26px; overflow: hidden;
+  border: 1px solid #e7c389; border-radius: var(--radius);
+  background: #fffbf3; box-shadow: 0 8px 24px rgba(133,74,8,.08);
+}
+.exam-announcement-header {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 17px 20px;
+}
+.exam-announcement-date {
+  padding: 7px 12px; border: 1px solid #e7c389; border-radius: 8px;
+  background: #fff1d8; color: #854a08;
+  font: 600 13px var(--font-mono);
+}
+.exam-announcement h2 { font-size: 1.3rem; }
+.exam-ticker-toggle {
+  margin-left: auto; padding: 7px 11px; border: 1px solid #d9bb8c;
+  border-radius: 7px; background: #fff; color: #75420c; cursor: pointer;
+  font: 600 12px var(--font-body);
+}
+.exam-ticker-toggle:hover { background: #fff1d8; }
+.exam-ticker-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.exam-ticker { overflow: hidden; background: var(--ink); color: #fff2d7; }
+.exam-ticker-track {
+  display: flex; width: max-content; white-space: nowrap;
+  font: 600 15px/1.6 var(--font-body);
+  animation: exam-ticker-scroll 36s linear infinite;
+}
+.exam-ticker-group { display: flex; flex-shrink: 0; align-items: center; gap: 48px; padding: 12px 24px; }
+.exam-ticker-group > span::before { content: "◆"; margin-right: 14px; color: #ffd075; }
+.exam-ticker:hover .exam-ticker-track,
+.exam-announcement[data-paused="true"] .exam-ticker-track { animation-play-state: paused; }
+@keyframes exam-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 600px) {
+  .exam-announcement-header { padding: 15px; gap: 10px; }
+  .exam-announcement h2 { font-size: 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .exam-ticker-track { width: auto; white-space: normal; animation: none; }
+  .exam-ticker-group { display: block; padding: 12px 18px; }
+  .exam-ticker-group[aria-hidden="true"],
+  .exam-ticker-group > span[aria-hidden="true"],
+  .exam-ticker-toggle { display: none; }
+}
+
 /* ---------- Practical rules ---------- */
 .rules-card {
   max-width: 900px;
@@ -992,6 +1041,28 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
 </section>
 
 <main class="page">
+  <section class="exam-announcement" id="lab-final-exam" aria-labelledby="lab-final-exam-title">
+    <div class="exam-announcement-header">
+      <time class="exam-announcement-date" datetime="2026-11-12">12 November</time>
+      <h2 id="lab-final-exam-title">Lab Final Exam</h2>
+      <button class="exam-ticker-toggle" type="button" aria-pressed="false" aria-controls="exam-ticker-text">Pause text</button>
+    </div>
+    <div class="exam-ticker">
+      <p class="exam-ticker-track" id="exam-ticker-text">
+        <span class="exam-ticker-group">
+          <span>The lab final exam is scheduled for 12 November 2026.</span>
+          <span aria-hidden="true">The lab final exam is scheduled for 12 November 2026.</span>
+          <span aria-hidden="true">The lab final exam is scheduled for 12 November 2026.</span>
+        </span>
+        <span class="exam-ticker-group" aria-hidden="true">
+          <span>The lab final exam is scheduled for 12 November 2026.</span>
+          <span>The lab final exam is scheduled for 12 November 2026.</span>
+          <span>The lab final exam is scheduled for 12 November 2026.</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
   <div class="def-box" style="max-width: 760px;">
     <span class="def-label">Lab assessment structure</span>
     <ul style="margin: 8px 0 0 20px;">
@@ -2247,5 +2318,17 @@ k = 2</pre>
   </div>
 </footer>
 
+<script>
+  (function () {
+    var announcement = document.getElementById("lab-final-exam");
+    var toggle = announcement.querySelector(".exam-ticker-toggle");
+    toggle.addEventListener("click", function () {
+      var paused = toggle.getAttribute("aria-pressed") !== "true";
+      announcement.dataset.paused = String(paused);
+      toggle.setAttribute("aria-pressed", String(paused));
+      toggle.textContent = paused ? "Resume text" : "Pause text";
+    });
+  })();
+</script>
 </body>
 </html>
