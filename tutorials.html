@@ -125,6 +125,100 @@
     .toc a.toc-objective { padding-left: 24px; font-size: 13px; }
 
     .content { min-width: 0; }
+    .project-calendar {
+      margin-bottom: 28px; overflow: hidden;
+      border: 1px solid #cbd9e4; border-radius: 18px;
+      background: var(--card); box-shadow: 0 14px 36px rgba(16,28,51,.08);
+      scroll-margin-top: 102px;
+    }
+    .calendar-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 27px 28px; color: #fff;
+      background: linear-gradient(115deg,#101c33,#164654);
+    }
+    .calendar-eyebrow {
+      display: block; margin-bottom: 7px; color: #a9dce3;
+      font: 600 11px var(--font-mono); letter-spacing: .13em; text-transform: uppercase;
+    }
+    .calendar-header h2 { font: 700 clamp(1.6rem,3vw,2rem)/1.2 var(--font-display); }
+    .calendar-header p { margin-top: 7px; color: #d6e7ed; font-size: 14px; }
+    .calendar-month-badge {
+      flex-shrink: 0; padding: 12px 15px; text-align: center;
+      border: 1px solid #688792; border-radius: 12px; background: rgba(255,255,255,.07);
+      font: 600 23px/1.15 var(--font-display);
+    }
+    .calendar-month-badge span {
+      display: block; margin-top: 5px; color: #c7e2e8;
+      font: 500 10px var(--font-mono); letter-spacing: .14em;
+    }
+    .calendar-body { padding: 22px; }
+    .calendar-legend {
+      display: flex; flex-wrap: wrap; gap: 9px 20px; margin-bottom: 18px;
+      color: var(--ink-soft); font-size: 12px; font-weight: 600;
+    }
+    .calendar-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .calendar-dot { width: 8px; height: 8px; border-radius: 50%; background: #0b7285; }
+    .calendar-dot-final { background: #7a1f3d; }
+    .calendar-dot-exam { background: #a15c0b; }
+    .calendar-grid { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 4px; }
+    .calendar-grid caption {
+      position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden;
+      clip-path: inset(50%); white-space: nowrap;
+    }
+    .calendar-grid th {
+      padding: 3px 0 10px; color: var(--ink-soft);
+      font: 500 11px var(--font-mono); text-align: center;
+    }
+    .calendar-grid abbr { text-decoration: none; }
+    .calendar-grid td {
+      height: 72px; padding: 0; border: 1px solid #e9eef4; border-radius: 9px;
+      background: #f8fafc; text-align: center; vertical-align: middle;
+      font: 500 16px var(--font-display);
+    }
+    .calendar-grid td:first-child,
+    .calendar-grid td:last-child { background: #f1f5f8; color: #64748b; }
+    .calendar-grid td.calendar-empty { border-color: transparent; background: transparent; }
+    .calendar-grid td.calendar-feedback { border-color: #a5d1da; background: #e0f1f4; color: #085a68; }
+    .calendar-grid td.calendar-final { border-color: #d9aebe; background: #fae9ef; color: #7a1f3d; }
+    .calendar-grid td.calendar-exam { border-color: #e7c389; background: #fff1d8; color: #854a08; }
+    .calendar-day-link {
+      display: flex; min-height: 70px; height: 100%; padding: 9px 2px;
+      flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      border-radius: 8px; color: inherit; font-weight: 700;
+      transition: box-shadow .18s ease, background .18s ease;
+    }
+    .calendar-day-link:hover { color: inherit; background: rgba(255,255,255,.4); box-shadow: inset 0 0 0 2px currentColor; }
+    .calendar-day-note { font: 600 10px/1.3 var(--font-body); }
+    .calendar-milestones {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px;
+      margin-top: 20px; list-style: none;
+    }
+    .calendar-milestone {
+      padding: 17px 18px; border: 1px solid #bbdce3; border-top: 3px solid #0b7285;
+      border-radius: 10px; background: #f3fafb; scroll-margin-top: 145px;
+    }
+    .calendar-milestone-final { border-color: #e4c2ce; border-top-color: #7a1f3d; background: #fff8fa; }
+    .calendar-milestone-exam { border-color: #e7c389; border-top-color: #a15c0b; background: #fffbf3; }
+    .calendar-milestone-date {
+      display: block; margin-bottom: 8px; color: #085a68;
+      font: 600 12px var(--font-mono);
+    }
+    .calendar-milestone-final .calendar-milestone-date { color: #7a1f3d; }
+    .calendar-milestone-exam .calendar-milestone-date { color: #854a08; }
+    .calendar-milestone h3 { margin-bottom: 5px; font: 700 16px/1.35 var(--font-display); }
+    .calendar-milestone p { color: var(--ink-soft); font-size: 13.5px; line-height: 1.6; }
+    @media (max-width: 560px) {
+      .project-calendar { scroll-margin-top: 140px; }
+      .calendar-header { padding: 22px 18px; gap: 12px; }
+      .calendar-month-badge { padding: 10px; font-size: 20px; }
+      .calendar-body { padding: 16px 10px; }
+      .calendar-grid { border-spacing: 3px; }
+      .calendar-grid td { height: 52px; font-size: 15px; }
+      .calendar-day-link { min-height: 50px; padding: 6px 1px; }
+      .calendar-day-note { display: none; }
+      .calendar-milestones { grid-template-columns: 1fr; margin: 16px 4px 0; }
+      .calendar-legend { margin-left: 4px; gap: 8px 14px; }
+    }
     .marks-notice {
       margin-bottom: 22px; padding: 20px 21px;
       display: grid; grid-template-columns: auto minmax(0,1fr) minmax(300px,.8fr);
@@ -532,7 +626,8 @@
     <aside class="toc" aria-label="Tutorial contents">
       <h2>Tutorial Topics</h2>
       <ol>
-        <li><a class="toc-topic current" href="#mid-evaluation-marks">Mid-Evaluation Marks</a></li>
+        <li><a class="toc-topic current" href="#project-evaluation-calendar">Project Evaluation Calendar</a></li>
+        <li><a class="toc-topic" href="#mid-evaluation-marks">Mid-Evaluation Marks</a></li>
         <li><a class="toc-topic" href="https://algo-ak.github.io/tutorials.html#mid-evaluation">Mid-Project Evaluation</a></li>
         <li><a class="toc-topic" href="https://algo-ak.github.io/tutorials.html#project-assignments">Project Topic Assignments</a></li>
         <li><a class="toc-topic" href="https://algo-ak.github.io/tutorials.html#task-offloading">Task Offloading and Resource Allocation</a></li>
@@ -550,6 +645,102 @@
     </aside>
 
     <main class="content">
+      <section class="project-calendar" id="project-evaluation-calendar" aria-labelledby="project-calendar-title">
+        <header class="calendar-header">
+          <div>
+            <span class="calendar-eyebrow">Project evaluation &amp; lab exam</span>
+            <h2 id="project-calendar-title">November 2026</h2>
+            <p>Submission dates, mentor feedback &amp; lab final exam</p>
+          </div>
+          <div class="calendar-month-badge" aria-hidden="true">11<span>NOVEMBER</span></div>
+        </header>
+        <div class="calendar-body">
+          <div class="calendar-legend" aria-label="Calendar colour key">
+            <span><i class="calendar-dot" aria-hidden="true"></i>Pre-final &amp; feedback</span>
+            <span><i class="calendar-dot calendar-dot-final" aria-hidden="true"></i>Final submission</span>
+            <span><i class="calendar-dot calendar-dot-exam" aria-hidden="true"></i>Lab final exam</span>
+          </div>
+          <table class="calendar-grid">
+            <caption>November 2026 project evaluation and lab exam calendar. Pre-final submission and mentor feedback on 5 and 6 November; final submission on 10 and 13 November; lab final exam on 12 November.</caption>
+            <thead>
+              <tr>
+                <th scope="col"><abbr title="Sunday">Sun</abbr></th>
+                <th scope="col"><abbr title="Monday">Mon</abbr></th>
+                <th scope="col"><abbr title="Tuesday">Tue</abbr></th>
+                <th scope="col"><abbr title="Wednesday">Wed</abbr></th>
+                <th scope="col"><abbr title="Thursday">Thu</abbr></th>
+                <th scope="col"><abbr title="Friday">Fri</abbr></th>
+                <th scope="col"><abbr title="Saturday">Sat</abbr></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><time datetime="2026-11-01">1</time></td>
+                <td><time datetime="2026-11-02">2</time></td>
+                <td><time datetime="2026-11-03">3</time></td>
+                <td><time datetime="2026-11-04">4</time></td>
+                <td class="calendar-feedback"><a class="calendar-day-link" href="#project-pre-final" aria-label="5 November: pre-final submission and mentor feedback"><time datetime="2026-11-05">5</time><span class="calendar-day-note" aria-hidden="true">Pre-final</span></a></td>
+                <td class="calendar-feedback"><a class="calendar-day-link" href="#project-pre-final" aria-label="6 November: pre-final submission and mentor feedback"><time datetime="2026-11-06">6</time><span class="calendar-day-note" aria-hidden="true">Pre-final</span></a></td>
+                <td><time datetime="2026-11-07">7</time></td>
+              </tr>
+              <tr>
+                <td><time datetime="2026-11-08">8</time></td>
+                <td><time datetime="2026-11-09">9</time></td>
+                <td class="calendar-final"><a class="calendar-day-link" href="#project-final" aria-label="10 November: final submission"><time datetime="2026-11-10">10</time><span class="calendar-day-note" aria-hidden="true">Final</span></a></td>
+                <td><time datetime="2026-11-11">11</time></td>
+                <td class="calendar-exam"><a class="calendar-day-link" href="#lab-final-exam" aria-label="12 November: lab final exam"><time datetime="2026-11-12">12</time><span class="calendar-day-note" aria-hidden="true">Lab exam</span></a></td>
+                <td class="calendar-final"><a class="calendar-day-link" href="#project-final" aria-label="13 November: final submission"><time datetime="2026-11-13">13</time><span class="calendar-day-note" aria-hidden="true">Final</span></a></td>
+                <td><time datetime="2026-11-14">14</time></td>
+              </tr>
+              <tr>
+                <td><time datetime="2026-11-15">15</time></td>
+                <td><time datetime="2026-11-16">16</time></td>
+                <td><time datetime="2026-11-17">17</time></td>
+                <td><time datetime="2026-11-18">18</time></td>
+                <td><time datetime="2026-11-19">19</time></td>
+                <td><time datetime="2026-11-20">20</time></td>
+                <td><time datetime="2026-11-21">21</time></td>
+              </tr>
+              <tr>
+                <td><time datetime="2026-11-22">22</time></td>
+                <td><time datetime="2026-11-23">23</time></td>
+                <td><time datetime="2026-11-24">24</time></td>
+                <td><time datetime="2026-11-25">25</time></td>
+                <td><time datetime="2026-11-26">26</time></td>
+                <td><time datetime="2026-11-27">27</time></td>
+                <td><time datetime="2026-11-28">28</time></td>
+              </tr>
+              <tr>
+                <td><time datetime="2026-11-29">29</time></td>
+                <td><time datetime="2026-11-30">30</time></td>
+                <td class="calendar-empty"></td>
+                <td class="calendar-empty"></td>
+                <td class="calendar-empty"></td>
+                <td class="calendar-empty"></td>
+                <td class="calendar-empty"></td>
+              </tr>
+            </tbody>
+          </table>
+          <ol class="calendar-milestones" aria-label="Project evaluation and lab exam dates">
+            <li class="calendar-milestone" id="project-pre-final">
+              <span class="calendar-milestone-date"><time datetime="2026-11-05">5</time> &amp; <time datetime="2026-11-06">6 November</time></span>
+              <h3>Pre-final submission</h3>
+              <p>Submit your pre-final project and get feedback from your mentors.</p>
+            </li>
+            <li class="calendar-milestone calendar-milestone-final" id="project-final">
+              <span class="calendar-milestone-date"><time datetime="2026-11-10">10</time> &amp; <time datetime="2026-11-13">13 November</time></span>
+              <h3>Final submission</h3>
+              <p>Submit the final version of your project.</p>
+            </li>
+            <li class="calendar-milestone calendar-milestone-exam" id="lab-final-exam">
+              <span class="calendar-milestone-date"><time datetime="2026-11-12">12 November</time></span>
+              <h3>Lab Final Exam</h3>
+              <p>The lab final exam is scheduled for 12 November 2026.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
       <section class="marks-notice" id="mid-evaluation-marks" role="note" aria-labelledby="marks-title">
         <div class="marks-mark" aria-hidden="true">MK</div>
         <div class="marks-copy">
@@ -901,14 +1092,14 @@
 
     var tocLinks = Array.from(document.querySelectorAll(".toc a"));
     var sections = tocLinks
-      .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+      .map(function (link) { return document.getElementById(new URL(link.href).hash.slice(1)); })
       .filter(Boolean);
     if ("IntersectionObserver" in window) {
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
           tocLinks.forEach(function (link) {
-            link.classList.toggle("current", link.getAttribute("href") === "#" + entry.target.id);
+            link.classList.toggle("current", new URL(link.href).hash === "#" + entry.target.id);
           });
         });
       }, {rootMargin: "-18% 0px -72% 0px", threshold: 0});
