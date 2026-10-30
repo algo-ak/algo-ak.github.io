@@ -141,21 +141,15 @@ document.addEventListener('DOMContentLoaded', () => {
     byId('fw-table').querySelector('caption').textContent = 'Floyd–Warshall distances: rows are source vertices and columns are destination vertices';
     byId('fw-state').textContent = f.choice;
     byId('fw-message').textContent = f.message;
+    const graph = byId('fw-live-graph');
+    graph.querySelectorAll('[data-vertex]').forEach(node => {
+      node.classList.toggle('fw-intermediate', Number(node.dataset.vertex) === f.k);
+    });
+    const final = f.message.startsWith('Complete:');
+    graph.querySelectorAll('[data-edge]').forEach(edge => {
+      edge.classList.toggle('fw-route', final && ['2-3','3-4','4-1'].includes(edge.dataset.edge));
+    });
   });
-  const fwNodes = {
-    1:{x:210,y:65}, 2:{x:550,y:65},
-    3:{x:550,y:250}, 4:{x:210,y:250}
-  };
-  const fwEdges = [
-    {a:'1',b:'2',w:4,curve:-34,directed:true},
-    {a:'2',b:'1',w:9,curve:-34,directed:true},
-    {a:'1',b:'4',w:8,curve:34,directed:true},
-    {a:'4',b:'1',w:2,curve:34,directed:true},
-    {a:'2',b:'3',w:2,directed:true},
-    {a:'3',b:'4',w:1,directed:true},
-    {a:'3',b:'1',w:6,directed:true}
-  ];
-  window.ChapterUI.graph(byId('fw-graph'), fwNodes, fwEdges, {});
   const prices=[0,1,5,8,9,10,17,17,20,24,30], revenue=[0], first=[0];
   const rodFrames=[{values:[0], n:0, cut:0, best:0, message:'Base case: an empty rod has revenue zero.'}];
   for(let n=1;n<=10;n++) {
@@ -176,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     byId('rod-track').innerHTML=segments.map((length,i)=>`<span style="flex:${length}" class="${i===0?'rod-piece':'rod-remainder'}">${length}</span>`).join('') || '<span>Empty rod · length 0</span>';
     byId('rod-message').textContent=f.message;
   });
+
   const x='ABCBDAB', y='BDCABA';
   const lcs=Array.from({length:x.length+1},(_,i)=>Array.from({length:y.length+1},(_,j)=>i===0||j===0?0:null));
   const lcsFrames=[{data:copy(lcs),i:0,j:0,deps:[],path:[],result:'',message:'Initialize the empty-prefix row and column to zero. Each remaining cell describes two prefixes.'}];
@@ -207,8 +202,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }html+='</tr>';
     }
     byId('lcs-table').innerHTML=html+'</tbody>';
+    const matched = f.path.map(key => key.split(',').map(Number)).filter(([i,j]) => i > 0 && j > 0 && x[i-1] === y[j-1]);
+    for (const [id, label, sequence, side, current] of [
+      ['lcs-sequence-x','X',x,0,f.i], ['lcs-sequence-y','Y',y,1,f.j]
+    ]) {
+      const picked = new Set(matched.map(pair => pair[side]));
+      byId(id).innerHTML = `<strong>${label}</strong>` + Array.from(sequence, (letter,index) => {
+        const selected = picked.has(index+1);
+        const active = index+1 === current && !f.message.startsWith('Complete:');
+        return `<span class="lcs-letter${selected ? ' selected' : active ? ' current' : ''}"><b>${letter}</b><small>${index+1}</small></span>`;
+      }).join('');
+    }
     byId('lcs-choice').textContent=`X prefix: ${x.slice(0,f.i)||'∅'} · Y prefix: ${y.slice(0,f.j)||'∅'} · Recovered suffix: ${f.result||'—'}`;
     byId('lcs-message').textContent=f.message;
   });
+
+  byId('lcs-play').closest('.lab').querySelector('.dp-legend').textContent = 'Amber: current state or prefix end · Violet: dependency · Outlined green cells: traceback · Green characters: recovered matches';
 
 });
