@@ -55,8 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
     byId('fib-message').textContent = f.message;
   });
   function table(id, data, row, col, dependencies = [], path = []) {
-    let html = '<caption class="sr-only">Dynamic programming states and dependencies</caption><thead><tr><th scope="col">State</th>';
-    const start = id === 'mc-table' ? 1 : 0;
+    let html = `<caption class="sr-only">Dynamic programming states and dependencies</caption><thead><tr><th scope="col">${id === 'fw-table' ? 'From / To' : 'State'}</th>`;
+    const start = id === 'mc-table' || id === 'fw-table' ? 1 : 0;
     for (let j = start; j < data[0].length; j++) html += `<th scope="col">${j}</th>`;
     html += '</tr></thead><tbody>';
     for (let i = start; i < data.length; i++) {
@@ -101,6 +101,61 @@ document.addEventListener('DOMContentLoaded', () => {
   function order(i,j) { if(i === j) return 'A'+i; const k = splits[i+','+j]; return '('+order(i,k)+' × '+order(k+1,j)+')'; }
   mcFrames.push({data:copy(m), i:1, j:4, deps:[], choice:order(1,4), message:'Complete: minimum cost 76. Multiply A3A4 first (40), then A2 with that result (24), then A1 (12).'});
   player('mc', mcFrames, f => {table('mc-table', f.data, f.i, f.j, f.deps); byId('mc-choice').textContent=f.choice; byId('mc-message').textContent=f.message;});
+  // The graph and update order match the four-vertex example in the lecture.
+  const distances = [
+    Array(5).fill(null),
+    [null, 0, 4, Infinity, 8],
+    [null, 9, 0, 2, Infinity],
+    [null, 6, Infinity, 0, 1],
+    [null, 2, Infinity, Infinity, 0]
+  ];
+  const distanceText = value => value === Infinity ? '∞' : value;
+  const fwFrames = [{data:copy(distances), k:0, i:0, j:0, deps:[],
+    choice:'D⁽⁰⁾ · No intermediate vertices allowed',
+    message:'Initialize from the directed graph: diagonal entries are 0, direct edges use their weights, and missing edges are ∞.'}];
+  for (let k = 1; k <= 4; k++) {
+    fwFrames.push({data:copy(distances), k, i:0, j:0, deps:[],
+      choice:`Phase k=${k} · Allow vertex ${k} as an intermediate`,
+      message:`Check every ordered pair (i,j). Compare its current distance with D[i,${k}] + D[${k},j]. Steps show the entries that improve.`});
+    let improvements = 0;
+    for (let i = 1; i <= 4; i++) for (let j = 1; j <= 4; j++) {
+      const previous = distances[i][j], left = distances[i][k], right = distances[k][j];
+      const via = left + right;
+      if (via < previous) {
+        distances[i][j] = via;
+        improvements++;
+        fwFrames.push({data:copy(distances), k, i, j, deps:[`${i},${k}`, `${k},${j}`],
+          choice:`k=${k} · Update D[${i},${j}] · Via vertex ${k}`,
+          message:`D[${i},${j}]: ${distanceText(previous)} → ${via}. Through ${k}: ${left} + ${right} = ${via}, which is smaller than ${distanceText(previous)}.`});
+      }
+    }
+    fwFrames.push({data:copy(distances), k, i:0, j:0, deps:[],
+      choice:`D⁽${k}⁾ complete · Intermediate vertices 1…${k}`,
+      message:`All 16 ordered pairs have been checked for k=${k}; ${improvements} distances improved. The matrix now allows vertices 1…${k} inside a path.`});
+  }
+  fwFrames.push({data:copy(distances), k:4, i:2, j:1, deps:[],
+    choice:'Final D⁽⁴⁾ · Shortest route 2 → 3 → 4 → 1',
+    message:'Complete: D[2,1]=5. The route 2 → 3 → 4 → 1 costs 2+1+2=5, improving on the direct edge of weight 9.'});
+  player('fw', fwFrames, f => {
+    table('fw-table', f.data, f.i, f.j, f.deps);
+    byId('fw-table').querySelector('caption').textContent = 'Floyd–Warshall distances: rows are source vertices and columns are destination vertices';
+    byId('fw-state').textContent = f.choice;
+    byId('fw-message').textContent = f.message;
+  });
+  const fwNodes = {
+    1:{x:210,y:65}, 2:{x:550,y:65},
+    3:{x:550,y:250}, 4:{x:210,y:250}
+  };
+  const fwEdges = [
+    {a:'1',b:'2',w:4,curve:-34,directed:true},
+    {a:'2',b:'1',w:9,curve:-34,directed:true},
+    {a:'1',b:'4',w:8,curve:34,directed:true},
+    {a:'4',b:'1',w:2,curve:34,directed:true},
+    {a:'2',b:'3',w:2,directed:true},
+    {a:'3',b:'4',w:1,directed:true},
+    {a:'3',b:'1',w:6,directed:true}
+  ];
+  window.ChapterUI.graph(byId('fw-graph'), fwNodes, fwEdges, {});
   const prices=[0,1,5,8,9,10,17,17,20,24,30], revenue=[0], first=[0];
   const rodFrames=[{values:[0], n:0, cut:0, best:0, message:'Base case: an empty rod has revenue zero.'}];
   for(let n=1;n<=10;n++) {
