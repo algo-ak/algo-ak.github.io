@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Chapter 14: m-way search trees, multilevel indexing, B-trees, B+ trees, insertion, deletion, and disk-index calculations."><title>Chapter 14 · B-Trees and B+ Trees · Design and Analysis of Algorithms</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="chapter-advanced.css"><link rel="stylesheet" href="./chapter-quality.css?v=20260816"><link rel="stylesheet" href="chapter14-diagrams.css?v=20261101b"></head><body class="chapter-interaction-polish chapter14">
+<a class="skip" href="#content">Skip to content</a><button type="button" class="top" id="top" aria-label="Back to top">↑ Top</button><header class="site-header"><div class="progress" id="progress"></div><nav class="nav"><a class="brand" href="index.html"><span class="mark">O(n)</span><span class="brand-copy"><strong>Design &amp; Analysis of Algorithms</strong><span>IIT (ISM) Dhanbad</span></span></a><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a class="active" href="topics.html">Topics</a></li><li><a href="practical.html">Practical</a></li><li><a href="tutorials.html">Tutorials</a></li></ul></nav></header>
+<div class="layout"><aside class="toc"><h4>In this chapter</h4><ol><li><a href="#sec-1">14.1 m-way trees</a></li><li><a href="#sec-2">14.2 Multilevel indexing</a></li><li><a href="#sec-3">14.3 Index calculations</a></li><li><a href="#sec-4">14.4 B-tree structure</a></li><li><a href="#sec-5">14.5 B-tree insertion</a></li><li><a href="#sec-6">14.6 B-tree deletion</a></li><li><a href="#sec-7">14.7 B+ tree structure</a></li><li><a href="#sec-8">14.8 B+ calculations</a></li><li><a href="#sec-9">14.9 Comparison &amp; uses</a></li></ol></aside>
+<main class="chapter" id="content"><span class="kicker">Chapter 14</span><h1>B-Trees and B+ Trees</h1><p class="intro">Disk-aware search trees keep their height small by storing many keys in each node. This chapter connects m-way search trees with multilevel indexing, then develops B-tree and B+ tree structure, insertion, deletion, capacity calculations, and applications.</p><div class="interaction-guide"><strong>Interactive chapter</strong><span>Use <b>Step</b> to follow each operation. Teal arrows connect child-pointer slots to child nodes; dashed purple arrows connect B+ leaves. Each diagram starts with all connections visible. Use <b>Enlarge</b> for full-size labels and horizontal scrolling.</span></div>
+
+<section class="section" id="sec-1">
+<h2><span class="sec">14.1</span>From binary trees to m-way search trees</h2>
+<p>An m-way search tree stores at most m−1 ordered keys per node. A node containing k keys has k+1 child-pointer positions, partitioning the search space into k+1 ordered ranges; some pointers may be null. Here all keys are distinct. A match at an ordinary search-tree node ends the search there.</p>
+<div class="lab"><div class="lab-head"><div><h3>A 4-way search-tree node</h3><p>Root keys [10,30,35] have four child-pointer slots. The children show actual keys, with their permitted ranges below them.</p></div><span class="status" id="mway-status"></span></div>
+<div class="diagram-legend"><span>Numbered cells: keys</span><span class="legend-child">P0, P1, … → child subtrees</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="mway-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="mway-zoom" aria-controls="mway-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="A 4-way search-tree node: scrollable diagram" aria-describedby="mway-help"><svg id="mway-diagram" role="img" aria-label="A 4-way search-tree node"></svg></div>
+<div class="readout" id="mway-message"></div>
+<div class="controls"><button type="button" class="primary" id="mway-play">Play</button><button type="button" id="mway-step">Step</button><button type="button" id="mway-reset">Reset</button><label class="diagram-help" for="mway-speed">Speed</label><select id="mway-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="mway-diagram-text"></pre></details></div>
+<div class="grid2"><div class="card"><strong>Why use wide nodes?</strong><p>If each node occupies a disk page, a binary tree may require many page reads along a long path. Keeping many separators in one page reduces the number of levels.</p></div><div class="card"><strong>Height and I/O</strong><p>Balanced binary trees have O(log₂ N) height. A wide balanced tree has O(log<sub>m</sub> N) height when its branching factor is proportional to m. A cached root does not require a disk read.</p></div></div>
+<p>Let h be the number of levels, counting the root as level 1. In a <em>perfectly filled</em> m-way tree, every internal node has m children and every node has m−1 keys:</p>
+<div class="formula">nodes = 1 + m + … + m<sup>h−1</sup> = (m<sup>h</sup>−1)/(m−1)<br>keys = (m−1) × nodes = m<sup>h</sup>−1</div>
+<div class="table-wrap"><table><thead><tr><th>Levels h</th><th>Keys: m=2</th><th>Keys: m=200</th></tr></thead><tbody><tr><td>3</td><td>7</td><td>7,999,999</td></tr><tr><td>5</td><td>31</td><td>319,999,999,999</td></tr><tr><td>7</td><td>127</td><td>12,799,999,999,999,999</td></tr></tbody></table></div>
+<div class="note box"><span class="label">Ordinary m-way trees are not automatically balanced</span>The maximum degree alone does not guarantee a small height. B-trees add minimum occupancy and equal-leaf-depth rules to preserve balance after updates.</div>
+</section>
+
+<section class="section" id="sec-2">
+<h2><span class="sec">14.2</span>Indexing and multilevel indexing</h2>
+<p>For a data file sorted by a distinct search key, a sparse index can store one entry per data block: the minimum key in that block and a pointer to it. Search chooses the entry with the largest key not exceeding the requested key. If the index spans several pages, build another sparse index over those pages.</p>
+<div class="lab"><div class="lab-head"><div><h3>Follow an index entry to its page</h3><p>Example: 30 sorted records; five records per data block; at most three entries per index block. Search for record 23.</p></div><span class="status" id="index-status"></span></div>
+<div class="diagram-legend"><span>Index cell: minimum key / page pointer</span><span class="legend-child">→ pointed-to page</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="index-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="index-zoom" aria-controls="index-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="Follow an index entry to its page: scrollable diagram" aria-describedby="index-help"><svg id="index-diagram" role="img" aria-label="Follow an index entry to its page"></svg></div>
+<div class="readout" id="index-message"></div>
+<div class="controls"><button type="button" class="primary" id="index-play">Play</button><button type="button" id="index-step">Step</button><button type="button" id="index-reset">Reset</button><label class="diagram-help" for="index-speed">Speed</label><select id="index-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="index-diagram-text"></pre></details></div>
+<p>The root R has two entries, one for each first-level index page. I1 and I2 each have three entries, one for each data block they cover. These are <em>minimum-key/pointer pairs</em>, so an index page with k entries has k pointers; it is not drawn using the k+1 separator-pointer layout of a B-tree node.</p>
+<div class="grid3"><div class="card"><strong>Track</strong><p>A concentric recording path on a magnetic disk surface.</p></div><div class="card"><strong>Sector</strong><p>An addressable segment of a disk track. SSDs do not have physical tracks.</p></div><div class="card"><strong>Page and cluster</strong><p>A database page is an I/O unit; a file-system cluster is an allocation unit containing one or more sectors. They need not have the same size.</p></div></div>
+<div class="note box"><span class="label">Dynamic indexing</span>A static index requires maintenance as data pages change. B-trees and B+ trees organize pages dynamically, splitting or combining them while preserving sorted routing and balance.</div>
+</section>
+
+<section class="section" id="sec-3">
+<h2><span class="sec">14.3</span>Index-capacity exercises</h2>
+<div class="note box"><span class="label">Storage assumptions for these exercises</span>Records and entries are fixed-size and unspanned: an entry never crosses a block boundary. Ignore page headers, slot directories, and compression. All page reads below assume an empty cache. Round capacities down and required page counts up.</div>
+<h3>Sparse-index example</h3>
+<p>30,000 sorted records; record size 100 B; block size 1024 B; key size 9 B; block pointer 6 B.</p>
+<div class="formula">records per data block = ⌊1024/100⌋ = 10<br>data blocks = ⌈30,000/10⌉ = 3,000<br>index entry size = 9 + 6 = 15 B<br>index entries per block = ⌊1024/15⌋ = 68<br>first-level index blocks = ⌈3,000/68⌉ = 45<br>root index blocks = ⌈45/68⌉ = 1</div>
+<div class="table-wrap"><table><thead><tr><th>Access method</th><th>Worst-case page reads</th><th>Assumption</th></tr></thead><tbody><tr><td>Sequential scan of data</td><td>3,000</td><td>No useful ordering or index</td></tr><tr><td>Binary search on data blocks</td><td>12</td><td>Sorted, directly addressable blocks</td></tr><tr><td>Binary search on 45 index blocks, then data</td><td>6 + 1 = 7</td><td>One index level; the selected block is scanned in memory</td></tr><tr><td>Two-level sparse index, then data</td><td>1 + 1 + 1 = 3</td><td>Root → first-level page → data page</td></tr></tbody></table></div>
+<p>For ordinary binary search over N candidate pages, ⌊log₂ N⌋+1 is a worst-case probe bound for N ≥ 1. These are not average search costs. An average requires a stated query distribution and search algorithm.</p>
+<h3>Dense multilevel-index example</h3>
+<p>16,384 records; record size 32 B; block size 1024 B; key size 6 B. Assume both record locators and upper-level block pointers occupy 10 B.</p>
+<div class="formula">data records per block = 1024/32 = 32<br>data blocks = 16,384/32 = 512<br>dense index entry size = 6 + 10 = 16 B<br>index entries per block = 1024/16 = 64<br>level 1: one entry per record → ⌈16,384/64⌉ = 256 blocks<br>level 2: one entry per level-1 block → ⌈256/64⌉ = 4 blocks<br>level 3: one entry per level-2 block → ⌈4/64⌉ = 1 root block</div>
+<p>A complete uncached lookup traverses three index pages, then the data page: four page reads. The dense first level has one entry per record; the upper levels are sparse indexes over index pages.</p>
+</section>
+
+<section class="section" id="sec-4">
+<h2><span class="sec">14.4</span>B-tree structure and order</h2>
+<div class="def box"><span class="label">Convention used throughout this chapter</span>For B-trees take m ≥ 3. Order m means the <em>maximum number of child pointers</em> in an internal node. A B-tree node stores at most m−1 keys. This is different from the minimum-degree t convention, whose maximum is 2t children. Examples use distinct keys and external record pointers.</div>
+<ul><li>Every internal node with k keys has exactly k+1 non-null child pointers. The keys separate strictly ordered child ranges.</li><li>Every non-root node stores ⌈m/2⌉−1 through m−1 keys. Thus non-root internal nodes have ⌈m/2⌉ through m children.</li><li>An internal root has at least two children and one key. A leaf root may store 0 through m−1 keys; zero keys represents an empty tree.</li><li>All leaves are at the same depth. Leaves have no child subtrees.</li><li>In the indexed representation used here, every key has a record pointer, including keys stored in internal nodes.</li></ul>
+<div class="formula">Internal node with k keys:<br>P₀, ⟨K₁,RP₁⟩, P₁, …, ⟨K<sub>k</sub>,RP<sub>k</sub>⟩, P<sub>k</sub><br>Keys in Pᵢ lie strictly between the adjacent separators.</div>
+<div class="table-wrap"><table><thead><tr><th>Order-5 node</th><th>Children</th><th>Keys</th></tr></thead><tbody><tr><td>Internal root</td><td>2…5</td><td>1…4</td></tr><tr><td>Non-root internal node</td><td>3…5</td><td>2…4</td></tr><tr><td>Non-root leaf</td><td>0</td><td>2…4</td></tr><tr><td>Leaf root</td><td>0</td><td>0…4</td></tr></tbody></table></div>
+<h3>Order from a block-size constraint</h3>
+<p>Key = 9 B; record pointer = 7 B; child block pointer = 6 B; block = 512 B. An internal node with capacity p child pointers has p−1 key/record-pointer entries.</p>
+<div class="formula">6p + (p−1)(9+7) ≤ 512<br>22p ≤ 528 ⇒ p ≤ 24</div>
+<p>The maximum order is <strong>24</strong>: p=24 occupies exactly 512 B; p=25 would occupy 534 B. Real page overhead can lower this capacity.</p>
+<h3>Maximum records in four full levels</h3>
+<p>For order 23, every full node stores 22 keys; each full <em>internal</em> node has 23 children. Counting the root as level 1:</p>
+<div class="formula">22(1 + 23 + 23² + 23³) = 23⁴−1 = 279,840 entries</div>
+<p>This counts each B-tree key/record-pointer entry once, including entries in internal nodes.</p>
+</section>
+
+<section class="section" id="sec-5">
+<h2><span class="sec">14.5</span>B-tree insertion</h2>
+<p>Search for the key first. If it is absent, insert its entry into the appropriate leaf in sorted order. An overflowing node has too many keys. Split it around a median, move the median entry to the parent, and reconnect all child pointers. Repeat upward if necessary. Splitting the root creates a new root and adds one level.</p>
+<div class="lab"><div class="lab-head"><div><h3>Insert 55 into an order-5 B-tree</h3><p>Maximum four keys per node. Every child and record-pointer cell is shown; red marks temporary overflow.</p></div><span class="status" id="insert-status"></span></div>
+<div class="diagram-legend"><span>Key / r(key): key and record pointer</span><span class="legend-child">P0, P1, … → child pages</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="insert-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="insert-zoom" aria-controls="insert-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="Insert 55 into an order-5 B-tree: scrollable diagram" aria-describedby="insert-help"><svg id="insert-diagram" role="img" aria-label="Insert 55 into an order-5 B-tree"></svg></div>
+<div class="readout" id="insert-message"></div>
+<div class="controls"><button type="button" class="primary" id="insert-play">Play</button><button type="button" id="insert-step">Step</button><button type="button" id="insert-reset">Reset</button><label class="diagram-help" for="insert-speed">Speed</label><select id="insert-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="insert-diagram-text"></pre></details></div>
+<pre class="code">insert(tree, entry):
+    leaf = search_for_absent_key(tree, entry.key)
+    insert_sorted(leaf.entries, entry)
+    node = leaf
+    while node has more than m - 1 entries:
+        parent = node.parent
+        left, median_entry, right = split(node)
+        if parent is null:
+            tree.root = new_root(median_entry, left, right)
+            return
+        replace node in parent by left, median_entry, right
+        node = parent</pre>
+<p>The split transfers child pointers along with their corresponding key ranges. The promoted entry is removed from its old node; it is not duplicated in a B-tree leaf.</p>
+<h3>Order-4 construction exercise</h3>
+<p>Insert 2, 5, 10, 1, 6, 9, 4, 3, 12, 18, 20, 25. Here use <em>top-down</em> insertion: split any full three-key node before descending into it. This produces the following final tree. A bottom-up split convention can produce a different valid tree.</p>
+<div class="lab"><div class="lab-head"><div><h3>Final order-4 construction</h3><p>Root [5]; internal children [2] and [9,12]; all twelve inserted keys appear exactly once.</p></div></div>
+<div class="diagram-legend"><span>Key / r(key): key and record pointer</span><span class="legend-child">P0, P1, … → child pages</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="order4-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="order4-zoom" aria-controls="order4-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="Final order-4 construction: scrollable diagram" aria-describedby="order4-help"><svg id="order4-diagram" role="img" aria-label="Final order-4 construction"></svg></div>
+
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="order4-diagram-text"></pre></details></div>
+</section>
+
+<section class="section" id="sec-6">
+<h2><span class="sec">14.6</span>B-tree deletion</h2>
+<p>For a leaf key, remove the entry directly. For an internal key, replace its entry with its predecessor (largest key in the left subtree) or successor (smallest key in the right subtree), then remove that replacement at its leaf. The examples below use bottom-up repair after deletion.</p>
+<div class="lab"><div class="lab-head"><div><h3>Delete 10: repair by borrowing</h3><p>Order 5 requires at least two keys in every non-root node. Borrowing rotates entries through the parent separator.</p></div><span class="status" id="delete-status"></span></div>
+<div class="diagram-legend"><span>Key / r(key): key and record pointer</span><span class="legend-child">P0, P1, … → child pages</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="delete-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="delete-zoom" aria-controls="delete-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="Delete 10: repair by borrowing: scrollable diagram" aria-describedby="delete-help"><svg id="delete-diagram" role="img" aria-label="Delete 10: repair by borrowing"></svg></div>
+<div class="readout" id="delete-message"></div>
+<div class="controls"><button type="button" class="primary" id="delete-play">Play</button><button type="button" id="delete-step">Step</button><button type="button" id="delete-reset">Reset</button><label class="diagram-help" for="delete-speed">Speed</label><select id="delete-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="delete-diagram-text"></pre></details></div><div class="lab"><div class="lab-head"><div><h3>Delete 3: repair by merging</h3><p>An independent example starting from the original tree. The adjacent sibling cannot lend.</p></div><span class="status" id="merge-status"></span></div>
+<div class="diagram-legend"><span>Key / r(key): key and record pointer</span><span class="legend-child">P0, P1, … → child pages</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="merge-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="merge-zoom" aria-controls="merge-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="Delete 3: repair by merging: scrollable diagram" aria-describedby="merge-help"><svg id="merge-diagram" role="img" aria-label="Delete 3: repair by merging"></svg></div>
+<div class="readout" id="merge-message"></div>
+<div class="controls"><button type="button" class="primary" id="merge-play">Play</button><button type="button" id="merge-step">Step</button><button type="button" id="merge-reset">Reset</button><label class="diagram-help" for="merge-speed">Speed</label><select id="merge-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="merge-diagram-text"></pre></details></div>
+<div class="grid3"><div class="card"><strong>Borrow</strong><p>An adjacent sibling with more than the minimum can lend. A parent separator moves down; a sibling entry moves up. For internal nodes, transfer the matching child pointer as well.</p></div><div class="card"><strong>Merge</strong><p>If no adjacent sibling can lend, combine the deficient node, a parent separator, and an adjacent sibling. Remove that separator and one child pointer from the parent.</p></div><div class="card"><strong>Repair upward</strong><p>If the parent underflows, repeat the repair above it. If an internal root becomes empty, replace it with its only child, reducing the height by one.</p></div></div>
+<p>With this repair-after-deletion method, merging a one-key-deficient node and a minimum-size sibling fits within the node capacity. For order 5: 1 + 1 + 2 = 4 keys. No overflow split is needed during the repair.</p>
+</section>
+
+<section class="section" id="sec-7">
+<h2><span class="sec">14.7</span>B+ tree structure</h2>
+<div class="def box"><span class="label">Routing above, data entries at the leaves</span>Internal nodes contain separator keys and child pointers only. Every indexed record has its data entry at a leaf. In this chapter a leaf entry is a key and an external record locator; implementations may instead store the record payload. Leaves are linked in sorted order.</div>
+<p>Use internal order m and a separate leaf capacity q. Non-root internal nodes have ⌈m/2⌉…m children; with the half-full convention, non-root leaves have ⌈q/2⌉…q entries. An internal root has 2…m children. A leaf root has 0…q entries. All leaves have the same depth.</p>
+<div class="formula">Internal: P₀, K₁, P₁, …, K<sub>k</sub>, P<sub>k</sub><br>Leaf: ⟨K₁,RP₁⟩, …, ⟨K<sub>q′</sub>,RP<sub>q′</sub>⟩, next<br>q′ is the current number of entries, at most q.</div>
+<div class="lab"><div class="lab-head"><div><h3>B+ point search and linked-leaf scan</h3><p>This example has internal order m=3 and leaf capacity q=3. Each separator is the minimum key in its right subtree.</p></div><span class="status" id="bplus-status"></span></div>
+<div class="diagram-legend"><span>Leaf: key / r(key)</span><span class="legend-child">P0, P1, … → children</span><span class="legend-next">next ⇢ next leaf; ∅ = null</span><span class="legend-active">Amber = current step</span></div>
+<div class="diagram-toolbar"><p class="diagram-help" id="bplus-help">Every arrow connects its pointer slot to the referenced page. Enlarge for full-size labels.</p><button type="button" class="diagram-zoom" id="bplus-zoom" aria-controls="bplus-diagram" aria-pressed="false">Enlarge</button></div>
+<div class="tree-viewport" tabindex="0" role="region" aria-label="B+ point search and linked-leaf scan: scrollable diagram" aria-describedby="bplus-help"><svg id="bplus-diagram" role="img" aria-label="B+ point search and linked-leaf scan"></svg></div>
+<div class="readout" id="bplus-message"></div>
+<div class="controls"><button type="button" class="primary" id="bplus-play">Play</button><button type="button" id="bplus-step">Step</button><button type="button" id="bplus-reset">Reset</button><label class="diagram-help" for="bplus-speed">Speed</label><select id="bplus-speed"><option value="1500">Slow</option><option value="1000" selected>Normal</option><option value="650">Fast</option></select></div>
+<details><summary>Read this diagram as text</summary><pre class="tree-text" id="bplus-diagram-text"></pre></details></div>
+<ul><li>With this separator convention, equality follows the pointer to the right of the matching separator. For [30,60], P0 covers k&lt;30, P1 covers 30≤k&lt;60, and P2 covers k≥60.</li><li>Record pointers r5, r10, … appear only in leaves. Internal separator copies do not represent extra data records.</li><li>After finding the first qualifying leaf, a range scan follows next-leaf pointers in order. The final next pointer is null.</li></ul>
+<h3>B+ insertion and deletion</h3>
+<p>Insert at a leaf. If a leaf splits, keep all data entries in the two leaves, <em>copy</em> the minimum key of the new right leaf into the parent, and repair the next-leaf links. If an internal node splits, move its separating key up and redistribute child pointers. Splitting can propagate to the root.</p>
+<p>Delete at the leaf. Borrow or merge if its occupancy falls below the chosen minimum, update affected separator keys to preserve the routing convention, and repair leaf links after a merge. Repair deficient ancestors as needed; an empty internal root is replaced by its only child.</p>
+</section>
+
+<section class="section" id="sec-8">
+<h2><span class="sec">14.8</span>B+ tree capacity calculations</h2>
+<p>Key = 9 B; record locator = 7 B; block pointer = 6 B; block size = 512 B. Ignore page overhead and reserve one next-leaf pointer per leaf.</p>
+<div class="grid2"><div class="card"><strong>Internal capacity</strong><div class="formula">6p + 9(p−1) ≤ 512<br>15p ≤ 521<br>p<sub>max</sub> = ⌊521/15⌋ = 34</div><p>34 child pointers and 33 separators; 501 B used. A 35-child node would require 516 B.</p></div><div class="card"><strong>Leaf capacity</strong><div class="formula">q(9+7) + 6 ≤ 512<br>16q ≤ 506<br>q<sub>max</sub> = ⌊506/16⌋ = 31</div><p>31 key/record-pointer entries and one next pointer; 502 B used. A 32-entry leaf would require 518 B.</p></div></div>
+<p>Here leaf capacity q counts data entries, and internal order p counts child pointers. Keeping these quantities separate avoids the ambiguous term “leaf order.”</p>
+<h3>Four levels and 70% occupancy</h3>
+<p>Let the root be at level 0 and the leaves at level 3. Capacities are 34 children per internal node and 31 entries per leaf. Exactly 70% at every node is impossible because 0.7×34=23.8 and 0.7×31=21.7 are not integers. State the rounding rule before computing.</p>
+<div class="table-wrap"><table><thead><tr><th>Interpretation</th><th>Children per internal node</th><th>Entries per leaf</th><th>Leaf data entries</th></tr></thead><tbody><tr><td>At least 70% full; uniform minimum integer occupancy</td><td>⌈23.8⌉ = 24</td><td>⌈21.7⌉ = 22</td><td>24³ × 22 = <strong>304,128</strong></td></tr><tr><td>Textbook estimate using floors at every node</td><td>⌊23.8⌋ = 23</td><td>⌊21.7⌋ = 21</td><td>23³ × 21 = <strong>255,507</strong></td></tr></tbody></table></div>
+<p>Both rows assume the same occupancy for every internal node, including the root. The floor estimate is actually about 67.6% of internal child capacity and 67.7% of leaf capacity. If 70% describes only an average, the exact record count is not determined without more information. Separator copies are not counted as data entries.</p>
+<div class="answer box"><span class="label">Multiple-choice interpretation</span>For the standard comparison, choose <strong>(b): B+ trees support efficient range queries through linked leaves.</strong> This describes their structural advantage; measured speed also depends on caching, page layout, and the workload.</div>
+<details><summary>Why the other options are false</summary><ul><li>B-trees and B+ trees both support disk-oriented indexes; B+ trees are not restricted to main memory.</li><li>Neither structure is restricted to only primary or only secondary indexes.</li><li>B+ tree height depends on record count, fan-out, and occupancy.</li></ul></details>
+</section>
+
+<section class="section" id="sec-9">
+<h2><span class="sec">14.9</span>B-tree versus B+ tree</h2>
+<div class="table-wrap"><table><thead><tr><th>Aspect</th><th>B-tree</th><th>B+ tree</th></tr></thead><tbody><tr><td>Record entries in this index model</td><td>Internal nodes and leaves</td><td>Leaves only</td></tr><tr><td>Equality search</td><td>May finish in an internal node</td><td>Reaches the data entry at a leaf</td></tr><tr><td>Ordered range traversal</td><td>In-order traversal can visit internal nodes and leaves</td><td>Initial search, then follow the leaf chain</td></tr><tr><td>Internal capacity for equal page/field sizes</td><td>Record pointers consume internal space</td><td>More space available for separators and child pointers</td></tr><tr><td>Balance</td><td>All leaves at the same depth</td><td>All leaves at the same depth</td></tr></tbody></table></div>
+<p>Both are balanced multiway trees designed to reduce page accesses. B+ trees are particularly useful for ordered scans because the data entries occupy a linked sequence of leaves.</p>
+<h3>Applications and implementation choices</h3>
+<p>Database and file-system indexes use B-tree-family structures in several forms. MySQL documents InnoDB’s ordinary clustered and secondary indexes as B-trees. Clustered-index leaves contain row data; secondary-index leaves contain indexed keys and primary-key locators. Spatial indexes use R-trees. Do not infer the exact variant from a product category alone.</p>
+<p>LevelDB and RocksDB use log-structured merge-tree designs. They should not be listed as examples of B+ tree storage engines.</p>
+</section>
+<aside class="references" aria-labelledby="references-title">
+<h2 id="references-title">References and source slides</h2>
+<ul>
+<li><a href="https://www.cs.gordon.edu/courses/cs321/lectures/Btrees.html">Gordon College — B-tree definitions, insertion, and deletion</a></li>
+<li><a href="https://opendsa-server.cs.vt.edu/ODSA/Books/pubbook/odsa-all/fall-2019/Public_Instance/html/BTree.html">OpenDSA — B/B+ tree nodes, splits, and leaf links</a></li>
+<li><a href="https://cs186berkeley.net/notes/note4/">UC Berkeley CS 186 — B+ tree search and copy-up versus move-up</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/8.4/en/innodb-physical-structure.html">MySQL manual — physical structure of InnoDB indexes</a></li>
+<li><a href="https://github.com/google/leveldb/blob/main/doc/impl.md">LevelDB — implementation and sorted-table levels</a></li>
+<li><a href="https://github.com/meta/rocksdb/wiki/RocksDB-Overview">RocksDB — LSM-tree overview</a></li>
+</ul>
+<p class="diagram-help">The linked PowerPoint is the original lecture source. Use the corrected definitions, diagrams, and calculations on this page when they differ from those slides.</p>
+</aside>
+<aside class="download" aria-labelledby="dl14"><span class="icon">PPTX</span><div class="copy"><h3 id="dl14">Chapter 14 PowerPoint</h3><p>Original lecture slides. Corrections and explicit conventions are provided in the web chapter above.</p></div><a href="ppt/DAA_14_26.pptx" download="DAA_14_26.pptx">↓ Download PPTX</a></aside><nav class="chapter-nav"><a href="chapter13.html">← Chapter 13: Dynamic Programming</a><a href="topics.html">All topics</a><a href="chapter15.html">Chapter 15: Hashing →</a></nav></main></div>
+<footer class="footer"><strong>Design and Analysis of Algorithms</strong>© 2026 <a href="https://alakesh-kalita.github.io/">Dr. Alakesh Kalita</a> · Mathematics and Computing · IIT (ISM) Dhanbad</footer><script src="chapter-advanced.js?v=20260816"></script>
+<script src="chapter14-diagrams.js?v=20261101b"></script>
+<script src="chapter-quality.js?v=20260816"></script>
+</body></html>
