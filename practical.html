@@ -553,13 +553,13 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
 
 /* ---------- Lab final exam announcement ---------- */
 .exam-announcement {
-  margin-bottom: 26px; overflow: hidden;
+  margin-bottom: 28px; overflow: hidden;
   border: 1px solid #e7c389; border-radius: var(--radius);
   background: #fffbf3; box-shadow: 0 8px 24px rgba(133,74,8,.08);
 }
 .exam-announcement-header {
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  padding: 17px 20px;
+  padding: 20px 24px;
 }
 .exam-announcement-date {
   padding: 7px 12px; border: 1px solid #e7c389; border-radius: 8px;
@@ -589,7 +589,7 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   to { transform: translateX(-50%); }
 }
 @media (max-width: 600px) {
-  .exam-announcement-header { padding: 15px; gap: 10px; }
+  .exam-announcement-header { padding: 16px; gap: 10px; }
   .exam-announcement h2 { font-size: 1.1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -602,7 +602,8 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
 
 /* ---------- Practical rules ---------- */
 .rules-card {
-  max-width: 900px;
+  width: 100%;
+  max-width: none;
   margin: 0 0 28px;
   overflow: hidden;
   background: var(--card);
@@ -612,9 +613,9 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
 }
 .rules-heading {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 18px 20px;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
   background: #fff1ef;
   border-bottom: 1px solid #f2cbc6;
 }
@@ -633,7 +634,7 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   line-height: 1;
 }
 .rules-heading h3 {
-  margin: 0 0 4px;
+  margin: 0;
   color: #7f261e;
   font-size: 1.18rem;
 }
@@ -644,7 +645,7 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
 }
 .rules-list {
   margin: 0;
-  padding: 8px 20px 12px;
+  padding: 0 24px 8px;
   list-style: none;
   counter-reset: practical-rule;
 }
@@ -655,12 +656,21 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   align-items: start;
   gap: 12px;
   margin: 0;
-  padding: 11px 0;
+  padding: 18px 0;
   border-bottom: 1px solid var(--line);
 }
 .rules-list li:last-child { border-bottom: 0; }
+.rules-list li > div > strong { display: block; margin-bottom: 4px; }
+.rules-list li > div { min-width: 0; }
+.weekly-assessment {
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 20px 24px;
+}
 .rules-list li::before {
   content: counter(practical-rule);
+  justify-self: center;
+  margin-top: 1px;
   display: grid;
   width: 28px;
   height: 28px;
@@ -672,13 +682,18 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   font-size: 13px;
   font-weight: 700;
 }
-.rules-list li:nth-child(-n+2) {
+.rules-list li:nth-child(-n+2) > div > strong {
   color: #7f261e;
-  font-weight: 600;
 }
 .rules-list li:nth-child(-n+2)::before {
   background: #a9362b;
   color: #fff;
+}
+
+@media (max-width: 600px) {
+  .rules-heading { padding: 16px; }
+  .rules-list { padding: 0 16px 8px; }
+  .weekly-assessment { padding: 16px; }
 }
 
 pre.code {
@@ -1079,7 +1094,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     </ol>
   </section>
 
-  <div class="def-box" style="max-width: 760px;">
+  <div class="def-box weekly-assessment">
     <span class="def-label">Weekly lab assessment structure</span>
     <ul style="margin: 8px 0 0 20px;">
       <li>Weekly assessment — contributes <strong>30% of the final grading</strong>.</li>
