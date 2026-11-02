@@ -35,16 +35,30 @@
 .chapter15 .math-symbol { color:#8a99ad; }
 .chapter15 .fold-result { display:flex; align-items:baseline; gap:20px; padding:16px; border:1px solid #bbdace; border-radius:9px; background:#eff9f4; font-size:13px; color:#45695c; }
 .chapter15 .fold-result strong { font:600 26px var(--display); color:#0b6b56; margin-left:7px; }
-.chapter15 .chain-viewport { overflow:auto; padding:20px 0; border-top:1px solid #e1e8ef; border-bottom:1px solid #e1e8ef; }
-.chapter15 .chain-nodes { display:flex; align-items:center; gap:10px; width:max-content; min-height:56px; margin:auto; }
-.chapter15 .chain-head,.chapter15 .chain-key,.chapter15 .chain-null { display:grid; place-items:center; min-width:45px; height:48px; padding:8px; border:1px solid #bacdd8; border-radius:7px; background:#fff; font:600 16px var(--mono); color:#263c55; }
-.chapter15 .chain-head { min-width:95px; font:500 13px var(--display); background:#edf6f8; color:#0b6376; }
-.chapter15 .chain-key.active { background:#e1f2eb; border-color:#5caa90; }
-.chapter15 .chain-null { border:0; min-width:25px; }
-.chapter15 .chain-arrow { color:#0b7285; font-size:20px; }
-.chapter15 .empty-buckets { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:14px 0; }
-.chapter15 .empty-buckets span { padding:4px 7px; font:11px var(--mono); color:#63758a; background:#f3f6fa; border:1px solid #e0e6ed; border-radius:4px; }
-.chapter15 .empty-buckets span:first-child { border:0; background:none; padding-left:0; font-family:var(--body); }
+.chapter15 .chain-picture-toolbar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin:16px 0 12px; }
+.chapter15 .chain-picture-toolbar>span { color:#63758a; font-size:12px; line-height:1.6; }
+.chapter15 .chain-picture-toolbar button { flex-shrink:0; border:1px solid #b9cfd9; border-radius:7px; padding:8px 12px; background:#fff; color:#275268; font:500 13px var(--display); cursor:pointer; }
+.chapter15 .chain-viewport { overflow:auto; border:1px solid #d2dfe9; border-radius:10px; background:#fbfdff; }
+.chapter15 .chain-viewport svg { display:block; max-width:none; margin-inline:auto; font-family:var(--mono); }
+.chapter15 .chain-viewport:not(.enlarged) svg { width:100%; height:auto; }
+.chapter15 .chain-svg-label { fill:#60758b; text-anchor:middle; dominant-baseline:middle; font-size:12px; }
+.chapter15 .chain-svg-column { font-size:10px; }
+.chapter15 .chain-svg-key { fill:#193d56; text-anchor:middle; dominant-baseline:middle; font-size:18px; font-weight:600; }
+.chapter15 .chain-svg-index { fill:#37546e; text-anchor:middle; dominant-baseline:middle; font-size:14px; }
+.chapter15 .chain-svg-math { fill:#27566d; text-anchor:middle; dominant-baseline:middle; font-size:13px; }
+.chapter15 .chain-svg-null { fill:#708298; text-anchor:middle; dominant-baseline:middle; font-size:20px; }
+.chapter15 .probing-methods { display:grid; gap:14px; margin:24px 0 12px; }
+.chapter15 .probing-method { min-width:0; padding:20px; border:1px solid #d2dee8; border-radius:11px; background:#fff; }
+.chapter15 .probing-method h3 { margin:0 0 14px; font-size:18px; color:#25475d; }
+.chapter15 .method-formula { padding:15px 18px; margin-bottom:14px; border-radius:7px; background:#f2f7fa; overflow-x:auto; color:#193d56; }
+.chapter15 .method-formula math { width:max-content; margin:0; font-size:22px; }
+.chapter15 .probing-method p { margin:0; color:#526078; font-size:14px; line-height:1.75; }
+.chapter15 .probing-notation { color:#63758a; font-size:13px; line-height:1.7; }
+@media(max-width:480px) {
+  .chapter15 .probing-method { padding:15px; }
+  .chapter15 .method-formula { padding:12px; }
+  .chapter15 .method-formula math { font-size:18px; }
+}
 .chapter15 .input-row { display:flex; flex-wrap:wrap; gap:14px; }
 .chapter15 .input-row label { flex:1 1 170px; font-size:13px; color:#526078; }
 .chapter15 .input-row input,.chapter15 .input-row select { display:block; width:100%; margin-top:7px; }

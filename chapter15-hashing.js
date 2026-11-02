@@ -25,9 +25,57 @@
     return {counts,scanned,used,repeated:[...counts].filter(pair=>pair[1]>1)};
   }
   function buildChain(){
-    const chain=[],frames=[{chain:[],key:null,message:'All keys hash to bucket 1. Other buckets are empty.'}];
+    const chain=[],frames=[{chain:[31,21,11,1],key:null,message:'Bucket 1 points to 31 → 21 → 11 → 1 → null. Use Step to rebuild this chain from an empty table.'},{chain:[],key:null,message:'Start with an empty table. The ten bucket heads are null.'}];
     for(const key of [1,11,21,31]){chain.unshift(key);frames.push({chain:chain.slice(),key,message:'Insert '+key+' at the head of bucket 1. Its next pointer refers to '+(chain.length>1?chain[1]:'null')+'.'});}
     return frames;
+  }
+  function chainGeometry(frame){
+    const head={x:268,y:124};
+    const nodes=frame.chain.map((key,i)=>({key,x:330+i*94,y:100,width:74,height:48,pointer:{x:391+i*94,y:124}}));
+    const edges=nodes.map((n,i)=>({from:i?nodes[i-1].key:'bucket-1',to:n.key,start:i?nodes[i-1].pointer:head,end:{x:n.x-4,y:124}}));
+    if(nodes.length)edges.push({from:nodes.at(-1).key,to:null,start:nodes.at(-1).pointer,end:{x:nodes.at(-1).x+110,y:124}});
+    return {head,nodes,edges,width:780,height:430};
+  }
+  function drawChain(svg,frame){
+    const doc=svg.ownerDocument||document,NS='http://www.w3.org/2000/svg',g=chainGeometry(frame),prefix=svg.id;
+    svg.replaceChildren();svg.setAttribute('viewBox','0 0 '+g.width+' '+g.height);svg.setAttribute('width',g.width);svg.setAttribute('height',g.height);
+    function add(tag,attrs={},text,parent=svg){const el=doc.createElementNS(NS,tag);for(const [name,value] of Object.entries(attrs))el.setAttribute(name,value);if(text!==undefined)el.textContent=text;parent.appendChild(el);return el;}
+    function text(x,y,label,className='chain-svg-label',extra={}){return add('text',{x,y,class:className,...extra},label);}
+    add('title',{},'Hash table with separate chaining');
+    add('desc',{},'Ten buckets indexed 0 through 9. Hash function h(k)=k mod 10 maps 1, 11, 21, 31 to bucket 1. '+(frame.chain.length?'Bucket 1 links to '+frame.chain.join(', ')+', then null.':'All bucket heads are null.'));
+    const defs=add('defs'),marker=add('marker',{id:prefix+'-arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:8,markerHeight:8,orient:'auto',markerUnits:'userSpaceOnUse'},undefined,defs);
+    add('path',{d:'M 0 0 L 10 5 L 0 10 Z',fill:'#0b7285'},undefined,marker);
+    function arrow(path,attrs={}){return add('path',{d:path,fill:'none',stroke:'#0b7285','stroke-width':2,'marker-end':'url(#'+prefix+'-arrow)',...attrs});}
+    text(36,35,'KEYS');text(162,35,'HASH FUNCTION');text(254,35,'HASH TABLE');text(530,35,'LINKED LIST');
+    for(const [i,key] of [1,11,21,31].entries()){
+      const y=72+i*40,active=key===frame.key;
+      add('rect',{x:14,y,width:44,height:28,rx:5,fill:active?'#dff2e9':'#f2f6fa',stroke:active?'#438d76':'#c6d5e2'});
+      text(36,y+15,key,'chain-svg-key');arrow('M 58 '+(y+14)+' C 85 '+(y+14)+', 95 124, 120 124',{'stroke-width':1.5});
+    }
+    add('rect',{x:124,y:96,width:76,height:56,rx:8,fill:'#e8f4f7',stroke:'#72a8b5'});
+    text(162,115,'h(k)','chain-svg-key');text(162,138,'k mod 10','chain-svg-math');
+    arrow('M 200 124 H 216');
+    text(234,63,'index','chain-svg-label chain-svg-column');text(268,63,'head','chain-svg-label chain-svg-column');
+    for(let i=0;i<10;i++){
+      const y=76+i*32,occupied=i===1&&frame.chain.length;
+      add('rect',{x:220,y,width:68,height:32,fill:occupied?'#e5f5ed':'#fff',stroke:'#b7cad8','stroke-width':1});
+      add('path',{d:'M 248 '+y+' v 32',stroke:'#b7cad8'});
+      text(234,y+17,i,'chain-svg-index');
+      if(occupied)add('circle',{cx:268,cy:y+16,r:4,fill:'#0b7285'});
+      else text(268,y+17,'∅','chain-svg-null');
+    }
+    for(const n of g.nodes){
+      const active=n.key===frame.key;
+      text(n.x+24,84,'key');text(n.x+61,84,'next');
+      add('rect',{'data-chain-key':n.key,x:n.x,y:n.y,width:n.width,height:n.height,rx:5,fill:active?'#dff2e9':'#f8fcfa',stroke:active?'#438d76':'#8bb8a7','stroke-width':active?2:1.5});
+      add('path',{d:'M '+(n.x+48)+' '+n.y+' v '+n.height,stroke:'#8bb8a7'});
+      text(n.x+24,125,n.key,'chain-svg-key');
+      add('circle',{cx:n.pointer.x,cy:n.pointer.y,r:4,fill:'#0b7285'});
+    }
+    for(const e of g.edges)arrow('M '+e.start.x+' '+e.start.y+' H '+e.end.x,{'data-chain-from':e.from,'data-chain-to':e.to===null?'null':e.to});
+    if(g.nodes.length)text(g.edges.at(-1).end.x+14,125,'∅','chain-svg-null');
+    text(124,274,'h(1) = h(11)','chain-svg-math');text(124,298,'= h(21) = h(31) = 1','chain-svg-math');
+    const description=doc.getElementById('chain-structure');if(description)description.textContent='Bucket 1: '+(frame.chain.length?frame.chain.join(' → ')+' → ':'')+'null. Buckets 0 and 2–9: null.';
   }
   const deletionFrames=[
     {badActive:-1,goodActive:-1,badStatus:'Search has not started',goodStatus:'Search has not started',message:'After deleting 11, compare an ordinary EMPTY slot with a DELETED tombstone. Search for 31 using linear probing.'},
@@ -54,7 +102,7 @@
     for(const key of resizeKeys){old=old.filter(k=>k!==key);moved.push(key);frames.push({old:old.slice(),moved:moved.slice(),key,message:'Move '+key+': old bucket '+mod(key,8)+' → new bucket '+mod(key,16)+'. Use h(k)=k mod 16 in the new table.'});}
     return frames;
   }
-  scope.Chapter15={mod,stepFor,probeIndex,buildProbe,frequency,buildChain,deletionFrames,bloomHashes,makeBloom,buildResize,resizeKeys};
+  scope.Chapter15={mod,stepFor,probeIndex,buildProbe,frequency,buildChain,chainGeometry,drawChain,deletionFrames,bloomHashes,makeBloom,buildResize,resizeKeys};
   if(typeof document==='undefined')return;
   document.addEventListener('DOMContentLoaded',function(){
     const q=id=>document.getElementById(id);
@@ -74,7 +122,8 @@
     q('address-input').addEventListener('input',updateAddress);updateAddress();
     function updateFolding(){const text=q('fold-input').value.trim();q('fold-parts').replaceChildren();if(!/^\d{1,24}$/.test(text)){q('fold-sum').textContent='—';q('fold-result').textContent='—';q('fold-message').textContent='Enter 1–24 digits.';return;}const chunks=text.match(/.{1,2}/g).map(Number),sum=chunks.reduce((a,b)=>a+b,0);chunks.forEach((chunk,i)=>{if(i)q('fold-parts').appendChild(element('span','math-symbol','+'));q('fold-parts').appendChild(element('span','fold-part',chunk));});q('fold-sum').textContent=sum;q('fold-result').textContent=mod(sum,11);q('fold-message').textContent='Group digits from the left in pairs, add the groups, then take the sum modulo 11.';}
     q('fold-input').addEventListener('input',updateFolding);updateFolding();
-    scope.ChapterUI.player({frames:buildChain(),play:'chain-play',step:'chain-step',reset:'chain-reset',speed:'chain-speed',status:'chain-status',render(frame){q('chain-nodes').replaceChildren();q('chain-nodes').appendChild(element('span','chain-head','Bucket 1'));for(const key of frame.chain){q('chain-nodes').append(element('span','chain-arrow','→'),element('span','chain-key'+(key===frame.key?' active':''),key));}q('chain-nodes').append(element('span','chain-arrow','→'),element('span','chain-null','∅'));q('chain-message').textContent=frame.message;}});
+    scope.ChapterUI.player({frames:buildChain(),play:'chain-play',step:'chain-step',reset:'chain-reset',speed:'chain-speed',status:'chain-status',render(frame){drawChain(q('chain-diagram'),frame);q('chain-message').textContent=frame.message;}});
+    q('chain-enlarge').addEventListener('click',()=>{const enlarged=q('chain-viewport').classList.toggle('enlarged');q('chain-enlarge').textContent=enlarged?'Fit diagram':'Enlarge';q('chain-enlarge').setAttribute('aria-pressed',String(enlarged));});
     let probePlayer,loadedMode='linear';
     function renderProbe(frame){
       renderSlots(q('probe-table'),frame.table,frame.active);q('probe-message').textContent=frame.message;q('probe-key').textContent=frame.key===null?'—':frame.key;q('probe-total').textContent=frame.total;q('probe-load').textContent=(frame.table.filter(v=>v!==null).length/10).toFixed(1);
