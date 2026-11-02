@@ -652,7 +652,7 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   counter-increment: practical-rule;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
   gap: 12px;
   margin: 0;
   padding: 11px 0;
@@ -672,11 +672,11 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   font-size: 13px;
   font-weight: 700;
 }
-.rules-list li:nth-child(-n+3) {
+.rules-list li:nth-child(-n+2) {
   color: #7f261e;
   font-weight: 600;
 }
-.rules-list li:nth-child(-n+3)::before {
+.rules-list li:nth-child(-n+2)::before {
   background: #a9362b;
   color: #fff;
 }
@@ -1063,8 +1063,24 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     </div>
   </section>
 
+  <section class="rules-card" id="practical-exam-rules" aria-labelledby="important-rules-title">
+    <div class="rules-heading">
+      <span class="rules-icon" aria-hidden="true">!</span>
+      <div>
+        <h3 id="important-rules-title">Practical Exam Rules and Regulations</h3>
+      </div>
+    </div>
+    <ol class="rules-list">
+      <li><div><strong>No talking or discussion.</strong> Once you are seated in the examination hall, do not communicate with other students, even to ask for a pen or pencil. Any violation will result in the immediate termination of your examination.</div></li>
+      <li><div><strong>No USB devices or internet access.</strong> Software that detects USB connections and internet access has been installed on the examination systems. Do not use either. Any violation will result in the immediate termination of your examination.</div></li>
+      <li><div><strong>Binary marking.</strong> No partial marks will be awarded.</div></li>
+      <li><div><strong>Solve two out of three questions.</strong> You must successfully solve at least two of the three questions to receive full marks.</div></li>
+      <li><div><strong>No error-correction assistance.</strong> Neither the teaching assistants (TAs) nor the instructor will correct or debug errors in your code.</div></li>
+    </ol>
+  </section>
+
   <div class="def-box" style="max-width: 760px;">
-    <span class="def-label">Lab assessment structure</span>
+    <span class="def-label">Weekly lab assessment structure</span>
     <ul style="margin: 8px 0 0 20px;">
       <li>Weekly assessment — contributes <strong>30% of the final grading</strong>.</li>
       <li>Every <strong>Tuesday</strong>, at most <strong>10 lab questions</strong> will be given.</li>
@@ -1073,22 +1089,7 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
     </ul>
   </div>
 
-  <section class="rules-card" aria-labelledby="important-rules-title">
-    <div class="rules-heading">
-      <span class="rules-icon" aria-hidden="true">!</span>
-      <div>
-        <h3 id="important-rules-title">Important Rules</h3>
-        <p>Below are the rules that must be followed. Violation of rules 1–3 may result in an F grade. No warnings will be given.</p>
-      </div>
-    </div>
-    <ol class="rules-list">
-      <li>No mobile phones.</li>
-      <li>No internet access.</li>
-      <li>No discussion with anyone.</li>
-      <li>No partial marks.</li>
-      <li>The programs assigned must be completed before 5.30 PM.</li>
-    </ol>
-  </section>
+
 
   <h3 style="font-family: var(--font-display); margin: 34px 0 14px;">Lab sheets</h3>
   <div class="chapter-grid">
