@@ -1,18 +1,17 @@
 /* Lecture-based activities, scoped to Chapter 14. */
-.chapter14 { --lesson-purple:#6857be; --lesson-mint:#b5eddf; }
-.chapter14 .chapter-hero { padding:30px; border-radius:20px; color:#f5f8ff; background:radial-gradient(ellipse at 100% 10%,#394870,transparent 62%),#152338; box-shadow:0 18px 40px #15233818; }
-.chapter14 .hero-eyebrow { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:22px; font:12px var(--mono); letter-spacing:.08em; }
-.chapter14 .hero-eyebrow span { color:var(--lesson-mint); }
-.chapter14 .hero-eyebrow a { padding:7px 10px; border:1px solid #74809e; border-radius:6px; color:#e2eafa; letter-spacing:0; text-decoration:none; }
-.chapter14 .chapter-hero h1 { font-size:clamp(1.4rem,3vw,2rem); font-weight:500; color:#c4d3ec; }
-.chapter14 .hero-question { margin:16px 0; font:600 clamp(2rem,4.3vw,3.5rem)/1.13 var(--display); letter-spacing:-.035em; }
-.chapter14 .hero-intro { font-size:16px; color:#c3d0e4; line-height:1.7; max-width:60ch; }
-.chapter14 .hero-route { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:24px 0; }
-.chapter14 .hero-route a { display:flex; flex-direction:column; gap:7px; padding:13px; color:#fff; background:#ffffff09; border:1px solid #ffffff2b; border-radius:10px; text-decoration:none; font:500 14px/1.4 var(--display); }
-.chapter14 .hero-route a:hover { background:#ffffff19; border-color:#b5eddf; }
-.chapter14 .hero-route b { color:var(--lesson-mint); font:12px var(--mono); }
-.chapter14 .hero-foot { display:flex; flex-wrap:wrap; gap:8px 22px; color:#a8bbd6; font-size:12px; }
-.chapter14 .hero-foot span:last-child { color:var(--lesson-mint); }
+.chapter14 { --lesson-purple:#6857be; }
+.chapter14 .chapter-hero { padding:0; color:var(--ink); background:transparent; box-shadow:none; }
+.chapter14 .hero-eyebrow { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:8px; font:13px var(--mono); letter-spacing:.1em; }
+.chapter14 .hero-eyebrow span { color:var(--accent-dark); }
+.chapter14 .hero-eyebrow a { color:var(--accent); font-size:12px; letter-spacing:0; text-decoration:underline; text-underline-offset:3px; }
+.chapter14 .chapter-hero h1 { margin:8px 0 10px; font-size:clamp(2rem,3.7vw,2.85rem); font-weight:700; letter-spacing:-.025em; color:var(--ink); }
+.chapter14 .hero-question { margin:20px 0 10px; color:var(--accent-dark); font:600 1.35rem/1.4 var(--display); letter-spacing:-.015em; }
+.chapter14 .hero-intro { color:var(--soft); font-size:1.08rem; line-height:1.68; max-width:800px; }
+.chapter14 .hero-route { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:22px 0 16px; }
+.chapter14 .hero-route a { display:flex; flex-direction:column; gap:7px; padding:13px; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:9px; text-decoration:none; font:500 14px/1.4 var(--display); }
+.chapter14 .hero-route a:hover { background:var(--accent-soft); border-color:#9cced7; }
+.chapter14 .hero-route b { color:var(--accent-dark); font:12px var(--mono); }
+.chapter14 .hero-foot { display:flex; flex-wrap:wrap; gap:8px 22px; color:var(--soft); font-size:12px; }
 .chapter14 .section-opening { margin:18px 0 24px; }
 .chapter14 .section-opening .lead-question { margin:12px 0 10px; font:600 clamp(1.3rem,2.3vw,1.6rem)/1.35 var(--display); letter-spacing:-.02em; max-width:31ch; }
 .chapter14 .section-opening>p:not(.lead-question) { font-size:16px; color:#526078; }
@@ -102,7 +101,6 @@
 .chapter14 .fill-equation>strong { font:600 19px var(--mono); color:#8291a8; }
 .chapter14 .fill-equation .fill-total b { color:#0b7d69; }
 @media(max-width:650px) {
-  .chapter14 .chapter-hero { padding:22px; }
   .chapter14 .hero-route { gap:7px; }
   .chapter14 .hero-route a { padding:10px; font-size:12px; }
   .chapter14 .hero-foot { font-size:11px; }
@@ -137,7 +135,7 @@
   .chapter14 .packing-bar i { font-size:9px; padding:0 5px; }
 }
 @media(prefers-reduced-motion:reduce) { .chapter14 .height-track i,.chapter14 #book-entries li { transition:none; } }
-@media print { .chapter14 .chapter-hero { color:#101c33; background:#edf2f8; } .chapter14 .hero-intro,.chapter14 .hero-route a,.chapter14 .hero-foot,.chapter14 .chapter-hero h1 { color:#101c33; } .chapter14 .lesson-actions,.chapter14 .explorer-controls { display:none; } }
+@media print { .chapter14 .lesson-actions,.chapter14 .explorer-controls { display:none; } }
 
 .chapter14 .fill-equation[data-valid=false] .fill-total b { color:#a84b21; }
 
