@@ -10,7 +10,6 @@
 .chapter14 .diagram-legend { display:flex; flex-wrap:wrap; gap:8px 20px; margin:12px 0 8px; font-size:13px; color:#46536b; }
 .chapter14 .legend-child { color:#075968; }
 .chapter14 .legend-next { color:#6d4cc3; }
-.chapter14 .legend-active { color:#9a4900; }
 .chapter14 .tree-text { white-space:pre; font:13px/1.9 var(--mono); overflow:auto; padding:12px; background:#f1f5f9; border-radius:8px; }
 .chapter14 .lab-head h3 { margin-top:0; }
 .chapter14 .lab-head p { margin-bottom:0; }
