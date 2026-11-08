@@ -682,12 +682,25 @@ a.chapter-card:hover { box-shadow: 0 10px 26px rgba(16,28,51,.10); transform: tr
   font-size: 13px;
   font-weight: 700;
 }
-.rules-list li:nth-child(-n+2) > div > strong {
+.rules-list li:nth-child(-n+4) > div > strong {
   color: #7f261e;
 }
-.rules-list li:nth-child(-n+2)::before {
+.rules-list li:nth-child(-n+4)::before {
   background: #a9362b;
   color: #fff;
+}
+.rules-form-reference { margin: 16px 0 0; max-width: 1000px; }
+.rules-form-reference img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.rules-form-reference figcaption {
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 14px;
 }
 
 @media (max-width: 600px) {
@@ -1086,6 +1099,17 @@ table.tbl tr:nth-child(even) td { background: #fbfcfe; }
       </div>
     </div>
     <ol class="rules-list">
+      <li><div><strong>Run ExamSafe.</strong> Run the ExamSafe software installed on your machine.</div></li>
+      <li><div>
+        <strong>Mandatory: fill in the ExamSafe registration form.</strong>
+        Enter your admission number, assigned question set, and student full name as per institute records. Read the examination regulations and select the acknowledgment checkbox to confirm that you have read, understood, and agree to comply with them. Click <b>Start examination</b> only after receiving permission from the invigilator.
+        <figure class="rules-form-reference">
+          <a href="assets/examsafe-registration.png" target="_blank" rel="noopener noreferrer">
+            <img src="assets/examsafe-registration.png" width="1177" height="987" alt="ExamSafe registration form showing the admission number, assigned question set, student full name, examination regulation, acknowledgment checkbox, and Start examination button.">
+          </a>
+          <figcaption>ExamSafe student registration form. Select the image to view it at full size.</figcaption>
+        </figure>
+      </div></li>
       <li><div><strong>No talking or discussion.</strong> Once you are seated in the examination hall, do not communicate with other students, even to ask for a pen or pencil. Any violation will result in the immediate termination of your examination.</div></li>
       <li><div><strong>No USB devices or internet access.</strong> Software that detects USB connections and internet access has been installed on the examination systems. Do not use either. Any violation will result in the immediate termination of your examination.</div></li>
       <li><div><strong>Binary marking.</strong> No partial marks will be awarded.</div></li>
@@ -2321,7 +2345,7 @@ k = 2</pre>
     </details>
 
 
-    <details class="chapter-card lab-sheet-card collapsible-lab" id="lab-12" open>
+    <details class="chapter-card lab-sheet-card collapsible-lab" id="lab-12">
       <summary class="lab-sheet-summary" aria-labelledby="lab-12-title">
         <span class="lab-sheet-heading">
           <span class="chapter-num">Lab 12</span>
