@@ -1,32 +1,274 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Chapter 16: decision and optimization problems, P, NP, NP-complete, NP-hard, 3-SAT, and polynomial-time reductions."><title>Chapter 16 · NP-Completeness · Design and Analysis of Algorithms</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="chapter-advanced.css"><style>
-.class-map{position:relative;min-height:360px;margin:18px 0;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;overflow:hidden}.oval{position:absolute;display:grid;place-items:center;border:3px solid;color:var(--ink);font:700 20px var(--display)}.oval.np{inset:35px 9% 35px 9%;border-color:#6d4cc3;border-radius:50%;background:rgba(109,76,195,.07)}.oval.p{left:17%;top:120px;width:30%;height:150px;border-color:var(--green);border-radius:50%;background:rgba(15,118,110,.12)}.oval.npc{right:16%;top:100px;width:31%;height:190px;border-color:var(--amber);border-radius:50%;background:rgba(180,83,9,.10)}.class-label{position:absolute;padding:4px 8px;border-radius:6px;background:#fff;font:600 13px var(--mono)}.clause-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}.clause{padding:14px;border:2px solid var(--line);border-radius:9px;background:#fff;text-align:center;font:600 15px var(--mono);transition:.2s}.clause.true{border-color:var(--green);background:var(--green-soft)}.clause.false{border-color:var(--red);background:var(--red-soft)}.switches{display:flex;flex-wrap:wrap;gap:8px}.bool{min-width:70px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font:600 14px var(--mono);cursor:pointer}.bool.on{border-color:var(--green);background:var(--green);color:#fff}.reduction-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:15px;align-items:center;margin:18px 0}.problem-box{min-height:140px;padding:18px;display:grid;place-items:center;border:2px solid #c8d4e3;border-radius:12px;background:#fff;text-align:center}.problem-box.active{border-color:var(--amber);background:var(--amber-soft)}.arrow-big{color:var(--accent);font-size:36px}.complexity-line{display:grid;grid-template-columns:95px 1fr 130px;gap:9px;align-items:center;margin:8px 0}.complexity-line i{display:block;height:11px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--accent),var(--amber),var(--red))}
-@media(max-width:650px){.clause-grid{grid-template-columns:1fr}.reduction-flow{grid-template-columns:1fr}.arrow-big{transform:rotate(90deg);text-align:center}.class-map{min-height:310px}.complexity-line{grid-template-columns:80px 1fr 90px}}
+.clause-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:15px 0; }
+.clause { padding:12px 8px; border:2px solid var(--line); border-radius:9px; text-align:center; font:600 15px var(--mono); }
+.clause span { display:block; margin-top:4px; font-size:13px; }
+.clause.true { border-color:var(--green); background:var(--green-soft); }
+.clause.false { border-color:var(--red); background:var(--red-soft); }
+.switches { display:flex; flex-wrap:wrap; gap:8px; }
+.bool { min-width:70px; min-height:42px; padding:9px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font:600 14px var(--mono); cursor:pointer; }
+.bool[aria-pressed="true"] { border-color:var(--green); background:var(--green); color:#fff; }
+.reduction-flow { display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:stretch; margin:18px 0; }
+.problem-box { display:grid; align-content:center; gap:6px; padding:14px; border:2px solid var(--line); border-radius:10px; text-align:center; }
+.problem-box.active { border-color:var(--amber); background:var(--amber-soft); }
+.arrow-big { align-self:center; text-align:center; color:var(--accent-dark); font-size:28px; }
+@media(max-width:620px) {
+  .clause-grid { grid-template-columns:1fr; }
+  .reduction-flow { grid-template-columns:1fr; gap:8px; }
+  .arrow-big { transform:rotate(90deg); line-height:1; }
+}
 </style><link rel="stylesheet" href="./chapter-quality.css?v=20260816"></head><body class="chapter-interaction-polish">
 <a class="skip" href="#content">Skip to content</a><button type="button" class="top" id="top" aria-label="Back to top">↑ Top</button><header class="site-header"><div class="progress" id="progress"></div><nav class="nav"><a class="brand" href="index.html"><span class="mark">NP</span><span class="brand-copy"><strong>Design &amp; Analysis of Algorithms</strong><span>IIT (ISM) Dhanbad</span></span></a><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a class="active" href="topics.html">Topics</a></li><li><a href="practical.html">Practical</a></li><li><a href="tutorials.html">Tutorials</a></li></ul></nav></header>
-<div class="layout"><aside class="toc"><h4>In this chapter</h4><ol><li><a href="#sec-1">16.1 Problem types</a></li><li><a href="#sec-2">16.2 Complexity growth</a></li><li><a href="#sec-3">16.3 P and NP</a></li><li><a href="#sec-4">16.4 NP-complete</a></li><li><a href="#sec-5">16.5 3-SAT</a></li><li><a href="#sec-6">16.6 Reductions</a></li><li><a href="#sec-7">16.7 Related pairs</a></li><li><a href="#sec-8">16.8 NP-hard</a></li><li><a href="#sec-9">16.9 Comparison</a></li></ol></aside>
-<main class="chapter" id="content"><span class="kicker">Chapter 16</span><h1>NP-Completeness</h1><p class="intro">Complexity classes separate problems by what can be solved efficiently, what can be verified efficiently, and what is at least as hard as every problem in NP. The key tool connecting these classes is polynomial-time reduction.</p><div class="interaction-guide"><strong>Interactive chapter</strong><span>Change a Boolean assignment, evaluate a 3-CNF formula, and step through the logic of a reduction. Definitions distinguish decision problems from their optimization versions.</span></div>
+<div class="layout">
+  <aside class="toc">
+    <h4>In this chapter</h4>
+    <ol>
+      <li><a href="#sec-1">16.1 Problem types</a></li>
+      <li><a href="#sec-2">16.2 Running time</a></li>
+      <li><a href="#sec-3">16.3 P and NP</a></li>
+      <li><a href="#sec-4">16.4 NP-complete</a></li>
+      <li><a href="#sec-5">16.5 3-SAT</a></li>
+      <li><a href="#sec-6">16.6 Reductions</a></li>
+      <li><a href="#sec-7">16.7 Related problems</a></li>
+      <li><a href="#sec-8">16.8 NP-hard</a></li>
+      <li><a href="#sec-9">16.9 Review</a></li>
+    </ol>
+  </aside>
+  <main class="chapter" id="content">
+    <span class="kicker">Chapter 16</span>
+    <h1>NP-Completeness</h1>
+    <p class="intro">Suppose you have a bag with a weight limit and want to pack items worth at least 90. If someone hands you a list of items, you can add up their weights and profits to check it. How quickly can you find such a list yourself? That difference between solving and checking is at the heart of P versus NP.</p>
 
-<section class="section" id="sec-1"><h2><span class="sec">16.1</span>Decision and optimization problems</h2><div class="grid2"><div class="card"><strong>Decision problem</strong><p>Asks a yes/no question: “Does this array contain a duplicate?” or “Is there a tour of length at most K?”</p></div><div class="card"><strong>Optimization problem</strong><p>Asks for the best feasible value or solution: “Find the minimum-length tour.”</p></div></div><div class="def box"><span class="label">Why decision form matters</span>P and NP are formally classes of decision problems. An optimization problem is often studied through a related threshold decision problem.</div><h3>3-CNF as a decision problem</h3><p>A literal is a variable or its negation. A clause is an OR of literals. A CNF formula is an AND of clauses; in 3-CNF, each clause has exactly three literals.</p><div class="formula">(¬x ∨ y ∨ z) ∧ (x ∨ ¬y ∨ w) ∧ (¬z ∨ u ∨ v)</div><p>The output is YES if some assignment satisfies every clause; otherwise it is NO. The circuit diagram in the slides implements the same Boolean decision: OR gates form clauses and an AND gate combines their outputs.</p></section>
+    <section class="section" id="sec-1">
+      <h2><span class="sec">16.1</span>Decision and optimization problems</h2>
+      <p>The same set of items can give rise to two questions. In both cases, the bag holds at most 16 units of weight, and each item can be taken once.</p>
+      <div class="grid2">
+        <div class="card"><strong>Decision</strong><p>Can we pack items with a total profit of at least 90? The answer is YES or NO.</p></div>
+        <div class="card"><strong>Optimization</strong><p>What is the largest total profit we can pack? The answer gives the best value, and may include the chosen items.</p></div>
+      </div>
+      <p>P and NP classify decision problems. In <a href="chapter17.html#sec-1">Chapter 17</a>, we use the same example to find the maximum profit.</p>
+    </section>
 
-<section class="section" id="sec-2"><h2><span class="sec">16.2</span>Growth rates and tractability</h2><div class="table-wrap"><table><thead><tr><th>Time</th><th>Name</th><th>Example</th><th>Broad behavior</th></tr></thead><tbody><tr><td>O(1)</td><td>Constant</td><td>Array access</td><td rowspan="6">Polynomial-time / tractable</td></tr><tr><td>O(log n)</td><td>Logarithmic</td><td>Binary search</td></tr><tr><td>O(n)</td><td>Linear</td><td>Array or list traversal</td></tr><tr><td>O(n log n)</td><td>Linearithmic</td><td>Merge sort, heap sort</td></tr><tr><td>O(n²)</td><td>Quadratic</td><td>Bubble sort, insertion sort</td></tr><tr><td>O(n³)</td><td>Cubic</td><td>Floyd–Warshall</td></tr><tr><td>O(2ⁿ)</td><td>Exponential</td><td>Naive 0/1-knapsack search</td><td rowspan="2">Superpolynomial growth</td></tr><tr><td>O(n!)</td><td>Factorial</td><td>Enumerating all TSP tours</td></tr></tbody></table></div><div class="complexity-line"><b>n log n</b><i style="width:30%"></i><span>manageable growth</span></div><div class="complexity-line"><b>n³</b><i style="width:52%"></i><span>still polynomial</span></div><div class="complexity-line"><b>2ⁿ</b><i style="width:78%"></i><span>rapid growth</span></div><div class="complexity-line"><b>n!</b><i style="width:100%"></i><span>extreme growth</span></div><div class="warn box"><span class="label">Precision</span>“Hard” does not simply mean “known to take exponential time.” For many NP-complete problems, we do not know a polynomial-time algorithm, but we also cannot prove that every algorithm must take exponential time. That uncertainty is tied to P versus NP.</div></section>
+    <section class="section" id="sec-2">
+      <h2><span class="sec">16.2</span>Polynomial and exponential growth</h2>
+      <p>In this chapter, an algorithm is efficient if its worst-case time is bounded by a fixed polynomial in the length of its input. For example, when <var>n</var> is the number of items, doubling <var>n</var> multiplies <var>n</var>² by 4. A search over every subset has 2<sup><var>n</var></sup> choices. Each new item doubles that count.</p>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Running time examples">
+        <table>
+          <thead><tr><th scope="col">Growth</th><th scope="col">Example</th><th scope="col">Polynomial-time bound?</th></tr></thead>
+          <tbody>
+            <tr><td>O(1), O(log n), O(n)</td><td>Array access, binary search, scanning a list</td><td>Yes</td></tr>
+            <tr><td>O(n log n), O(n²), O(n³)</td><td>Merge sort, insertion sort, Floyd–Warshall</td><td>Yes</td></tr>
+            <tr><td>2<sup>n</sup> choices</td><td>Checking every subset of n items</td><td>Exponential growth</td></tr>
+            <tr><td>n! permutations</td><td>Trying every ordering of n cities</td><td>Factorial growth</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>These counts describe particular algorithms. The P versus NP question asks whether better algorithms exist for all problems in NP.</p>
+    </section>
 
-<section class="section" id="sec-3"><h2><span class="sec">16.3</span>P and NP</h2><div class="grid2"><div class="def box"><span class="label">P</span>Decision problems solvable by a deterministic algorithm in polynomial time.</div><div class="def box"><span class="label">NP</span>Decision problems for which a proposed YES-certificate can be verified in polynomial time. Equivalently, solvable in polynomial time by a nondeterministic machine.</div></div><p>Every problem in P is also in NP: if a problem can be solved quickly, a proposed answer can also be checked quickly.</p><div class="class-map" aria-label="Relationship between P, NP, and NP-complete"><div class="oval np"></div><div class="oval p">P</div><div class="oval npc">NP-complete</div><span class="class-label" style="left:11%;top:48px">NP</span><span class="class-label" style="left:34%;bottom:48px">P ⊆ NP</span></div><div class="note box"><span class="label">Open problem</span>Is P=NP or P≠NP? No proof is known. The diagram shows the widely believed P≠NP picture, not a proved separation.</div></section>
+    <section class="section" id="sec-3">
+      <h2><span class="sec">16.3</span>P and NP</h2>
+      <div class="grid2">
+        <div class="def box"><span class="label">P</span>A deterministic algorithm can answer the decision question in polynomial time. For example, scan a list to decide whether it contains a given number.</div>
+        <div class="def box"><span class="label">NP</span>Every YES instance has a short piece of evidence, called a <strong>certificate</strong>, that a deterministic algorithm can verify in polynomial time. For a NO instance, every proposed certificate fails the check.</div>
+      </div>
+      <p>For the knapsack decision problem, the certificate is a subset of items. Items 1 and 3 weigh 2 + 10 = 12 and earn 40 + 50 = 90. Both limits are met, so this subset proves the answer is YES. If a proposed subset fails either check, another subset could still succeed.</p>
+      <p>Every problem in P is also in NP (<strong>P ⊆ NP</strong>). A verifier for a problem in P can simply run the polynomial-time solver and use its answer.</p>
+      <div class="note box"><span class="label">P versus NP</span>Does every decision problem with quickly checkable YES certificates also have a polynomial-time solver? This remains open. NP stands for <em>nondeterministic polynomial time</em>. <a href="https://www.claymath.org/millennium/p-vs-np/">Clay Mathematics Institute</a></div>
+    </section>
 
-<section class="section" id="sec-4"><h2><span class="sec">16.4</span>What makes a problem NP-complete?</h2><div class="formula">NP-complete = in NP + NP-hard</div><ul><li>Its YES-solutions are verifiable in polynomial time.</li><li>Every problem in NP can be reduced to it in polynomial time.</li><li>No polynomial-time algorithm is known for any NP-complete problem.</li><li>If one NP-complete problem has a polynomial-time algorithm, then every problem in NP does—and P=NP.</li></ul><div class="grid2"><div class="card"><strong>Status we know</strong><p>NP-complete problems are mutually connected through polynomial reductions and are the hardest decision problems inside NP.</p></div><div class="card"><strong>Status we do not know</strong><p>Whether an NP-complete problem can be solved in polynomial time.</p></div></div><div class="callout-question" style="padding:16px;border-left:4px solid #6d4cc3;background:#f3efff;border-radius:0 10px 10px 0"><strong>An NP problem not known to be in P or NP-complete:</strong> graph isomorphism is a standard example. Integer factorization is another commonly discussed candidate.</div></section>
+    <section class="section" id="sec-4">
+      <h2><span class="sec">16.4</span>What makes a problem NP-complete?</h2>
+      <p>An NP-complete problem meets both conditions.</p>
+      <ol>
+        <li><strong>In NP.</strong> We can check a YES certificate in polynomial time.</li>
+        <li><strong>NP-hard.</strong> We can translate every problem in NP into it in polynomial time while preserving the YES or NO answer. This translation is called a <a href="#sec-6">reduction</a>.</li>
+      </ol>
+      <p>A polynomial-time solver for even one NP-complete problem would solve every problem in NP in polynomial time. For each problem, first translate the input, then run that solver. This would prove P = NP.</p>
+    </section>
 
-<section class="section" id="sec-5"><h2><span class="sec">16.5</span>3-SAT: verify an assignment</h2><p>Given an assignment, evaluating all clauses is polynomial, so 3-SAT is in NP. 3-SAT is also NP-hard by polynomial-time reductions; therefore it is NP-complete.</p><div class="lab"><div class="lab-head"><div><h3>Evaluate the slide’s 3-CNF formula</h3><p>Click a variable to switch between 0 and 1.</p></div><span class="status" id="sat-status"></span></div><div class="switches" id="switches"></div><div class="clause-grid"><div class="clause" id="c1">¬x ∨ y ∨ z</div><div class="clause" id="c2">x ∨ ¬y ∨ w</div><div class="clause" id="c3">¬z ∨ u ∨ v</div></div><div class="readout" id="sat-message"></div></div><details><summary>Why 3-SAT is NP-complete</summary><p>The Cook–Levin theorem established SAT as NP-complete. A further polynomial transformation converts SAT instances to equivalent 3-SAT instances. Hence every problem in NP can be reduced to 3-SAT in polynomial time.</p></details></section>
+    <section class="section" id="sec-5">
+      <h2><span class="sec">16.5</span>3-SAT and its certificate</h2>
+      <p>3-SAT asks whether some assignment of true or false to the variables makes a formula true. A <strong>literal</strong> is a variable such as <var>x</var> or its negation ¬<var>x</var>. In the example, each <strong>clause</strong> has three literals joined by OR (∨), and the clauses are joined by AND (∧). Each clause needs at least one true literal, and every clause must pass.</p>
+      <div class="lab">
+        <div class="lab-head">
+          <div><h3>Check a 3-SAT assignment</h3><p>Start with all variables set to 0 (false). Switch x to 1 (true) and see which clause fails. Then switch z to 1 and see what changes.</p></div>
+          <span class="status" id="sat-status"></span>
+        </div>
+        <div class="switches" aria-label="Boolean variables" role="group">
+          <button type="button" class="bool" data-variable="x" aria-label="x" aria-pressed="false">x = 0</button>
+          <button type="button" class="bool" data-variable="y" aria-label="y" aria-pressed="false">y = 0</button>
+          <button type="button" class="bool" data-variable="z" aria-label="z" aria-pressed="false">z = 0</button>
+          <button type="button" class="bool" data-variable="w" aria-label="w" aria-pressed="false">w = 0</button>
+          <button type="button" class="bool" data-variable="u" aria-label="u" aria-pressed="false">u = 0</button>
+          <button type="button" class="bool" data-variable="v" aria-label="v" aria-pressed="false">v = 0</button>
+        </div>
+        <div class="clause-grid">
+          <div class="clause" id="c1"><strong>¬x ∨ y ∨ z</strong><span>1 ∨ 0 ∨ 0 = 1</span></div>
+          <div class="clause" id="c2"><strong>x ∨ ¬y ∨ w</strong><span>0 ∨ 1 ∨ 0 = 1</span></div>
+          <div class="clause" id="c3"><strong>¬z ∨ u ∨ v</strong><span>1 ∨ 0 ∨ 0 = 1</span></div>
+        </div>
+        <div class="readout" id="sat-message">All three clauses are true. This assignment proves the answer is YES.</div>
+      </div>
+      <p>The assignment is the certificate. Checking it takes one pass through the clauses, which shows that 3-SAT is in NP.</p>
+      <details>
+        <summary>Why 3-SAT is NP-complete</summary>
+        <p>The Cook–Levin theorem shows that SAT, the general satisfiability problem, is NP-complete. SAT can be reduced to 3-SAT in polynomial time. So every problem in NP can first be translated to SAT, then to 3-SAT.</p>
+      </details>
+    </section>
 
-<section class="section" id="sec-6"><h2><span class="sec">16.6</span>Polynomial-time reductions</h2><div class="def box"><span class="label">A ≤p B</span>A polynomial-time reduction transforms every instance x of problem A into an instance f(x) of problem B such that x is a YES-instance of A exactly when f(x) is a YES-instance of B.</div><div class="lab"><div class="lab-head"><div><h3>Read the direction correctly</h3><p>To prove B is hard, reduce a problem already known to be hard <em>to B</em>.</p></div><span class="status" id="red-status"></span></div><div class="reduction-flow"><div class="problem-box" id="red-a"><div><strong>Known problem A</strong><p>instance x</p></div></div><div class="arrow-big">→</div><div class="problem-box" id="red-b"><div><strong>Target problem B</strong><p>instance f(x)</p></div></div></div><div class="readout" id="red-message"></div><div class="controls"><button type="button" class="primary" id="red-play">Play</button><button type="button" id="red-step">Step</button><button type="button" id="red-reset">Reset</button><select id="red-speed"><option value="1100">Slow</option><option value="700" selected>Normal</option><option value="400">Fast</option></select></div></div><div class="answer box"><span class="label">Consequence</span>If A≤pB and B has a polynomial-time algorithm, then A also has a polynomial-time algorithm. If A is NP-complete and B∈NP, this proves B is NP-complete.</div></section>
+    <section class="section" id="sec-6">
+      <h2><span class="sec">16.6</span>Polynomial-time reductions</h2>
+      <p><strong>A ≤<sub>p</sub> B</strong> means we can turn any input of A into an input of B in polynomial time. The two inputs must have the same answer. A solver for B can then answer the original question about A.</p>
+      <div class="lab">
+        <div class="lab-head">
+          <div><h3>Reduce Subset Sum to 0/1 knapsack</h3><p>Use Step to translate the example and check why the answer stays the same.</p></div>
+          <span class="status" id="red-status"></span>
+        </div>
+        <div class="readout" id="red-message">Start with the Subset Sum instance. Each number can be used at most once.</div>
+        <div class="controls">
+          <button type="button" class="primary" id="red-play">Play</button>
+          <button type="button" id="red-step">Step</button>
+          <button type="button" id="red-reset">Reset</button>
+          <select id="red-speed" aria-label="Playback speed"><option value="4000">Slow</option><option value="2700" selected>Normal</option><option value="1600">Fast</option></select>
+        </div>
+        <div class="reduction-flow">
+          <div class="problem-box" id="red-a">
+            <strong>Subset Sum (A)</strong>
+            <span>Can we choose a subset of {2, 3, 7} whose sum is exactly 5?</span>
+          </div>
+          <span class="arrow-big" aria-hidden="true">→</span>
+          <div class="problem-box" id="red-b">
+            <strong>0/1 knapsack decision (B)</strong>
+            <span>Give each number an item with that weight and profit. Can we pack weight ≤ 5 and earn profit ≥ 5?</span>
+          </div>
+        </div>
+      </div>
+      <p>For any target <var>T</var>, set both the bag capacity and profit target to <var>T</var>. Since every item has equal weight and profit, a subset satisfies both limits exactly when its sum is <var>T</var>. Making one item per number takes polynomial time. <a href="https://people.csail.mit.edu/rrw/6.1400-2025/lec18-color.pdf">MIT lecture notes on the reduction</a></p>
+      <div class="answer box"><span class="label">Direction of the proof</span>Start with a known NP-complete problem A and reduce it to your target B to prove B is NP-hard. Subset Sum is A here. We already checked that 0/1 knapsack decision is in NP, so the reduction proves it is NP-complete.</div>
+    </section>
 
-<section class="section" id="sec-7"><h2><span class="sec">16.7</span>Polynomial problems and their harder cousins</h2><div class="table-wrap"><table><thead><tr><th>Polynomial-time problem</th><th>Related NP-complete / NP-hard problem</th><th>Key distinction</th></tr></thead><tbody><tr><td>Fractional knapsack</td><td>0/1 knapsack decision is NP-complete; optimization is NP-hard</td><td>Fractions make the greedy choice valid.</td></tr><tr><td>Shortest path</td><td>Hamiltonian cycle / TSP decision is NP-complete</td><td>Visiting every vertex exactly once changes the problem.</td></tr><tr><td>Linear programming</td><td>Integer linear-program feasibility is NP-complete in general</td><td>Forcing variables to integers removes convex continuity.</td></tr></tbody></table></div><div class="note box"><span class="label">TSP wording</span>The decision version asks whether a tour of cost at most K exists and is NP-complete. Finding the minimum-cost tour is an optimization problem and is NP-hard.</div></section>
+    <section class="section" id="sec-7">
+      <h2><span class="sec">16.7</span>How changing the rules changes the problem</h2>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Related algorithm problems">
+        <table>
+          <thead><tr><th scope="col">Polynomial-time problem</th><th scope="col">Related decision problem that is NP-complete</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Fractional knapsack.</strong> Take part of an item if needed. A greedy algorithm fills the bag in order of profit per unit of weight.</td><td><strong>0/1 knapsack.</strong> Take whole items. Can we reach the profit target within the weight limit?</td></tr>
+            <tr><td><strong>Shortest path.</strong> Find the cheapest route from one vertex to another.</td><td><strong>Travelling Salesman Problem (TSP).</strong> Can a tour visit every city once, return to the start, and stay within a cost limit?</td></tr>
+            <tr><td><strong>Linear programming.</strong> The variables can take fractional values.</td><td><strong>Integer linear feasibility.</strong> Can integer values satisfy all the given linear constraints?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-<section class="section" id="sec-8"><h2><span class="sec">16.8</span>NP-hard problems</h2><div class="def box"><span class="label">NP-hard</span>A problem H is NP-hard if every problem in NP reduces to H in polynomial time. H need not be a decision problem, need not belong to NP, and need not have polynomially verifiable solutions.</div><div class="grid2"><div class="card"><strong>Inside NP</strong><p>Every NP-complete problem—including 3-SAT—is also NP-hard and has polynomially verifiable YES-certificates.</p></div><div class="card"><strong>Outside or beyond NP</strong><p>The halting problem is undecidable and NP-hard under suitable reductions; optimization TSP and optimization 0/1 knapsack are NP-hard rather than decision problems.</p></div></div><div class="warn box"><span class="label">Important correction</span>NP-hard does not mean “not verifiable in polynomial time.” Verification is simply not required by the definition. Some NP-hard problems are NP-complete and therefore are verifiable in polynomial time.</div></section>
+    <section class="section" id="sec-8">
+      <h2><span class="sec">16.8</span>NP-hard problems</h2>
+      <p>A problem is <strong>NP-hard</strong> if every problem in NP can be reduced to it in polynomial time. A polynomial-time solver for an NP-hard problem would therefore give a polynomial-time solver for every problem in NP.</p>
 
-<section class="section" id="sec-9"><h2><span class="sec">16.9</span>NP, NP-complete, and NP-hard</h2><div class="table-wrap"><table><thead><tr><th>Class</th><th>Polynomial verification?</th><th>Decision problem?</th><th>Polynomial solution known?</th><th>Examples</th></tr></thead><tbody><tr><td>NP</td><td>Yes, for YES-certificates</td><td>Yes</td><td>Some (the P subset); others unknown</td><td>All P problems; graph isomorphism; 3-SAT</td></tr><tr><td>NP-complete</td><td>Yes</td><td>Yes</td><td>No, unless P=NP</td><td>3-SAT, vertex cover, Hamiltonian path, 0/1-knapsack decision</td></tr><tr><td>NP-hard</td><td>Not required</td><td>Not required</td><td>Generally no</td><td>TSP optimization, 0/1-knapsack optimization, halting problem; also every NP-complete problem</td></tr></tbody></table></div><div class="answer box"><span class="label">One-sentence memory aid</span>P concerns efficient <strong>solution</strong>; NP concerns efficient <strong>verification</strong>; NP-complete problems are the hardest problems <strong>within NP</strong>; NP-hard is the broader hardness category.</div></section>
+      <h3>Decision and optimization problems can both be NP-hard</h3>
+      <p>Consider the Travelling Salesman Problem (TSP). A tour visits each city exactly once and returns to the starting city.</p>
+      <div class="grid2">
+        <div class="card"><strong>Decision version · NP-complete</strong><p>Is there a tour with total cost at most 100? The answer is YES or NO. In the general decision problem, the cost limit is part of the input.</p></div>
+        <div class="card"><strong>Optimization version · NP-hard</strong><p>Find a tour with the lowest possible total cost. The answer is a tour.</p></div>
+      </div>
+      <p>If you can find a cheapest tour, compare its cost with the given limit to answer the decision question. This shows why the optimization version is also NP-hard. The same idea works for 0/1 knapsack by comparing the maximum profit with the target. <a href="https://web.stanford.edu/class/cs369/files/CS261-Notes.pdf">Stanford TSP notes</a></p>
+
+      <h3>An NP-hard decision problem can be outside NP</h3>
+      <p>The <strong>Halting Problem</strong> asks whether a given program eventually stops on a given input. It has a YES or NO answer, and it is undecidable. Every problem in NP is decidable by exhaustively checking all certificates up to the polynomial length bound, so the Halting Problem is outside NP.</p>
+      <p>To see why it is NP-hard, take any SAT formula and construct a program that tries all truth assignments. The program <strong>halts if it finds a satisfying assignment</strong> and runs forever if it exhausts the assignments. The SAT answer is YES exactly when the constructed program halts. Writing the program with the formula embedded takes polynomial time, even though running it may take much longer. <a href="https://www.cs.swarthmore.edu/~sindhu/cs46/s16/SAT.pdf">Swarthmore notes on SAT and NP-hardness</a></p>
+
+      <h3>NP-hardness alone gives no guarantee of efficient verification</h3>
+      <p>The <strong>Non-Halting Problem</strong> is the complement of the Halting Problem. Given a program and an input, it asks whether the program runs forever on that input.</p>
+      <p>To reduce SAT to Non-Halting, construct a program that tries all truth assignments. This time, the program <strong>runs forever if it finds a satisfying assignment</strong> and halts if it exhausts the assignments. Writing this program also takes polynomial time. The SAT answer is YES exactly when the constructed program runs forever, so Non-Halting is NP-hard.</p>
+      <p>Could a finite certificate always prove the claim “This program will never stop”? There is no general algorithm that can verify such certificates for all true non-halting claims, even with unlimited time to check each certificate. So polynomial-time verification of YES instances is impossible here. <a href="https://www.cs.cornell.edu/courses/cs4820/2019sp/handouts/computability.pdf">Cornell notes on the limits of computability</a></p>
+      <details>
+        <summary>Why would a verifier for Non-Halting decide Halting?</summary>
+        <p>Suppose every true non-halting claim had a finite certificate that an algorithm could check, and the checker rejected every certificate for a program that halts. Run two tasks in parallel. Simulate the given program, and search all finite certificates using the checker. The simulation finishes if the program halts. The search finds an accepted certificate if the program runs forever. One task must succeed, so together they would decide the Halting Problem. That contradicts its undecidability.</p>
+      </details>
+    </section>
+
+    <section class="section" id="sec-9">
+      <h2><span class="sec">16.9</span>Compare the four terms</h2>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Complexity class comparison">
+        <table>
+          <thead><tr><th scope="col">Term</th><th scope="col">What it guarantees</th><th scope="col">Example</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">P</th><td>A polynomial-time decision algorithm</td><td>Decide if a list contains a given number</td></tr>
+            <tr><th scope="row">NP</th><td>Polynomial-time verification of YES certificates</td><td>Does a 3-SAT formula have a satisfying assignment?</td></tr>
+            <tr><th scope="row">NP-complete</th><td>In NP and NP-hard</td><td>3-SAT, 0/1 knapsack decision</td></tr>
+            <tr><th scope="row">NP-hard</th><td>At least as hard as every problem in NP under polynomial-time reductions</td><td>TSP optimization, the Halting Problem, Non-Halting, 3-SAT</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <details>
+        <summary>Self-check. If B is in NP and B reduces to 3-SAT, is B NP-complete?</summary>
+        <p>The reduction shows how a solver for 3-SAT could solve B. To prove that B is NP-hard, reduce a known NP-complete problem to B. Then combine that result with B being in NP.</p>
+      </details>
+    </section>
 
 <aside class="download" aria-labelledby="dl16"><span class="icon">PPTX</span><div class="copy"><h3 id="dl16">Chapter 16 PowerPoint</h3><p>Original presentation for offline study and revision.</p></div><a href="ppt/DAA_16_26.pptx" download="DAA_16_26.pptx">↓ Download PPTX</a></aside><nav class="chapter-nav"><a href="chapter15.html">← Chapter 15: Hashing</a><a href="topics.html">All topics</a><a href="chapter17.html">Chapter 17: Branch and Bound →</a></nav></main></div>
-<footer class="footer"><strong>Design and Analysis of Algorithms</strong>© 2026 <a href="https://alakesh-kalita.github.io/">Dr. Alakesh Kalita</a> · Mathematics and Computing · IIT (ISM) Dhanbad</footer><script src="chapter-advanced.js?v=20260816"></script><script>
-(function(){function q(id){return document.getElementById(id)}var values={x:false,y:false,z:false,w:false,u:false,v:false},names=['x','y','z','w','u','v'];function sat(){q('switches').innerHTML=names.map(function(n){return '<button type="button" class="bool '+(values[n]?'on':'')+'" data-v="'+n+'">'+n+' = '+(values[n]?1:0)+'</button>'}).join('');var clauses=[!values.x||values.y||values.z,values.x||!values.y||values.w,!values.z||values.u||values.v];clauses.forEach(function(ok,i){q('c'+(i+1)).className='clause '+(ok?'true':'false')});var all=clauses.every(Boolean);q('sat-message').textContent='Clause values: '+clauses.map(function(v){return v?1:0}).join(' ∧ ')+' ⇒ formula = '+(all?1:0)+(all?' (satisfied)':' (not satisfied)');q('sat-status').textContent=all?'SAT for this assignment':'assignment fails';[].slice.call(document.querySelectorAll('.bool')).forEach(function(b){b.onclick=function(){values[b.dataset.v]=!values[b.dataset.v];sat()}})}sat();
-var rf=[{a:false,b:false,m:'Begin with an arbitrary instance x of a known problem A.'},{a:true,b:false,m:'Compute f(x) in polynomial time.'},{a:false,b:true,m:'Feed the transformed instance f(x) to an algorithm for B.'},{a:true,b:true,m:'The transformation preserves the answer: x∈A if and only if f(x)∈B.'},{a:false,b:true,m:'Therefore, a fast algorithm for B would also solve A quickly.'}];ChapterUI.player({frames:rf,play:'red-play',step:'red-step',reset:'red-reset',speed:'red-speed',status:'red-status',render:function(f){q('red-a').classList.toggle('active',f.a);q('red-b').classList.toggle('active',f.b);q('red-message').textContent=f.m}});
-})();</script><script src="./chapter-quality.js?v=20260816"></script><script src="./roadmap-prompt.js?v=20260907" defer></script>
-</body></html>
+<footer class="footer"><strong>Design and Analysis of Algorithms</strong>© 2026 <a href="https://alakesh-kalita.github.io/">Dr. Alakesh Kalita</a> · Mathematics and Computing · IIT (ISM) Dhanbad</footer><script src="chapter-advanced.js?v=20260816"></script>
+<script>
+(() => {
+  const variables = { x: 0, y: 0, z: 0, w: 0, u: 0, v: 0 };
+  const clauses = [
+    document.querySelector('#c1'),
+    document.querySelector('#c2'),
+    document.querySelector('#c3')
+  ];
+  const satStatus = document.querySelector('#sat-status');
+  const satMessage = document.querySelector('#sat-message');
+
+  function renderAssignment() {
+    const { x, y, z, w, u, v } = variables;
+    const literalsByClause = [[1 - x, y, z], [x, 1 - y, w], [1 - z, u, v]];
+    const results = literalsByClause.map(literals => Math.max(...literals));
+    clauses.forEach((clause, i) => {
+      clause.classList.toggle('true', results[i] === 1);
+      clause.classList.toggle('false', results[i] === 0);
+      clause.querySelector('span').textContent = literalsByClause[i].join(' ∨ ') + ' = ' + results[i];
+    });
+    const satisfied = results.every(Boolean);
+    satStatus.textContent = satisfied ? 'Formula = 1' : 'Formula = 0';
+    satMessage.textContent = satisfied
+      ? 'All three clauses are true. This assignment proves the answer is YES.'
+      : 'At least one clause is false. Try changing a variable in a clause that evaluates to 0.';
+  }
+
+  document.querySelectorAll('[data-variable]').forEach(button => {
+    button.addEventListener('click', () => {
+      const name = button.dataset.variable;
+      const value = 1 - variables[name];
+      variables[name] = value;
+      button.textContent = name + ' = ' + value;
+      button.setAttribute('aria-pressed', value === 1);
+      renderAssignment();
+    });
+  });
+  renderAssignment();
+
+  const reductionFrames = [
+    { active: ['a'], message: 'Start with the Subset Sum instance. Each number can be used at most once.' },
+    { active: ['b'], message: 'Create items (weight, profit) of (2, 2), (3, 3), and (7, 7). Set both the capacity and the required profit to 5.' },
+    { active: ['b'], message: 'Total weight and total profit are equal. To meet both limits, this shared total must be exactly 5.' },
+    { active: ['a', 'b'], message: 'The items weighing 2 and 3 give total weight 5 and profit 5. The same numbers sum to 5 in Subset Sum, so the answer is YES in both problems.' },
+    { active: ['b'], message: 'A knapsack decision solver can therefore answer Subset Sum. The reduction goes from Subset Sum to knapsack.' }
+  ];
+  const source = document.querySelector('#red-a');
+  const target = document.querySelector('#red-b');
+  const reductionMessage = document.querySelector('#red-message');
+  ChapterUI.player({
+    frames: reductionFrames, play: 'red-play', step: 'red-step', reset: 'red-reset',
+    speed: 'red-speed', status: 'red-status',
+    render(frame) {
+      source.classList.toggle('active', frame.active.includes('a'));
+      target.classList.toggle('active', frame.active.includes('b'));
+      reductionMessage.textContent = frame.message;
+    }
+  });
+})();
+</script>
+<script src="./chapter-quality.js?v=20260816"></script>
+<script src="./roadmap-prompt.js?v=20260907" defer></script>
+</body>
+</html>
